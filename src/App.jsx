@@ -2,6 +2,9 @@ import "./App.css";
 import HeaderLayout from "./layouts/HeaderLayout";
 import BodyLayout from "./layouts/BodyLayout";
 import FooterLayout from "./layouts/FooterLayout";
+import "@fontsource/fira-code/400.css";
+import "@fontsource/fira-code/700.css";
+import "@fontsource/fira-sans";
 
 function App() {
   return (
