@@ -6,25 +6,19 @@ const BitcoinPriceChart = () => {
   const { satsToUsd, priceOverTime } = useCryptoContext();
 
   const chartContainer = useRef(null);
-  console.log(priceOverTime);
 
   useEffect(() => {
-    const satsData = Object.entries(priceOverTime).map((p) => ({
-      x: new Date(Date.now()),
-      y: p,
-    }));
-
     const ctx = chartContainer.current.getContext("2d");
 
     const chart = new Chart(ctx, {
       type: "line",
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: priceOverTime.map((p) => p.x),
         datasets: [
           {
-            label: "# of Votes",
-            data: satsData,
-            borderWidth: 1,
+            label: "$1 USD in Satoshis",
+            data: priceOverTime,
+            borderWidth: 0.00000001,
           },
         ],
       },

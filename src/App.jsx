@@ -15,12 +15,7 @@ import {
 import { SATS_REFRESH_RATE } from "./constants";
 
 // Sets the global price via context, with the help of the app's useEffect()
-async function setPrice(
-  priceOverTime,
-  startLooping,
-  setSatsPrice,
-  initPriceOverTime
-) {
+async function setPrice(startLooping, setSatsPrice, initPriceOverTime) {
   startLooping();
   const history = await getHistoricSatsRate();
   initPriceOverTime(history || []);
@@ -35,13 +30,8 @@ async function setPrice(
 }
 
 function App() {
-  const {
-    isLooping,
-    priceOverTime,
-    startLooping,
-    setSatsPrice,
-    initPriceOverTime,
-  } = useCryptoContext();
+  const { isLooping, startLooping, setSatsPrice, initPriceOverTime } =
+    useCryptoContext();
 
   console.log;
 
@@ -50,7 +40,6 @@ function App() {
     var interval = null;
     if (!isLooping) {
       interval = setPrice(
-        priceOverTime,
         () => startLooping(),
         (p) => setSatsPrice(p),
         () => initPriceOverTime()

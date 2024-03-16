@@ -44,7 +44,7 @@ export default function CartLayout() {
         </div>
         {/* Chart + Buy Now */}
         <div className="mt-auto flex flex-col">
-          <div className="w-full h-64 border-2 border-[var(--cart-secondary-bg-color)]">
+          <div className="mb-8 w-full h-64 border-2 border-[var(--cart-secondary-bg-color)]">
             Chart
             <BitcoinPriceChart />
           </div>
