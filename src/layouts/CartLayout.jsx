@@ -6,7 +6,7 @@ export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
 
   return (
-    <section className="absolute z-100 w-full lg:w-1/2 h-full right-0 top-0 p-4">
+    <section className="z-100 w-full lg:w-1/2 lg:display min-h-screen right-0 top-0 p-2">
       <div className="h-full p-2 bg-[var(--cart-bg-color)] text-[var(--cart-text-color)] flex flex-col gap-4">
         {/* Header */}
         <div className="w-full p-2 bg-[var(--cart-secondary-bg-color)]">
@@ -44,7 +44,7 @@ export default function CartLayout() {
         </div>
         {/* Chart + Buy Now */}
         <div className="mt-auto flex flex-col">
-          <div className="mb-8 w-full h-64 border-2 border-[var(--cart-secondary-bg-color)]">
+          <div className="mb-8 w-full h-full border-2 border-[var(--cart-secondary-bg-color)]">
             Chart
             <BitcoinPriceChart />
           </div>
@@ -59,7 +59,7 @@ export default function CartLayout() {
 
 const RoastItem = ({ name, type, qty, accentColor }) => {
   return (
-    <div className="border-2 border-white">
+    <div className="border-2 p-2 border-[var(--cart-secondary-bg-color)]">
       <p>
         <span className={`${accentColor || ""} font-bold`}>{name}</span> |{" "}
         {type}

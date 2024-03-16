@@ -6,7 +6,6 @@ export const useCryptoContext = create((set) => ({
   priceOverTime: [],
 
   setSatsPrice: (price) => {
-    console.log("Running...");
     set((state) => ({
       satsToUsd: price,
       priceOverTime:
@@ -24,34 +23,33 @@ export const useCryptoContext = create((set) => ({
   startLooping: () => set(() => ({ isLooping: true })),
 }));
 
-function getTodaysDate() {
-  const today = new Date();
+// function getTodaysDate() {
+//   const today = new Date();
 
-  const dd = String(today.getDate()).padStart(2, "0");
-  const mm = String(today.getMonth() + 1).padStart(2, "0"); // January is 0!
-  const yyyy = today.getFullYear();
+//   const dd = String(today.getDate()).padStart(2, "0");
+//   const mm = String(today.getMonth() + 1).padStart(2, "0"); // January is 0!
+//   const yyyy = today.getFullYear();
 
-  return dd + "-" + mm + "-" + yyyy;
-}
+//   return dd + "-" + mm + "-" + yyyy;
+// }
 
 export async function getHistoricSatsRate() {
-  console.log("get today's date", getTodaysDate());
-    return fetch(
-      `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&precision=10`
-    )
-      .then((response) => {
-        if (!response.ok) {
-          console.error(response);
-          throw new Error(response.message || "");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        return data;
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
+  return fetch(
+    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&precision=10`
+  )
+    .then((response) => {
+      if (!response.ok) {
+        console.error(response);
+        throw new Error(response.message || "");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
 }
 
 export async function getSatsRate() {
