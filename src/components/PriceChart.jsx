@@ -66,6 +66,8 @@ const BitcoinPriceChart = () => {
           },
           y: {
             stepSize: 100,
+            min: 67000 * (lightRoastBags * darkRoastBags || 1),
+            max: 71000 * (lightRoastBags * darkRoastBags || 1),
             // min: (
             //   (cartPrice || 0) * satsToUsd * BASE_COST_PER_BAG +
             //   1000

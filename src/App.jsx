@@ -16,32 +16,8 @@ import { useCartContext } from "./context/CartContext";
 import { SATS_REFRESH_RATE, BASE_COST_PER_BAG } from "./constants";
 
 // Sets the global price via context, with the help of the app's useEffect()
-async function setPrice(
-  hodlings,
-  startLooping,
-  setSatsPrice,
-  setCartPriceOverTime
-) {
+async function getPrice(startLooping, setSatsPrice) {
   startLooping();
-  const history = await getHistoricSatsRate();
-  console.log("History:", history);
-  const newData = history.prices.slice(
-    history.prices.length - 100,
-    history.prices.length
-  );
-  console.log("New History:", newData);
-  setCartPriceOverTime(newData);
-  // console.log("History:", history.prices);
-  // const newData = history.prices.map((p) => {
-  //   if (!p) return;
-  //   return {
-  //     x: p.x,
-  //     y: p.y * hodlings * BASE_COST_PER_BAG,
-  //   };
-  // });
-  // console.log("New Data:", newData);
-  // setCartPriceOverTime(newData);
-
   const price = await getSatsRate();
   if (price) setSatsPrice(price);
   const interval = setInterval(async () => {
@@ -49,6 +25,24 @@ async function setPrice(
     if (price) setSatsPrice(price);
   }, SATS_REFRESH_RATE);
   return interval;
+}
+
+async function setPrice(hodlings, setCartPriceOverTime) {
+  const history = await getHistoricSatsRate();
+  const prices = history.prices.slice(
+    history.prices.length - 100,
+    history.prices.length + 1
+  );
+  const newData = prices.map((p) => {
+    const btcToUsd = p[1];
+    const usdToBtc = 1 / btcToUsd;
+    const satsToUsd = usdToBtc * 100000000;
+    const costPerBag = satsToUsd * BASE_COST_PER_BAG;
+    const totalCost = costPerBag * hodlings;
+    return [p[0], totalCost];
+  });
+  console.log("New Data:", newData);
+  setCartPriceOverTime(newData);
 }
 
 function App() {
@@ -62,13 +56,17 @@ function App() {
     // Set the global Satoshi rate
     var interval = null;
     if (!isLooping) {
-      interval = setPrice(
-        hodlings,
+      interval = getPrice(
         () => startLooping(),
-        (p) => setSatsPrice(p),
-        (p) => setCartPriceOverTime(p)
+        (p) => setSatsPrice(p)
       );
     }
+    setPrice(
+      hodlings,
+      () => startLooping(),
+      (p) => setSatsPrice(p),
+      (p) => setCartPriceOverTime(p)
+    );
     return () => {
       if (interval) clearTimeout(interval);
     };

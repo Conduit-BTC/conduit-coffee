@@ -12,7 +12,6 @@ export const useCartContext = create((set) => ({
     }),
 
   setCartPriceOverTime: (array) => {
-    console.log("Setting Cart Price Over Time:", array);
     if (array && array.length > 0)
       set({
         cartPriceOverTime: [...array],
