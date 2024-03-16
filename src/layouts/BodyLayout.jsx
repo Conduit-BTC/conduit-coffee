@@ -75,21 +75,21 @@ function ProductLineItem({
       <h4 className="font-[700] pl-2">
         <span className={accentColor}>{name}</span> | {type}
       </h4>
-      <div className="flex mx-2 gap-2">
+      <div className="flex lg:mx-2 mr-0 gap-2">
         <button
           onClick={decreaseFunction}
           className={
-            "p-1 w-6 h-6 flex items-center justify-center rounded-sm bg-red-800" +
+            "p-1 w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center rounded-sm bg-red-800" +
             (bagCount === 0 ? " opacity-50" : "")
           }
           disabled={bagCount === 0}
         >{`-`}</button>
         <button
           onClick={increaseFunction}
-          className="p-1 w-6 h-6 flex items-center justify-center rounded-sm bg-green-800"
+          className="p-1 w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center rounded-sm bg-green-800"
         >{`+`}</button>
       </div>
-      <h3 className="pr-2">{`->`}</h3>
+      <h3 className="pr-2 hidden lg:block">{`->`}</h3>
       <p
         className="border-2 rounded-sm p-1 px-3 border-[var(--secondary-text-color)] flex items-center justify-center font-[700]"
         style={{ fontFamily: "Fira Code" }}
