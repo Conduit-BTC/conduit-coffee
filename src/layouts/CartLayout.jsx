@@ -46,7 +46,7 @@ export default function CartLayout() {
         <div className="mt-auto flex flex-col">
           <div className="w-full h-64 border-2 border-[var(--cart-secondary-bg-color)]">
             Chart
-            {/* <BitcoinPriceChart /> */}
+            <BitcoinPriceChart />
           </div>
           <button className="p-2 border-2 border-[var(--cart-secondary-bg-color)] self-end bg-[var(--cart-button-color)]">
             Lock-In Your Price - Buy Now
