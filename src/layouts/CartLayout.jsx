@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
-  const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice } =
+  const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice, bagCount } =
     useCartContext();
 
   useEffect(() => {
@@ -70,8 +70,15 @@ export default function CartLayout() {
           <div className="mb-8 w-full h-full">
             <BitcoinPriceChart />
           </div>
-          <button className="p-4 text-[var(--cart-secondary-bg-color)] font-[700] w-full bg-[var(--cart-button-color)] hover:border-4 hover:border-blue-500 transition-all">
-            {`Zap Out -> Buy Now`}
+          <button
+            className={`p-4 text-[var(--cart-secondary-bg-color)] font-[700] w-full bg-[var(--cart-button-color)] hover:border-4 hover:border-blue-500 transition-all ${
+              lightRoastBags + darkRoastBags == 0
+                ? " opacity-50"
+                : "opacity-100"
+            }`}
+            disabled={lightRoastBags + darkRoastBags == 0}
+          >
+            {`step 3: zap out -> buy now`}
           </button>
         </div>
       </div>
@@ -79,14 +86,14 @@ export default function CartLayout() {
   );
 }
 
-const RoastItem = ({ name, type, qty, accentColor }) => {
-  return (
-    <div className="border-2 p-2 border-[var(--cart-secondary-bg-color)]">
-      <p>
-        <span className={`${accentColor || ""} font-bold`}>{name}</span> |{" "}
-        {type}
-      </p>
-      <p>Bags: {qty}</p>
-    </div>
-  );
-};
+// const RoastItem = ({ name, type, qty, accentColor }) => {
+//   return (
+//     <div className="border-2 p-2 border-[var(--cart-secondary-bg-color)]">
+//       <p>
+//         <span className={`${accentColor || ""} font-bold`}>{name}</span> |{" "}
+//         {type}
+//       </p>
+//       <p>Bags: {qty}</p>
+//     </div>
+//   );
+// };

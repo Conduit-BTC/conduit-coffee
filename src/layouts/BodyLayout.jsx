@@ -12,13 +12,22 @@ const BodyLayout = () => {
 
   return (
     <section className="my-2 mt-0 p-8 w-full bg-[var(--cart-bg-color)]">
-      <h3 className="mb-2 text-center text-[var(--main-text-color)]">
+      {/* <h3 className="mb-2 text-center text-[var(--main-text-color)]">
         {`⚡️ `}Welcome to Conduit{` ⚡️`}
-      </h3>
-      <div className="h-[1px] m-4 mb-8 bg-[var(--main-text-color)] w-full" />
-      <h3 className="mb-8 animate-pulse text-[var(--accent-text-color)]">
-        {`step 1: pick your beans ->`}
-      </h3>
+      </h3> */}
+      {/* <div className="h-[1px] m-4 mb-8 bg-[var(--main-text-color)] w-full" /> */}
+      <p className="mb-4 text-xl" style={{ fontFamily: "Fira Code" }}>
+        <span className="font-[700]">$ conduit_coffee {`->`} </span>
+        <span className="font-normal">coffee/for/the_people</span>
+      </p>
+      <p
+        className={`mb-4 text-[var(--accent-text-color)] ${
+          lightRoastBags + darkRoastBags == 0 ? " animate-pulse " : ""
+        }`}
+        style={{ fontFamily: "Fira Code" }}
+      >
+        {`> step 1: pick your beans ->`}
+      </p>
       <div className="flex flex-col gap-4">
         <ProductLineItem
           name="Lightn.ng"
@@ -39,6 +48,14 @@ const BodyLayout = () => {
           decreaseFunction={() => decreaseDarkRoastBags()}
         />
       </div>
+      <p
+        className={`mt-8 animate-pulse text-[var(--secondary-text-color)] ${
+          lightRoastBags + darkRoastBags == 0 ? "hidden" : "block"
+        }`}
+        style={{ fontFamily: "Fira Code" }}
+      >
+        {`> step 2: check your hodlings`}
+      </p>
     </section>
   );
 };
@@ -65,6 +82,7 @@ function ProductLineItem({
             "p-1 w-6 h-6 flex items-center justify-center rounded-sm bg-red-800" +
             (bagCount === 0 ? " opacity-50" : "")
           }
+          disabled={bagCount === 0}
         >{`-`}</button>
         <button
           onClick={increaseFunction}
