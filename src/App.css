@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 .nav-item {
     border-radius: 0px;
     border: 1px solid transparent;
@@ -11,17 +13,19 @@
     font-family: inherit;
     cursor: pointer;
     transition: border-color 0.5s;
-    color: #00c3ff;
-    text-shadow: #00c3ff;
-    @apply animate-pulse;
+    color: var(--secondary-bg-color);
+    text-align: left;
+    background: var(--secondary-text-color);
+    margin: 2px;
   }
   .nav-item:hover {
-    border-color: #646cff;
+    border-color: var(--main-text-color);
   }
   .nav-item:focus,
   .nav-item:focus:not(:focus-visible) {
     outline: 0;
     box-shadow:
-      0 0 0 .05rem #646,
-      0 0 0 .15rem #646cff;
+      0 0 0 .05rem var(--secondary-text-color),
+      0 0 0 .15rem var(--main-text-color);
+      font-weight: 700;
   }

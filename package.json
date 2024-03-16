@@ -13,7 +13,8 @@
     "@fontsource/fira-code": "^5.0.17",
     "@fontsource/fira-sans": "^5.0.19",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",
