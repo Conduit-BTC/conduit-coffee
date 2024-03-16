@@ -29,3 +29,29 @@
       0 0 0 .15rem var(--main-text-color);
       font-weight: 700;
   }
+
+  .ping-red {
+    animation: red-ping 1s forwards;
+  }
+
+  .ping-blue {
+    animation: blue-ping 1s forwards;
+  }
+
+  @keyframes red-ping {
+    0% {
+      border-color: red;
+    }
+    100% {
+      border-color: --secondary-bg-color;
+    }
+  }
+
+  @keyframes blue-ping {
+    0% {
+      border-color: blue;
+    }
+    100% {
+      border-color: var(--secondary-bg-color);
+    }
+  }

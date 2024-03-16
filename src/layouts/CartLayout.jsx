@@ -85,15 +85,3 @@ export default function CartLayout() {
     </section>
   );
 }
-
-// const RoastItem = ({ name, type, qty, accentColor }) => {
-//   return (
-//     <div className="border-2 p-2 border-[var(--cart-secondary-bg-color)]">
-//       <p>
-//         <span className={`${accentColor || ""} font-bold`}>{name}</span> |{" "}
-//         {type}
-//       </p>
-//       <p>Bags: {qty}</p>
-//     </div>
-//   );
-// };
