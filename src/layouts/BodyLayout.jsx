@@ -1,5 +1,7 @@
 import { useRef } from "react";
 import { useCartContext } from "../context/CartContext";
+import pingBorder from "../lib/pingBorder";
+
 const BodyLayout = () => {
   const {
     lightRoastBags,
@@ -114,14 +116,6 @@ function ProductLineItem({
       <h3 className="pr-2 hidden lg:block">{`->`}</h3>
     </div>
   );
-}
-
-function pingBorder(element, pingColor) {
-  const pingType = pingColor == "red" ? "ping-red" : "ping-blue";
-  element.classList.add(pingType);
-  setTimeout(function () {
-    element.classList.remove(pingType);
-  }, 1000);
 }
 
 export default BodyLayout;

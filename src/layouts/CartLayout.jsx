@@ -2,17 +2,28 @@ import BitcoinPriceChart from "../components/PriceChart";
 import { BASE_COST_PER_BAG } from "../constants";
 import { useCryptoContext } from "../context/CryptoContext";
 import { useCartContext } from "../context/CartContext";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import pingBorder from "../lib/pingBorder";
 
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
   const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice, bagCount } =
     useCartContext();
 
+  const borderRef = useRef(null);
+
   useEffect(() => {
     const newHodlings = lightRoastBags + darkRoastBags;
     setCartPrice(newHodlings * BASE_COST_PER_BAG);
   }, [lightRoastBags, darkRoastBags]);
+
+  useEffect(() => {
+    pingBorder(borderRef.current, "blue");
+  }, [lightRoastBags]);
+
+  useEffect(() => {
+    pingBorder(borderRef.current, "red");
+  }, [darkRoastBags]);
 
   return (
     <section className="z-100 w-full lg:w-1/2 lg:display min-h-screen right-0 top-0 p-2 ">
@@ -36,7 +47,10 @@ export default function CartLayout() {
           <p className="text-xs mt-2">CoinGecko Real-Time Rate</p>
         </div>
         {/* PricePerBag */}
-        <div className="text-left mt-auto p-2 border-4 border-[var(--cart-secondary-bg-color)] bg-[var(--cart-bg-color)]">
+        <div
+          className="text-left mt-auto p-2 border-4 border-[var(--cart-secondary-bg-color)] bg-[var(--cart-bg-color)]"
+          ref={borderRef}
+        >
           <h4>
             <span className="font-[700]">{`>> Your Hodl:`} </span>
             <span className="text-green-500">
