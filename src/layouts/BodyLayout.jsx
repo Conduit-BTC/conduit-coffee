@@ -1,21 +1,76 @@
+import { useCartContext } from "../context/CartContext";
 const BodyLayout = () => {
+  const {
+    lightRoastBags,
+    darkRoastBags,
+    increaseLightRoastBags,
+    increaseDarkRoastBags,
+    decreaseDarkRoastBags,
+    decreaseLightRoastBags,
+  } = useCartContext();
+
   return (
-    <section className="m-4">
-      <h3 className="mb-4">{`->`}Choose your roast: </h3>
-      <div className="flex">
-        <h1>1: </h1>
-        <button className="nav-item">{`>> Light_Roast`}</button>
-      </div>
-      <div className="flex">
-        <h1>2: </h1>
-        <button className="nav-item">{`>> Dark_Roast`}</button>
-      </div>
-      <div className="flex">
-        <h1>3: </h1>
-        <button className="nav-item">{`>> Decaf`}</button>
+    <section className="m-2 p-4 w-full bg-[var(--cart-bg-color)]">
+      <h3 className="mb-2 text-center text-[var(--main-text-color)]">
+        {`⚡️ `}Welcome to Conduit{` ⚡️`}
+      </h3>
+      <div className="h-[1px] mb-4 bg-[var(--main-text-color)] w-full" />
+      <h3 className="mb-4 animate-pulse text-[var(--accent-text-color)]">
+        Pick your beans:{" "}
+      </h3>
+      <div className="flex flex-col gap-4">
+        <ProductLineItem
+          name="Lightn.ng"
+          number="1"
+          type="Light Roast"
+          accentColor="text-blue-500"
+          bagCount={lightRoastBags}
+          increaseFunction={() => increaseLightRoastBags()}
+          decreaseFunction={() => decreaseLightRoastBags()}
+        />
+        <ProductLineItem
+          name="Resist.nce"
+          number="2"
+          type="Dark Roast"
+          accentColor="text-red-600"
+          bagCount={darkRoastBags}
+          increaseFunction={() => increaseDarkRoastBags()}
+          decreaseFunction={() => decreaseDarkRoastBags()}
+        />
       </div>
     </section>
   );
 };
+
+function ProductLineItem({
+  name,
+  number,
+  type,
+  accentColor,
+  bagCount,
+  increaseFunction,
+  decreaseFunction,
+}) {
+  return (
+    <div className="flex items-center">
+      {/* <h3>{number}: </h3> */}
+      <h4 className="font-[700] pl-2">
+        <span className={accentColor}>{name}</span> | {type}
+      </h4>
+      <div className="flex mx-2 gap-2">
+        <button
+          onClick={decreaseFunction}
+          className={
+            "p-1 w-8 h-8 bg-red-800" + (bagCount === 0 ? " opacity-50" : "")
+          }
+        >{`-`}</button>
+        <button
+          onClick={increaseFunction}
+          className="p-1 w-8 h-8 bg-green-800"
+        >{`+`}</button>
+      </div>
+    </div>
+  );
+}
 
 export default BodyLayout;

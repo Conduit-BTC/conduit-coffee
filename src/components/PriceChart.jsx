@@ -1,9 +1,18 @@
-import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
+import { useEffect, useState, useRef } from "react";
 import { useCryptoContext } from "../context/CryptoContext";
+import { useCartContext } from "../context/CartContext";
 import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
 
-const BitcoinPriceChart = ({ hodlings }) => {
+const BitcoinPriceChart = () => {
+  const [hodlings, setHodlings] = useState(0);
+
+  const { lightRoastBags, darkRoastBags } = useCartContext();
+
+  useEffect(() => {
+    setHodlings(lightRoastBags + darkRoastBags);
+  }, [hodlings]);
+
   const { satsToUsd, priceOverTime } = useCryptoContext();
 
   const chartContainer = useRef(null);
@@ -26,7 +35,7 @@ const BitcoinPriceChart = ({ hodlings }) => {
           },
           {
             label: "Your Hodlings -> Satoshis",
-            data: priceOverTime * hodlings || 0,
+            data: priceOverTime * (hodlings || 0),
             showLine: true,
             tension: 0,
           },

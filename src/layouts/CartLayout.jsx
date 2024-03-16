@@ -1,9 +1,11 @@
 import BitcoinPriceChart from "../components/PriceChart";
 import { BASE_COST_PER_BAG } from "../constants";
 import { useCryptoContext } from "../context/CryptoContext";
+import { useCartContext } from "../context/CartContext";
 
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
+  const { lightRoastBags, darkRoastBags } = useCartContext();
 
   return (
     <section className="z-100 w-full lg:w-1/2 lg:display min-h-screen right-0 top-0 p-2">
@@ -32,13 +34,13 @@ export default function CartLayout() {
           <RoastItem
             name="Lightn.ng"
             type="Light Roast"
-            qty={5}
+            qty={lightRoastBags}
             accentColor="text-blue-500"
           />
           <RoastItem
             name="Resist.nce"
             type="Dark Roast"
-            qty={3}
+            qty={darkRoastBags}
             accentColor="text-red-500"
           />
         </div>
