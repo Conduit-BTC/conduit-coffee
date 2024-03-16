@@ -7,16 +7,18 @@ import CartLayout from "./layouts/CartLayout";
 import "@fontsource/fira-code/400.css";
 import "@fontsource/fira-code/700.css";
 import "@fontsource/fira-sans";
-import { getSatsPrice, useCryptoContext } from "./context/CryptoContext";
+import { getSatsRate, useCryptoContext } from "./context/CryptoContext";
+import { SATS_REFRESH_RATE } from "./constants";
 
+// Sets the global price via context, with the help of the app's useEffect()
 async function setPrice(startLooping, setSatsPrice) {
   startLooping();
-  const price = await getSatsPrice(20.0);
-  setSatsPrice(price.toString());
+  const price = await getSatsRate();
+  setSatsPrice(price);
   const interval = setInterval(async () => {
-    const price = await getSatsPrice(20.0);
-    setSatsPrice(price.toString());
-  }, 30000);
+    const price = await getSatsRate();
+    setSatsPrice(price);
+  }, SATS_REFRESH_RATE);
   return interval;
 }
 
@@ -24,11 +26,13 @@ function App() {
   const { isLooping, startLooping, setSatsPrice } = useCryptoContext();
 
   React.useEffect(() => {
+    // Set the global Satoshi rate
     var interval = null;
     if (!isLooping) {
       interval = setPrice(
         () => startLooping(),
-        (p) => setSatsPrice(p)
+        (p) => setSatsPrice(p),
+        (p) => appendPriceOverTime(p)
       );
     }
     return () => {

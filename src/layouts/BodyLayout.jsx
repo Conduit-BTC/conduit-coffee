@@ -1,7 +1,7 @@
 const BodyLayout = () => {
   return (
     <section className="m-4">
-      <h3 className="mb-4 animate-pulse">{`->`}Choose your roast: </h3>
+      <h3 className="mb-4">{`->`}Choose your roast: </h3>
       <div className="flex">
         <h1>1: </h1>
         <button className="nav-item">{`>> Light_Roast`}</button>

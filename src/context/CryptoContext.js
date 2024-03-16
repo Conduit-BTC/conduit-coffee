@@ -2,14 +2,24 @@ import { create } from "zustand";
 
 export const useCryptoContext = create((set) => ({
   isLooping: false,
-  satsPrice: "---",
+  satsToUsd: "---",
+  priceOverTime: [],
 
-  setSatsPrice: (price) => set({ satsPrice: price }),
+  setSatsPrice: (price) =>
+    set((state) => ({
+      satsToUsd: price,
+      priceOverTime: [...state.priceOverTime, price],
+    })),
+
+  appendPriceOverTime: (price) =>
+    set((state) => ({
+      priceOverTime: [...state.priceOverTime, price],
+    })),
 
   startLooping: () => set(() => ({ isLooping: true })),
 }));
 
-export async function getSatsPrice(price) {
+export async function getSatsRate() {
   return fetch(
     `https://btcpay0.voltageapp.io/api/rates?storeId=enevfPMDK4coPh5yps6T8Z55qWMSYPesffazn95Lduz`
   )
@@ -24,10 +34,8 @@ export async function getSatsPrice(price) {
       const btcToUsd = data[0].rate;
       const usdToBtc = 1 / btcToUsd;
       const satsToUsd = usdToBtc * 100000000;
-      console.log(
-        `CoinGecko Rate: $20 => ${parseInt(20.0 * satsToUsd)} Satoshis`
-      );
-      const calculatedPrice = parseInt(satsToUsd * price);
+      console.log(`CoinGecko Rate: $1.00 => ${parseInt(satsToUsd)} Satoshis`);
+      const calculatedPrice = parseInt(satsToUsd);
       return calculatedPrice;
     })
     .catch((error) => {

@@ -12,6 +12,7 @@
     --cart-secondary-bg-color: #1e293b;
     --cart-header-color: #000;
     --cart-text-color: #000;
+    --cart-button-color: #646cff;
   }
 }
 
@@ -27,6 +28,8 @@
   --cart-secondary-bg-color: #64748b;
   --cart-header-color: #fff;
   --cart-text-color: #fff;
+  --cart-button-color: #646cff;
+
 /*
   --main-bg-color: #D28E40;
   --main-text-color: #371D12;
