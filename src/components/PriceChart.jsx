@@ -1,23 +1,31 @@
 import Chart from "chart.js/auto";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useCryptoContext } from "../context/CryptoContext";
 import { useCartContext } from "../context/CartContext";
+import { BASE_COST_PER_BAG } from "../constants";
 import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
 
 const BitcoinPriceChart = () => {
-  const [hodlings, setHodlings] = useState(0);
-
-  const { lightRoastBags, darkRoastBags } = useCartContext();
-
-  useEffect(() => {
-    setHodlings(lightRoastBags + darkRoastBags);
-  }, [hodlings]);
-
+  const {
+    lightRoastBags,
+    darkRoastBags,
+    cartPriceOverTime,
+    setCartPriceOverTime,
+  } = useCartContext();
   const { satsToUsd, priceOverTime } = useCryptoContext();
 
-  const chartContainer = useRef(null);
+  useEffect(() => {
+    const newData = priceOverTime.map((p) => {
+      if (!p) return;
+      return {
+        x: p[0],
+        y: p[1] * (lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG,
+      };
+    });
+    setCartPriceOverTime(newData);
+  }, [lightRoastBags, darkRoastBags, priceOverTime]);
 
-  console.log("priceOverTime", priceOverTime || []);
+  const chartContainer = useRef(null);
 
   useEffect(() => {
     const ctx = chartContainer.current.getContext("2d");
@@ -30,12 +38,17 @@ const BitcoinPriceChart = () => {
           {
             label: "$1 USD -> Satoshis",
             data: priceOverTime,
+            borderColor: "green",
+            fillColor: "green",
             showLine: true,
             tension: 0,
+            hidden: true,
           },
           {
             label: "Your Hodlings -> Satoshis",
-            data: priceOverTime * (hodlings || 0),
+            data: cartPriceOverTime,
+            borderColor: "orange",
+            fillColor: "orange",
             showLine: true,
             tension: 0,
           },
@@ -98,7 +111,13 @@ const BitcoinPriceChart = () => {
     return () => {
       chart.destroy();
     };
-  }, [satsToUsd, priceOverTime]);
+  }, [
+    satsToUsd,
+    priceOverTime,
+    lightRoastBags,
+    darkRoastBags,
+    cartPriceOverTime,
+  ]);
 
   return <canvas ref={chartContainer} className="w-full h-full" />;
 };

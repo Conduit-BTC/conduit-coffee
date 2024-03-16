@@ -5,6 +5,7 @@ export const useCryptoContext = create((set) => ({
   satsToUsd: "---",
   priceOverTime: [],
 
+
   setSatsPrice: (price) => {
     set((state) => ({
       satsToUsd: price,

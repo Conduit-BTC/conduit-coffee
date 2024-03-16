@@ -10,13 +10,13 @@ const BodyLayout = () => {
   } = useCartContext();
 
   return (
-    <section className="m-2 p-4 w-full bg-[var(--cart-bg-color)]">
+    <section className="my-2 mt-0 p-8 w-full bg-[var(--cart-bg-color)]">
       <h3 className="mb-2 text-center text-[var(--main-text-color)]">
         {`⚡️ `}Welcome to Conduit{` ⚡️`}
       </h3>
-      <div className="h-[1px] mb-4 bg-[var(--main-text-color)] w-full" />
-      <h3 className="mb-4 animate-pulse text-[var(--accent-text-color)]">
-        Pick your beans:{" "}
+      <div className="h-[1px] m-4 mb-8 bg-[var(--main-text-color)] w-full" />
+      <h3 className="mb-8 animate-pulse text-[var(--accent-text-color)]">
+        {`step 1: pick your beans ->`}
       </h3>
       <div className="flex flex-col gap-4">
         <ProductLineItem

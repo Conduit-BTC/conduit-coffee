@@ -3,6 +3,18 @@ import { create } from "zustand";
 export const useCartContext = create((set) => ({
   lightRoastBags: 0,
   darkRoastBags: 0,
+  cartPrice: 0,
+  cartPriceOverTime: [],
+
+  setCartPrice: (price) =>
+    set({
+      cartPrice: price,
+    }),
+
+  setCartPriceOverTime: (array) =>
+    set({
+      cartPriceOverTime: [...array],
+    }),
 
   increaseLightRoastBags: () =>
     set((state) => ({ lightRoastBags: state.lightRoastBags + 1 })),

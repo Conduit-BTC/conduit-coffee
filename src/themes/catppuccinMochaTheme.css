@@ -38,7 +38,8 @@ crust = "#11111b",
   --cart-secondary-bg-color: #1e293b;
   --cart-header-color: #74c7ec;
   --cart-text-color: #cdd6f4;
-  --cart-button-color: #f38ba8;
+  --cart-button-color: #74c7ec;
+  --cart-button-tex-color: #1e293b;
 }
 
 /* @media (prefers-color-scheme: dark) {
