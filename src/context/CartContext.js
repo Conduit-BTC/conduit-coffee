@@ -11,10 +11,13 @@ export const useCartContext = create((set) => ({
       cartPrice: price,
     }),
 
-  setCartPriceOverTime: (array) =>
-    set({
-      cartPriceOverTime: [...array],
-    }),
+  setCartPriceOverTime: (array) => {
+    console.log("Setting Cart Price Over Time:", array);
+    if (array && array.length > 0)
+      set({
+        cartPriceOverTime: [...array],
+      });
+  },
 
   increaseLightRoastBags: () =>
     set((state) => ({ lightRoastBags: state.lightRoastBags + 1 })),

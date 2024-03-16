@@ -12,13 +12,35 @@ import {
   getSatsRate,
   useCryptoContext,
 } from "./context/CryptoContext";
-import { SATS_REFRESH_RATE } from "./constants";
+import { useCartContext } from "./context/CartContext";
+import { SATS_REFRESH_RATE, BASE_COST_PER_BAG } from "./constants";
 
 // Sets the global price via context, with the help of the app's useEffect()
-async function setPrice(startLooping, setSatsPrice, initPriceOverTime) {
+async function setPrice(
+  hodlings,
+  startLooping,
+  setSatsPrice,
+  setCartPriceOverTime
+) {
   startLooping();
   const history = await getHistoricSatsRate();
-  initPriceOverTime(history || []);
+  console.log("History:", history);
+  const newData = history.prices.slice(
+    history.prices.length - 100,
+    history.prices.length
+  );
+  console.log("New History:", newData);
+  setCartPriceOverTime(newData);
+  // console.log("History:", history.prices);
+  // const newData = history.prices.map((p) => {
+  //   if (!p) return;
+  //   return {
+  //     x: p.x,
+  //     y: p.y * hodlings * BASE_COST_PER_BAG,
+  //   };
+  // });
+  // console.log("New Data:", newData);
+  // setCartPriceOverTime(newData);
 
   const price = await getSatsRate();
   if (price) setSatsPrice(price);
@@ -30,25 +52,27 @@ async function setPrice(startLooping, setSatsPrice, initPriceOverTime) {
 }
 
 function App() {
-  const { isLooping, startLooping, setSatsPrice, initPriceOverTime } =
+  const { isLooping, startLooping, satsPrice, setSatsPrice } =
     useCryptoContext();
-
-  console.log;
+  const { lightRoastBags, darkRoastBags, setCartPriceOverTime } =
+    useCartContext();
 
   React.useEffect(() => {
+    const hodlings = lightRoastBags + darkRoastBags;
     // Set the global Satoshi rate
     var interval = null;
     if (!isLooping) {
       interval = setPrice(
+        hodlings,
         () => startLooping(),
         (p) => setSatsPrice(p),
-        () => initPriceOverTime()
+        (p) => setCartPriceOverTime(p)
       );
     }
     return () => {
       if (interval) clearTimeout(interval);
     };
-  }, []);
+  }, [lightRoastBags, darkRoastBags, satsPrice]);
 
   return (
     <main className="p-2 bg-[var(--secondary-bg-color)] min-h-screen">

@@ -1,10 +1,10 @@
 import { create } from "zustand";
+import { BASE_COST_PER_BAG } from "../constants";
 
 export const useCryptoContext = create((set) => ({
   isLooping: false,
   satsToUsd: "---",
   priceOverTime: [],
-
 
   setSatsPrice: (price) => {
     set((state) => ({
@@ -16,10 +16,20 @@ export const useCryptoContext = create((set) => ({
     }));
   },
 
-  initPriceOverTime: (priceArray) =>
-    set({
-      priceOverTime: priceArray || [],
-    }),
+  // initPriceOverTime: (priceArray, totalHodlings) => {
+  //   const newData = priceArray.map((p) => {
+  //     if (!p) return;
+  //     return {
+  //       x: p[0],
+  //       y: p[1] * totalHodlings * BASE_COST_PER_BAG,
+  //     };
+  //   });
+  //   setCartPriceOverTime(newData);
+
+  //   set({
+  //     priceOverTime: priceArray || [],
+  //   });
+  // },
 
   startLooping: () => set(() => ({ isLooping: true })),
 }));
