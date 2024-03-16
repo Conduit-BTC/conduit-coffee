@@ -12,11 +12,7 @@ const BodyLayout = () => {
 
   return (
     <section className="my-2 mt-0 p-8 w-full bg-[var(--cart-bg-color)]">
-      {/* <h3 className="mb-2 text-center text-[var(--main-text-color)]">
-        {`⚡️ `}Welcome to Conduit{` ⚡️`}
-      </h3> */}
-      {/* <div className="h-[1px] m-4 mb-8 bg-[var(--main-text-color)] w-full" /> */}
-      <p className="mb-4 text-xl" style={{ fontFamily: "Fira Code" }}>
+      <p className="mb-8 text-xl" style={{ fontFamily: "Fira Code" }}>
         <span className="font-[700]">$ conduit_coffee {`->`} </span>
         <span className="font-normal">coffee/for/the_people</span>
       </p>
@@ -32,8 +28,9 @@ const BodyLayout = () => {
         <ProductLineItem
           name="Lightn.ng"
           number="1"
-          type="Light Roast"
+          type="|Light Roast"
           accentColor="text-blue-500"
+          borderColor="border-blue-500"
           bagCount={lightRoastBags}
           increaseFunction={() => increaseLightRoastBags()}
           decreaseFunction={() => decreaseLightRoastBags()}
@@ -41,8 +38,9 @@ const BodyLayout = () => {
         <ProductLineItem
           name="Resist.nce"
           number="2"
-          type="Dark Roast"
+          type="|Dark Roast"
           accentColor="text-red-600"
+          borderColor="border-red-500"
           bagCount={darkRoastBags}
           increaseFunction={() => increaseDarkRoastBags()}
           decreaseFunction={() => decreaseDarkRoastBags()}
@@ -64,18 +62,25 @@ function ProductLineItem({
   name,
   number,
   type,
+  borderColor,
   accentColor,
   bagCount,
   increaseFunction,
   decreaseFunction,
 }) {
   return (
-    <div className="flex items-center">
-      {/* <h3>{number}: </h3> */}
+    <div className="flex items-center border-2 border-[var(--secondary-bg-color)] p-2">
+      <p
+        className={`border-2 rounded-sm p-1 px-3 flex items-center justify-center font-[700] ${borderColor}`}
+        style={{ fontFamily: "Fira Code" }}
+      >
+        {bagCount}
+        {/* {`x $${BASE_COST_PER_BAG}.00 per bag`} */}
+      </p>
       <h4 className="font-[700] pl-2">
-        <span className={accentColor}>{name}</span> | {type}
+        <span className={accentColor}>{name}</span> {type}
       </h4>
-      <div className="flex lg:mx-2 mr-0 gap-2">
+      <div className="flex mx-2 gap-2">
         <button
           onClick={decreaseFunction}
           className={
@@ -90,13 +95,6 @@ function ProductLineItem({
         >{`+`}</button>
       </div>
       <h3 className="pr-2 hidden lg:block">{`->`}</h3>
-      <p
-        className="border-2 rounded-sm p-1 px-3 border-[var(--secondary-text-color)] flex items-center justify-center font-[700]"
-        style={{ fontFamily: "Fira Code" }}
-      >
-        {bagCount}
-        {/* {`x $${BASE_COST_PER_BAG}.00 per bag`} */}
-      </p>
     </div>
   );
 }
