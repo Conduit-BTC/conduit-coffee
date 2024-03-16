@@ -55,6 +55,8 @@ const BitcoinPriceChart = () => {
         ],
       },
       options: {
+        maintainAspectRatio: false,
+        responsive: true,
         scales: {
           x: {
             type: "time",
@@ -119,7 +121,7 @@ const BitcoinPriceChart = () => {
     cartPriceOverTime,
   ]);
 
-  return <canvas ref={chartContainer} className="w-full h-full" />;
+  return <canvas ref={chartContainer} className="w-full h-full min-h-64" />;
 };
 
 export default BitcoinPriceChart;
