@@ -1,3 +1,4 @@
+import { BASE_COST_PER_BAG } from "../constants";
 import { useCartContext } from "../context/CartContext";
 const BodyLayout = () => {
   const {
@@ -61,14 +62,23 @@ function ProductLineItem({
         <button
           onClick={decreaseFunction}
           className={
-            "p-1 w-8 h-8 bg-red-800" + (bagCount === 0 ? " opacity-50" : "")
+            "p-1 w-6 h-6 flex items-center justify-center rounded-sm bg-red-800" +
+            (bagCount === 0 ? " opacity-50" : "")
           }
         >{`-`}</button>
         <button
           onClick={increaseFunction}
-          className="p-1 w-8 h-8 bg-green-800"
+          className="p-1 w-6 h-6 flex items-center justify-center rounded-sm bg-green-800"
         >{`+`}</button>
       </div>
+      <h3 className="pr-2">{`->`}</h3>
+      <p
+        className="border-2 rounded-sm p-1 px-3 border-[var(--secondary-text-color)] flex items-center justify-center font-[700]"
+        style={{ fontFamily: "Fira Code" }}
+      >
+        {bagCount}
+        {/* {`x $${BASE_COST_PER_BAG}.00 per bag`} */}
+      </p>
     </div>
   );
 }

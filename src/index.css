@@ -1,43 +1,11 @@
 @import url("./themes/catppuccinMochaTheme.css");
+/* @import url("./themes/coffeeTheme.css"); */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* @media (prefers-color-scheme: light) {
-  :root {
-    --main-bg-color: #371D12;
-    --main-text-color: #D28E40;
-    --secondary-bg-color: #743918;
-    --secondary-text-color: #E4E0DA;
-    --cart-bg-color: #334155;
-    --cart-secondary-bg-color: #1e293b;
-    --cart-header-color: #000;
-    --cart-text-color: #000;
-    --cart-button-color: #646cff;
-  }
-} */
-
 :root {
-  /* #00c3ff */
-  /*  #646cff */
-  /* #646 */
-  /* --main-bg-color: #D28E40;
-  --main-text-color: #371D12;
-  --secondary-bg-color: #E4E0DA;
-  --secondary-text-color: #743918;
-  --cart-bg-color: #0f172a;
-  --cart-secondary-bg-color: #64748b;
-  --cart-header-color: #fff;
-  --cart-text-color: #fff;
-  --cart-button-color: #646cff; */
-
-/*
-  --main-bg-color: #D28E40;
-  --main-text-color: #371D12;
-  --secondary-bg-color: #E4E0DA;
-  --secondary-text-color: #743918; */
-
   font-family: "Fira Code", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
