@@ -50,8 +50,8 @@ export default function CartLayout() {
             </span>
           </h5>
           <h4 className="font-[700] mt-2">Price Per Bag: </h4>
-          <h5 className="text-green-500 font-normal">
-            ${BASE_COST_PER_BAG}.00 /{" "}
+          <h5 className="font-normal">
+            <span className="text-green-500 ">${BASE_COST_PER_BAG}.00</span>
             <span className="text-orange-500">
               <SatsIcon color="orange" />
               {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(0)}`}
@@ -65,8 +65,21 @@ export default function CartLayout() {
           ref={borderRef}
         >
           <h4 className="">{`Your Hodl:`} </h4>
-          <h5 className="text-green-500 font-normal">
-            ${(lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG} /{" "}
+          <h5 className="font-normal">
+            <span
+              className={
+                lightRoastBags + darkRoastBags == 0
+                  ? "text-red-500"
+                  : "text-[var(--secondary-text-color)]"
+              }
+            >
+              {`${lightRoastBags + darkRoastBags} bags`}
+            </span>
+            {` / `}
+            <span className="text-green-500 ">
+              ${(lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG}
+            </span>{" "}
+            /{" "}
             <span className="text-orange-500">
               <SatsIcon color="orange" />
               {((cartPrice || 0) * satsToUsd).toFixed(0)}
