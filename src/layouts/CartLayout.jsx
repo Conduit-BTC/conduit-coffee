@@ -52,6 +52,7 @@ export default function CartLayout() {
           <h4 className="font-[700] mt-2">Price Per Bag: </h4>
           <h5 className="font-normal">
             <span className="text-green-500 ">${BASE_COST_PER_BAG}.00</span>
+            {` / `}
             <span className="text-orange-500">
               <SatsIcon color="orange" />
               {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(0)}`}

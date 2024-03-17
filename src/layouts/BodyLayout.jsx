@@ -22,7 +22,7 @@ const BodyLayout = () => {
         <span className="font-normal">coffee/for/the_people</span>
       </p>
       <p
-        className={`mb-4 text-[var(--accent-text-color)] z-0 ${
+        className={`mb-4 z-0 ${
           lightRoastBags + darkRoastBags == 0 ? " animate-pulse " : ""
         }`}
         style={{ fontFamily: "Fira Code" }}
@@ -34,7 +34,7 @@ const BodyLayout = () => {
           borderElement={lightningRef}
           name="Lightn.ng"
           number="1"
-          type="> Light Roast"
+          type="Light Roast"
           pingColor="blue"
           accentColor="text-blue-500"
           borderColor="border-blue-500"
@@ -46,7 +46,7 @@ const BodyLayout = () => {
           borderElement={resistanceRef}
           name="Resist.nce"
           number="2"
-          type="> Dark Roast"
+          type="Dark Roast"
           pingColor="red"
           accentColor="text-red-600"
           borderColor="border-red-500"
@@ -56,7 +56,7 @@ const BodyLayout = () => {
         />
       </div>
       <p
-        className={`mt-8 animate-pulse z-0 text-[var(--secondary-text-color)] ${
+        className={`mt-8 animate-pulse z-0 ${
           lightRoastBags + darkRoastBags == 0 ? "hidden" : "block"
         }`}
         style={{ fontFamily: "Fira Code" }}
@@ -91,8 +91,9 @@ function ProductLineItem({
         {bagCount}
         {/* {`x $${BASE_COST_PER_BAG}.00 per bag`} */}
       </p>
-      <h4 className="font-[700] pl-2">
-        <span className={accentColor}>{name}</span> {type}
+      <h4 className="font-[700] px-2">
+        <span className={accentColor}>{name}</span>
+        <span className="text-h7">{` (${type})`}</span>
       </h4>
       <div className="flex mx-2 gap-2">
         <button

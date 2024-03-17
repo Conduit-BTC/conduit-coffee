@@ -88,6 +88,18 @@ h6, .text-h6 {
   font-weight: 700;
 }
 
+h7, .text-h7 {
+  font-size: 1.0rem;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+h8, .text-h8 {
+  font-size: 0.9rem;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
 p {
   font-family: "Fira Sans", system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
