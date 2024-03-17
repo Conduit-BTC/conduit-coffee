@@ -17,6 +17,7 @@ const BitcoinPriceChart = () => {
       const satsToUsd = item[1];
       const costPerBag = satsToUsd * BASE_COST_PER_BAG;
       const totalCost = costPerBag * hodlings;
+      console.log("timestamp", item[0]);
       return [item[0], totalCost];
     });
 
@@ -51,13 +52,11 @@ const BitcoinPriceChart = () => {
         scales: {
           x: {
             type: "time",
-            // ticks: {
-            min: Date.now() - 1000 * 60 * 3,
+            min: Date.now() - 1000 * 60 * 60,
             max: Date.now(),
-            // },
             time: {
-              unit: "second",
-              stepSize: 1,
+              unit: "minute",
+              stepSize: 5,
               round: "true",
               displayFormats: {
                 minute: "h:mm",

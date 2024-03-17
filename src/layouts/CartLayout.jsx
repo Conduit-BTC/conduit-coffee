@@ -10,7 +10,7 @@ import SatsIcon from "../components/SatsIcon";
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
   const { openModal } = useUiContext();
-  const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice, bagCount } =
+  const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice } =
     useCartContext();
 
   const borderRef = useRef(null);
@@ -40,18 +40,23 @@ export default function CartLayout() {
         {/* CoinGecko Rate */}
         <div className="text-left p-2 bg-[var(--cart-bg-color)] border-4 border-[var(--cart-secondary-bg-color)]">
           <h4 className="font-[700]">Current Rate:</h4>
-          <span className="text-green-500">$1.00</span> ={" "}
-          <span className="text-orange-500">
-            <SatsIcon color="orange" />
-            {satsToUsd >= 0.0 ? satsToUsd.toFixed(0) : "-"}
-            <span className="text-xs">{` (Satoshis)`}</span>
-          </span>
+          <h5 className=" font-normal">
+            {" "}
+            <span className="text-green-500"> $1.00 </span> ={" "}
+            <span className="text-orange-500">
+              <SatsIcon color="orange" />
+              {satsToUsd >= 0.0 ? satsToUsd.toFixed(0) : "-"}
+              <span className="text-xs">{` (Satoshis)`}</span>
+            </span>
+          </h5>
           <h4 className="font-[700] mt-2">Price Per Bag: </h4>
-          <span className="text-green-500">${BASE_COST_PER_BAG}.00</span> /{" "}
-          <span className="text-orange-500">
-            <SatsIcon color="orange" />
-            {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(0)}`}
-          </span>
+          <h5 className="text-green-500 font-normal">
+            ${BASE_COST_PER_BAG}.00 /{" "}
+            <span className="text-orange-500">
+              <SatsIcon color="orange" />
+              {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(0)}`}
+            </span>
+          </h5>
           <p className="text-xs mt-2">CoinGecko Real-Time Rate</p>
         </div>
         {/* PricePerBag */}
@@ -59,17 +64,14 @@ export default function CartLayout() {
           className="text-left mt-auto p-2 border-4 border-[var(--cart-secondary-bg-color)] bg-[var(--cart-bg-color)]"
           ref={borderRef}
         >
-          <h4>
-            <span className="font-[700]">{`> Your Hodl:`} </span>
-            <span className="text-green-500">
-              ${(lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG}
-            </span>{" "}
-            /{" "}
+          <h4 className="">{`Your Hodl:`} </h4>
+          <h5 className="text-green-500 font-normal">
+            ${(lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG} /{" "}
             <span className="text-orange-500">
               <SatsIcon color="orange" />
               {((cartPrice || 0) * satsToUsd).toFixed(0)}
             </span>
-          </h4>
+          </h5>
         </div>
 
         {/* Light/Dark */}

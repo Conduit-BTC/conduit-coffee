@@ -1,10 +1,14 @@
+import { useEffect, useState } from "react";
+
 export default function SatsIcon({ size, color }) {
-  let width = "w-[11px]";
-  let height = "h-[11px]";
-  if (size) {
-    width = `w-[${size.toString()}px]`;
-    height = `h-[${size.toString()}px]`;
-  }
+  const [width, setWidth] = useState("w-[14px]");
+  const [height, setHeight] = useState("h-[14px]");
+
+  useEffect(() => {
+    if (!size) return;
+    setWidth(`w-[${size.toString()}px]`);
+    setHeight(`h-[${size.toString()}px]`);
+  }, [size]);
 
   return (
     <div className={`inline-block ${width} ${height}`}>
