@@ -1,5 +1,3 @@
-import tippy from "tippy.js";
-
 export default function SatsIcon({ size, color }) {
   let width = "w-[11px]";
   let height = "h-[11px]";
