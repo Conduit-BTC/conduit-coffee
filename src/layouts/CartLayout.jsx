@@ -65,7 +65,7 @@ export default function CartLayout() {
             onClick={() => {
               openModal();
             }}
-            className={`p-4 text-[var(--cart-secondary-bg-color)] font-[700] w-full bg-[var(--cart-button-color)] hover:border-4 hover:border-blue-500 transition-all ${
+            className={`p-4 text-[var(--main-text-color)] hover:font-bold w-full bg-blue-500 ${
               lightRoastBags + darkRoastBags == 0
                 ? " opacity-50"
                 : "opacity-100"
