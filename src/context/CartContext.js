@@ -3,18 +3,11 @@ import { create } from "zustand";
 export const useCartContext = create((set) => ({
   lightRoastBags: 0,
   darkRoastBags: 0,
-
   cartPrice: 0, // Number of bags * cost per bag
-  cartPriceOverTime: [], // CryptoContext's priceOverTime with each Sats value multiplied by (the number of bags * cost per bag)
 
   setCartPrice: (price) =>
     set({
       cartPrice: price,
-    }),
-
-  setCartPriceOverTime: (array) =>
-    set({
-      cartPriceOverTime: array,
     }),
 
   increaseLightRoastBags: () =>

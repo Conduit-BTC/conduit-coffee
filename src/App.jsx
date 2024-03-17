@@ -7,68 +7,69 @@ import CartLayout from "./layouts/CartLayout";
 import "@fontsource/fira-code/400.css";
 import "@fontsource/fira-code/700.css";
 import "@fontsource/fira-sans";
-import {
-  getHistoricSatsRate,
-  getSatsRate,
-  useCryptoContext,
-} from "./context/CryptoContext";
+import { useCryptoContext } from "./context/CryptoContext";
+import { getHistoricSatsPrice } from "./lib/cryptoApiFunctions";
 import { useCartContext } from "./context/CartContext";
-import { SATS_REFRESH_RATE, BASE_COST_PER_BAG } from "./constants";
+import { SATS_REFRESH_RATE } from "./constants";
 
 // Sets the global price via context, with the help of the app's useEffect()
-async function getPrice(startLooping, setSatsPrice) {
-  startLooping();
-  const price = await getSatsRate();
-  if (price) setSatsPrice(price);
+async function updateCryptoContext(
+  startLooping,
+  setSatsPrice,
+  setSatsPriceOverTime
+) {
+  const execute = async () => {
+    const history = await getHistoricSatsPrice();
+    if (!history) return;
+
+    const priceOverTime = history.prices.map((item) => {
+      const btcToUsd = item[1];
+      const usdToBtc = 1 / btcToUsd;
+      const satsToUsd = usdToBtc * 100000000;
+      return [item[0], satsToUsd];
+    });
+
+    const currentPrice = priceOverTime[priceOverTime.length - 1][1];
+
+    // const currentBtcPrice = 1 / history.prices[history.prices.length - 1][1];
+    // const currentPrice = currentBtcPrice * 100000000;
+
+    if (currentPrice) setSatsPrice(currentPrice);
+
+    setSatsPriceOverTime(priceOverTime);
+  };
+
+  execute();
+
   const interval = setInterval(async () => {
-    const price = await getSatsRate();
-    if (price) setSatsPrice(price);
+    execute();
   }, SATS_REFRESH_RATE);
+
+  startLooping();
+
   return interval;
 }
 
-async function setPrice(hodlings, setCartPriceOverTime) {
-  const history = await getHistoricSatsRate();
-  const prices = history.prices.slice(
-    history.prices.length - 100,
-    history.prices.length + 1
-  );
-  const newData = prices.map((p) => {
-    const btcToUsd = p[1];
-    const usdToBtc = 1 / btcToUsd;
-    const satsToUsd = usdToBtc * 100000000;
-    const costPerBag = satsToUsd * BASE_COST_PER_BAG;
-    const totalCost = costPerBag * hodlings;
-    return [p[0], totalCost];
-  });
-  setCartPriceOverTime(newData);
-}
-
 function App() {
-  const { isLooping, startLooping, satsPrice, setSatsPrice } =
+  const { lightRoastBags, darkRoastBags } = useCartContext();
+  const { isLooping, startLooping, setSatsPrice, setSatsPriceOverTime } =
     useCryptoContext();
-  const { lightRoastBags, darkRoastBags, setCartPriceOverTime } =
-    useCartContext();
 
   React.useEffect(() => {
-    const hodlings = lightRoastBags + darkRoastBags;
-    // Set the global Satoshi rate
     var interval = null;
+
     if (!isLooping) {
-      interval = getPrice(
+      interval = updateCryptoContext(
         () => startLooping(),
-        (p) => setSatsPrice(p)
+        (p) => setSatsPrice(p),
+        (a) => setSatsPriceOverTime(a)
       );
     }
-    setPrice(
-      hodlings,
-      () => startLooping(),
-      (p) => setCartPriceOverTime(p)
-    );
+
     return () => {
       if (interval) clearTimeout(interval);
     };
-  }, [lightRoastBags, darkRoastBags, satsPrice]);
+  }, [lightRoastBags, darkRoastBags]);
 
   return (
     <main className="p-2 bg-[var(--secondary-bg-color)] min-h-screen">

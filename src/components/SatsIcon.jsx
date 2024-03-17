@@ -8,8 +8,6 @@ export default function SatsIcon({ size, color }) {
     height = `h-[${size.toString()}px]`;
   }
 
-  console.log("Width Height", width, height);
-
   return (
     <div className={`inline-block ${width} ${height}`}>
       {/* <div className={`inline-block w-[10px] h-[10px]`}> */}
