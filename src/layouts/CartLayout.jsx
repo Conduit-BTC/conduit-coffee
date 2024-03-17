@@ -2,12 +2,14 @@ import BitcoinPriceChart from "../components/PriceChart";
 import { BASE_COST_PER_BAG } from "../constants";
 import { useCryptoContext } from "../context/CryptoContext";
 import { useCartContext } from "../context/CartContext";
+import { useUiContext } from "../context/UiContext";
 import { useEffect, useRef } from "react";
 import pingBorder from "../lib/pingBorder";
 import SatsIcon from "../components/SatsIcon";
 
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
+  const { openModal } = useUiContext();
   const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice, bagCount } =
     useCartContext();
 
@@ -92,6 +94,9 @@ export default function CartLayout() {
             <BitcoinPriceChart />
           </div>
           <button
+            onClick={() => {
+              openModal();
+            }}
             className={`p-4 text-[var(--cart-secondary-bg-color)] font-[700] w-full bg-[var(--cart-button-color)] hover:border-4 hover:border-blue-500 transition-all ${
               lightRoastBags + darkRoastBags == 0
                 ? " opacity-50"

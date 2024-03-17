@@ -2,7 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .nav-item {
     border-radius: 0px;

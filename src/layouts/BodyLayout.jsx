@@ -22,7 +22,7 @@ const BodyLayout = () => {
         <span className="font-normal">coffee/for/the_people</span>
       </p>
       <p
-        className={`mb-4 text-[var(--accent-text-color)] ${
+        className={`mb-4 text-[var(--accent-text-color)] z-0 ${
           lightRoastBags + darkRoastBags == 0 ? " animate-pulse " : ""
         }`}
         style={{ fontFamily: "Fira Code" }}
@@ -56,7 +56,7 @@ const BodyLayout = () => {
         />
       </div>
       <p
-        className={`mt-8 animate-pulse text-[var(--secondary-text-color)] ${
+        className={`mt-8 animate-pulse z-0 text-[var(--secondary-text-color)] ${
           lightRoastBags + darkRoastBags == 0 ? "hidden" : "block"
         }`}
         style={{ fontFamily: "Fira Code" }}
