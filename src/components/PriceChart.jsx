@@ -3,16 +3,17 @@ import { useEffect, useRef } from "react";
 import { useCryptoContext } from "../context/CryptoContext";
 import { useCartContext } from "../context/CartContext";
 import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
-import { BASE_COST_PER_BAG } from "../constants";
 
 const BitcoinPriceChart = () => {
-  const { lightRoastBags, darkRoastBags, cartPriceOverTime, cartPrice } =
-    useCartContext();
+  const { lightRoastBags, darkRoastBags, cartPriceOverTime } = useCartContext();
   const { satsToUsd, priceOverTime } = useCryptoContext();
 
   const chartContainer = useRef(null);
 
   useEffect(() => {
+    console.log("Chart - Price Over Time:", priceOverTime);
+    console.log("Chart - Cart Price Over Time:", cartPriceOverTime);
+
     const ctx = chartContainer.current.getContext("2d");
 
     const chart = new Chart(ctx, {
@@ -66,8 +67,8 @@ const BitcoinPriceChart = () => {
           },
           y: {
             stepSize: 100,
-            min: 67000 * (lightRoastBags * darkRoastBags || 1),
-            max: 71000 * (lightRoastBags * darkRoastBags || 1),
+            // min: 67000 * (lightRoastBags * darkRoastBags || 1),
+            // max: 71000 * (lightRoastBags * darkRoastBags || 1),
             // min: (
             //   (cartPrice || 0) * satsToUsd * BASE_COST_PER_BAG +
             //   1000

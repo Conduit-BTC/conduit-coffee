@@ -3,7 +3,7 @@ import { BASE_COST_PER_BAG } from "../constants";
 
 export const useCryptoContext = create((set) => ({
   isLooping: false,
-  satsToUsd: "---",
+  satsToUsd: 0.0,
   priceOverTime: [],
 
   setSatsPrice: (price) => {

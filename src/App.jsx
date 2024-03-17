@@ -41,7 +41,6 @@ async function setPrice(hodlings, setCartPriceOverTime) {
     const totalCost = costPerBag * hodlings;
     return [p[0], totalCost];
   });
-  console.log("New Data:", newData);
   setCartPriceOverTime(newData);
 }
 
@@ -64,7 +63,6 @@ function App() {
     setPrice(
       hodlings,
       () => startLooping(),
-      (p) => setSatsPrice(p),
       (p) => setCartPriceOverTime(p)
     );
     return () => {

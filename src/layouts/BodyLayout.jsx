@@ -34,7 +34,7 @@ const BodyLayout = () => {
           borderElement={lightningRef}
           name="Lightn.ng"
           number="1"
-          type="|Light Roast"
+          type="> Light Roast"
           pingColor="blue"
           accentColor="text-blue-500"
           borderColor="border-blue-500"
@@ -46,7 +46,7 @@ const BodyLayout = () => {
           borderElement={resistanceRef}
           name="Resist.nce"
           number="2"
-          type="|Dark Roast"
+          type="> Dark Roast"
           pingColor="red"
           accentColor="text-red-600"
           borderColor="border-red-500"
@@ -113,7 +113,6 @@ function ProductLineItem({
           className="p-1 w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center rounded-sm bg-green-800"
         >{`+`}</button>
       </div>
-      <h3 className="pr-2 hidden lg:block">{`->`}</h3>
     </div>
   );
 }

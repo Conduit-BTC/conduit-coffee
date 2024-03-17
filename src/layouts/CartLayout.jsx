@@ -4,6 +4,7 @@ import { useCryptoContext } from "../context/CryptoContext";
 import { useCartContext } from "../context/CartContext";
 import { useEffect, useRef } from "react";
 import pingBorder from "../lib/pingBorder";
+import SatsIcon from "../components/SatsIcon";
 
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
@@ -38,11 +39,16 @@ export default function CartLayout() {
         <div className="text-left p-2 bg-[var(--cart-bg-color)] border-4 border-[var(--cart-secondary-bg-color)]">
           <h4 className="font-[700]">Current Rate:</h4>
           <span className="text-green-500">$1.00</span> ={" "}
-          <span className="text-orange-500">{satsToUsd} (Satoshis)</span>
+          <span className="text-orange-500">
+            <SatsIcon color="orange" />
+            {satsToUsd >= 0.0 ? satsToUsd.toFixed(0) : "-"}
+            <span className="text-xs">{` (Satoshis)`}</span>
+          </span>
           <h4 className="font-[700] mt-2">Price Per Bag: </h4>
           <span className="text-green-500">${BASE_COST_PER_BAG}.00</span> /{" "}
           <span className="text-orange-500">
-            {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(5)}`}
+            <SatsIcon color="orange" />
+            {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(0)}`}
           </span>
           <p className="text-xs mt-2">CoinGecko Real-Time Rate</p>
         </div>
@@ -52,13 +58,14 @@ export default function CartLayout() {
           ref={borderRef}
         >
           <h4>
-            <span className="font-[700]">{`>> Your Hodl:`} </span>
+            <span className="font-[700]">{`> Your Hodl:`} </span>
             <span className="text-green-500">
               ${(lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG}
             </span>{" "}
             /{" "}
             <span className="text-orange-500">
-              {((cartPrice || 0) * satsToUsd).toFixed(5)}
+              <SatsIcon color="orange" />
+              {((cartPrice || 0) * satsToUsd).toFixed(0)}
             </span>
           </h4>
         </div>
