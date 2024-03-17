@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useCartContext } from "../context/CartContext";
 import pingBorder from "../lib/pingBorder";
+import ExchangeRateBox from "../components/ExchangeRateBox";
 
 const BodyLayout = () => {
   const {
@@ -17,18 +18,21 @@ const BodyLayout = () => {
 
   return (
     <section className="my-2 mt-0 p-8 w-full bg-[var(--cart-bg-color)]">
-      <p className="mb-8 text-xl" style={{ fontFamily: "Fira Code" }}>
+      <h5 className="mb-8">
         <span className="font-[700]">$ conduit_coffee {`->`} </span>
         <span className="font-normal">coffee/for/the_people</span>
-      </p>
-      <p
+      </h5>
+      <ExchangeRateBox />
+      <div className="mb-8" />
+      <h5
         className={`mb-4 z-0 ${
-          lightRoastBags + darkRoastBags == 0 ? " animate-pulse " : ""
+          lightRoastBags + darkRoastBags == 0
+            ? " animate-pulse "
+            : "text-gray-800"
         }`}
-        style={{ fontFamily: "Fira Code" }}
       >
         {`> step 1: pick your beans ->`}
-      </p>
+      </h5>
       <div className="flex flex-col gap-4">
         <ProductLineItem
           borderElement={lightningRef}
@@ -55,14 +59,13 @@ const BodyLayout = () => {
           decreaseFunction={() => decreaseDarkRoastBags()}
         />
       </div>
-      <p
+      <h5
         className={`mt-8 animate-pulse z-0 ${
           lightRoastBags + darkRoastBags == 0 ? "hidden" : "block"
         }`}
-        style={{ fontFamily: "Fira Code" }}
       >
         {`> step 2: check your hodlings`}
-      </p>
+      </h5>
     </section>
   );
 };
@@ -89,7 +92,6 @@ function ProductLineItem({
         style={{ fontFamily: "Fira Code" }}
       >
         {bagCount}
-        {/* {`x $${BASE_COST_PER_BAG}.00 per bag`} */}
       </p>
       <h4 className="font-[700] px-2">
         <span className={accentColor}>{name}</span>

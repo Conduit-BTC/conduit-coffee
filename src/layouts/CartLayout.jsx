@@ -6,6 +6,8 @@ import { useUiContext } from "../context/UiContext";
 import { useEffect, useRef } from "react";
 import pingBorder from "../lib/pingBorder";
 import SatsIcon from "../components/SatsIcon";
+import ExchangeRateBox from "../components/ExchangeRateBox";
+import CurrentHodlings from "../components/CurrentHodlings";
 
 export default function CartLayout() {
   const { satsToUsd } = useCryptoContext();
@@ -13,20 +15,20 @@ export default function CartLayout() {
   const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice } =
     useCartContext();
 
-  const borderRef = useRef(null);
+  // const borderRef = useRef(null);
 
   useEffect(() => {
     const newHodlings = lightRoastBags + darkRoastBags;
     setCartPrice(newHodlings * BASE_COST_PER_BAG);
   }, [lightRoastBags, darkRoastBags]);
 
-  useEffect(() => {
-    pingBorder(borderRef.current, "blue");
-  }, [lightRoastBags]);
+  // useEffect(() => {
+  //   pingBorder(borderRef.current, "blue");
+  // }, [lightRoastBags]);
 
-  useEffect(() => {
-    pingBorder(borderRef.current, "red");
-  }, [darkRoastBags]);
+  // useEffect(() => {
+  //   pingBorder(borderRef.current, "red");
+  // }, [darkRoastBags]);
 
   return (
     <section className="z-100 w-full lg:w-1/2 lg:display min-h-screen right-0 top-0 p-2 ">
@@ -37,57 +39,7 @@ export default function CartLayout() {
             My Hodlings
           </h2>
         </div>
-        {/* CoinGecko Rate */}
-        <div className="text-left p-2 bg-[var(--cart-bg-color)] border-4 border-[var(--cart-secondary-bg-color)]">
-          <h4 className="font-[700]">Current Rate:</h4>
-          <h5 className=" font-normal">
-            {" "}
-            <span className="text-green-500"> $1.00 </span> ={" "}
-            <span className="text-orange-500">
-              <SatsIcon color="orange" />
-              {satsToUsd >= 0.0 ? satsToUsd.toFixed(0) : "-"}
-              <span className="text-xs">{` (Satoshis)`}</span>
-            </span>
-          </h5>
-          <h4 className="font-[700] mt-2">Price Per Bag: </h4>
-          <h5 className="font-normal">
-            <span className="text-green-500 ">${BASE_COST_PER_BAG}.00</span>
-            {` / `}
-            <span className="text-orange-500">
-              <SatsIcon color="orange" />
-              {`${(satsToUsd * BASE_COST_PER_BAG).toFixed(0)}`}
-            </span>
-          </h5>
-          <p className="text-xs mt-2">CoinGecko Real-Time Rate</p>
-        </div>
-        {/* PricePerBag */}
-        <div
-          className="text-left mt-auto p-2 border-4 border-[var(--cart-secondary-bg-color)] bg-[var(--cart-bg-color)]"
-          ref={borderRef}
-        >
-          <h4 className="">{`Your Hodl:`} </h4>
-          <h5 className="font-normal">
-            <span
-              className={
-                lightRoastBags + darkRoastBags == 0
-                  ? "text-red-500"
-                  : "text-[var(--secondary-text-color)]"
-              }
-            >
-              {`${lightRoastBags + darkRoastBags} bags`}
-            </span>
-            {` / `}
-            <span className="text-green-500 ">
-              ${(lightRoastBags + darkRoastBags) * BASE_COST_PER_BAG}
-            </span>{" "}
-            /{" "}
-            <span className="text-orange-500">
-              <SatsIcon color="orange" />
-              {((cartPrice || 0) * satsToUsd).toFixed(0)}
-            </span>
-          </h5>
-        </div>
-
+        <CurrentHodlings />
         {/* Light/Dark */}
         {/* <div className="flex flex-col gap-4">
           <RoastItem

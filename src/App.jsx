@@ -79,7 +79,7 @@ function App() {
         <ModalWindowLayout>
           <CheckoutLayout />
         </ModalWindowLayout>
-        <HeaderLayout />
+        {/* <HeaderLayout /> */}
         <div className="flex flex-col lg:flex-row justify-between">
           <BodyLayout />
           <CartLayout />

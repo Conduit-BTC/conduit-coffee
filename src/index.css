@@ -55,49 +55,49 @@ body {
 h1, .text-h1 {
   font-size: 2.986rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h2, .text-h2 {
   font-size: 2.488rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h3, .text-h3 {
   font-size: 2.074rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h4, .text-h4 {
   font-size: 1.728rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h5, .text-h5 {
   font-size: 1.44rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h6, .text-h6 {
   font-size: 1.2rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h7, .text-h7 {
   font-size: 1.0rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 h8, .text-h8 {
   font-size: 0.9rem;
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 p {
