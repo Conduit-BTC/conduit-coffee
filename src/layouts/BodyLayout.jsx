@@ -25,7 +25,7 @@ const BodyLayout = () => {
       <ExchangeRateBox />
       <div className="mb-8" />
       <h5
-        className={`mb-4 z-0 ${
+        className={`mb-8 z-0 ${
           lightRoastBags + darkRoastBags == 0
             ? " animate-pulse "
             : "text-gray-800"

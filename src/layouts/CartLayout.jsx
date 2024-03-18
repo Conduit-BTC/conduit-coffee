@@ -39,7 +39,9 @@ export default function CartLayout() {
             My Hodlings
           </h2>
         </div>
-        <CurrentHodlings />
+        <div className="p-2">
+          <CurrentHodlings />
+        </div>
         {/* Light/Dark */}
         {/* <div className="flex flex-col gap-4">
           <RoastItem

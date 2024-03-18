@@ -7,7 +7,7 @@ export default function CurrentHodlings() {
   const { lightRoastBags, darkRoastBags, cartPrice } = useCartContext();
   const { satsToUsd } = useCryptoContext();
   return (
-    <div className="text-left p-2 bg-[var(--cart-bg-color)] flex w-ful gap-4">
+    <div className="text-left bg-[var(--cart-bg-color)] flex w-ful gap-4">
       <h5>
         <span
           className={

@@ -1,3 +1,4 @@
+import CurrentHodlings from "../components/CurrentHodlings";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 
@@ -9,7 +10,11 @@ export default function CheckoutLayout() {
   return (
     <>
       <h1 className="text-h2 pr-12 text-blue-500 mb-2">⚡️ Zap Lightning</h1>
-      <h1 className="text-h2 pr-12 text-orange-700 mb-12">☕️ Get Coffee</h1>
+      <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get Coffee</h1>
+      <div className="mb-8">
+        <h3 className="mb-2">Your Order:</h3>
+        <CurrentHodlings />
+      </div>
       <h3 className="mb-2">{`Shipping Address`}</h3>
       <h6>{`We don't need to know you, we just need a place to send your coffee`}</h6>
       <form>
