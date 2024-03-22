@@ -31,7 +31,7 @@ export default function CheckoutLayout() {
           placeholder="Street Address (line 2)"
           id="address-2"
         />
-        <input
+        {/* <input
           className="w-full p-2 mt-4"
           type="text"
           placeholder="City"
@@ -42,7 +42,7 @@ export default function CheckoutLayout() {
           type="text"
           placeholder="State"
           id="state"
-        />
+        /> */}
         <input
           className="w-full p-2 mt-4"
           type="text"

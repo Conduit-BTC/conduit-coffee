@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  cockroachdb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "26257:26257"
+    environment:
+      COCKROACH_USER: coffee_admin

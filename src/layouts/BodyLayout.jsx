@@ -18,9 +18,9 @@ const BodyLayout = () => {
 
   return (
     <section className="my-2 mt-0 p-8 w-full bg-[var(--cart-bg-color)]">
-      <h5 className="mb-8">
+      <h5 className="mb-8 w-full">
         <span className="font-[700]">$ conduit_coffee {`->`} </span>
-        <span className="font-normal">coffee/for/the_people</span>
+        <span className="font-normal mr-auto">coffee/for/the_people</span>
       </h5>
       <ExchangeRateBox />
       <div className="mb-8" />

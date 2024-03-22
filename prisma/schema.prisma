@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Cart {
+  id        String   @id @default(uuid())
+  items     Item[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Order     Order[]
+}
+
+model Item {
+  id          String   @id @default(uuid())
+  sku         String   @unique
+  quantity    Int
+  name        String
+  description String
+  price       Decimal
+  image       String
+  cart        Cart?    @relation(fields: [cartId], references: [id])
+  cartId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id             String       @id @default(uuid())
+  cart           Cart         @relation(fields: [cartId], references: [id])
+  cartId         String
+  transaction    Transaction  @relation(fields: [transactionId], references: [id])
+  transactionId  String
+  shippingInfo   ShippingInfo @relation(fields: [shippingInfoId], references: [id])
+  shippingInfoId String
+  timestamp      DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([cartId])
+  @@index([transactionId])
+  @@index([shippingInfoId])
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  usd           Decimal
+  sats          Decimal
+  satsSpotPrice Decimal
+  timestamp     DateTime
+  resolved      Boolean  @default(false)
+  order         Order[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ShippingInfo {
+  id        String   @id @default(uuid())
+  address   String
+  address_2 String?
+  city      String
+  state     String
+  zip       String
+  country   String
+  timestamp DateTime
+  order     Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
