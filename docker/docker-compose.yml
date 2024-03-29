@@ -2,20 +2,28 @@ version: '3'
 
 services:
   cockroachdb:
+    user: root
     build:
       context: .
       dockerfile: Dockerfile
-    command: start --certs-dir /cockroach/certs --join cockroachdb --advertise-addr=cockroachdb --http-addr=0.0.0.0:8080 --sql-addr=0.0.0.0:26258
+    command:
+      - start
+      - --insecure
+      - --certs-dir=/cockroach/certs
+      - --join=cockroachdb
+      - --advertise-addr=cockroachdb
+      - --http-addr=0.0.0.0:8080
+      # - --sql-addr=0.0.0.0:26257
+      # - --listen-addr=0.0.0.0:26257
 
     ports:
       - "8080:8080"
-      - "26258:26258"
+      - "26257:26257"
     environment:
-      COCKROACH_USER: coffee_admin
-      COCKROACH_PASSWORD: your_password
+      COCKROACH_USER: root
     volumes:
       - cockroach-data:/cockroach/cockroach-data
-      - ./certs:/cockroach/certs
+      - ./certs:/cockroach/certs:ro
     networks:
       cockroach_network:
         ipv4_address: 172.28.1.1

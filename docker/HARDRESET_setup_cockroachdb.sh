@@ -6,15 +6,19 @@ echo ">>>"
 echo ">"
 echo " "
 
-echo "Removing existing containers and volumes..."
+echo "Removing existing containers volumes, and certs..."
 docker-compose down -v
-sleep 3
+sleep 1
+
+rm -r certs
+sleep 1
 
 echo "Creating the certs directory..."
 mkdir -p certs
 
 echo "Generating security certificates..."
 docker-compose run --rm cockroachdb cert create-node localhost --certs-dir /cockroach/certs --ca-key /cockroach/certs/ca.key
+
 docker-compose run --rm cockroachdb cert create-client root --certs-dir /cockroach/certs --ca-key /cockroach/certs/ca.key
 
 echo "Starting the CockroachDB container..."

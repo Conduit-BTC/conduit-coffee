@@ -14,14 +14,14 @@ datasource db {
 }
 
 model Cart {
-  id        String   @id @default(uuid())
-  items     Item[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Order     Order[]
+  id        String    @id @default(uuid())
+  products  Product[]
+  orders    Order[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
-model Item {
+model Product {
   id          String   @id @default(uuid())
   sku         String   @unique
   quantity    Int
@@ -46,22 +46,21 @@ model Order {
   timestamp      DateTime
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-
   @@index([cartId])
   @@index([transactionId])
   @@index([shippingInfoId])
 }
 
 model Transaction {
-  id            String   @id @default(uuid())
-  usd           Decimal
-  sats          Decimal
+  id           String   @id @default(uuid())
+  usd          Decimal
+  sats         Decimal
   satsSpotPrice Decimal
-  timestamp     DateTime
-  resolved      Boolean  @default(false)
-  order         Order[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  timestamp    DateTime
+  resolved     Boolean  @default(false)
+  order        Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model ShippingInfo {
