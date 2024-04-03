@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile-db
+    restart: always
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: conduit-coffee
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  api:
+      build:
+        context: ./api
+        dockerfile: Dockerfile-api
+      restart: always
+      ports:
+        - '3456:3456'
+      environment:
+        DATABASE_URL: postgresql://prisma:prisma@conduit-db:5432/conduit-coffee?schema=public

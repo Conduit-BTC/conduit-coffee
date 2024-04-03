@@ -17,7 +17,6 @@ const BitcoinPriceChart = () => {
       const satsToUsd = item[1];
       const costPerBag = satsToUsd * BASE_COST_PER_BAG;
       const totalCost = costPerBag * hodlings;
-      console.log("timestamp", item[0]);
       return [item[0], totalCost];
     });
 

@@ -1,19 +1,13 @@
 import BitcoinPriceChart from "../components/PriceChart";
 import { BASE_COST_PER_BAG } from "../constants";
-import { useCryptoContext } from "../context/CryptoContext";
 import { useCartContext } from "../context/CartContext";
 import { useUiContext } from "../context/UiContext";
-import { useEffect, useRef } from "react";
-import pingBorder from "../lib/pingBorder";
-import SatsIcon from "../components/SatsIcon";
-import ExchangeRateBox from "../components/ExchangeRateBox";
+import { useEffect } from "react";
 import CurrentHodlings from "../components/CurrentHodlings";
 
 export default function CartLayout() {
-  const { satsToUsd } = useCryptoContext();
   const { openModal } = useUiContext();
-  const { lightRoastBags, darkRoastBags, cartPrice, setCartPrice } =
-    useCartContext();
+  const { lightRoastBags, darkRoastBags, setCartPrice } = useCartContext();
 
   // const borderRef = useRef(null);
 
