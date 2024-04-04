@@ -49,6 +49,9 @@ exports.createOrder = async (req, res) => {
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `token ${process.env.BTCPAY_API_KEY}`);
 
+    console.error('Created order: ');
+    console.error(createdOrder);
+
     var raw = JSON.stringify({
       metadata: createdOrder,
       receipt: {
