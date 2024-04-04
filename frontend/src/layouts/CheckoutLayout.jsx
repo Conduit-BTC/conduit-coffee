@@ -23,8 +23,8 @@ export default function CheckoutLayout() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          console.log("Creating order...");
-          if (!import.meta.env.VITE_API_URL) {
+          const url = import.meta.env.VITE_API_URL;
+          if (!url) {
             console.error(
               "CheckoutLayout: Environment Variable missing: VITE_API_URL"
             );
@@ -54,18 +54,13 @@ export default function CheckoutLayout() {
           };
           //
           try {
-            console.log("VITE_API_URL: ");
-            console.log(import.meta.env.VITE_API_URL);
-            const response = await fetch(
-              `${import.meta.env.VITE_API_URL}/orders`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(orderData),
-              }
-            );
+            const response = await fetch(`${url}/orders`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(orderData),
+            });
 
             if (response.ok) {
               const data = await response.json();
