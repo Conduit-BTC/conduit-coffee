@@ -27,7 +27,13 @@ export default function CheckoutLayout() {
             );
             return;
           }
-          const formData = {
+          const cartData = {
+            sats_price: satsToUsd * cartPrice,
+            cart_price: cartPrice,
+            light_roast: lightRoastBags,
+            dark_roast: darkRoastBags,
+          };
+          const orderData = {
             first_name: document.getElementById("first_name").value,
             last_name: document.getElementById("last_name").value,
             address:
@@ -41,23 +47,22 @@ export default function CheckoutLayout() {
               "special-instructions"
             ).value,
             email: document.getElementById("email").value,
-            // Add other relevant form fields here
+            cart: cartData,
           };
 
           try {
-            // Send the form data to the Express API
             const response = await fetch(`${API_URL}`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(formData),
+              body: JSON.stringify(orderData),
             });
 
             if (response.ok) {
-              // Order created successfully
-              console.log("Order created successfully");
-              // Reset the form or perform any other necessary actions
+              const data = await response.json();
+              console.log("Order created successfully. ");
+              console.log("Checkout Link:", data.invoiceUrl);
             } else {
               console.error("Failed to create order:", response.statusText);
             }
