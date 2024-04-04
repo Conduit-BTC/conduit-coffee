@@ -2,8 +2,10 @@ import CurrentHodlings from "../components/CurrentHodlings";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 import { API_URL } from "../../constants";
+import { useState } from "react";
 
 export default function CheckoutLayout() {
+  const [invoiceUrl, setInvoiceUrl] = useState("");
   const { satsToUsd } = useCryptoContext();
   const { lightRoastBags, darkRoastBags, cartPrice } = useCartContext();
 
@@ -63,6 +65,7 @@ export default function CheckoutLayout() {
               const data = await response.json();
               console.log("Order created successfully. ");
               console.log("Checkout Link:", data.invoiceUrl);
+              setInvoiceUrl(data.invoiceUrl);
             } else {
               console.error("Failed to create order:", response.statusText);
             }
@@ -140,12 +143,21 @@ export default function CheckoutLayout() {
           placeholder="Nostr npub key (optional)"
           id="email"
         />
-        <button
-          type="submit"
-          className="w-full p-2 mt-4 bg-blue-500 text-[var(--main-text-color)] hover:font-bold"
-        >
-          {`>> Pay With Lightning <<`}
-        </button>
+        {invoiceUrl ? (
+          <button
+            onClick={() => window.open(invoiceUrl, "_blank")}
+            className="w-full p-2 mt-4 bg-orange-500 text-[var(--main-text-color)] hover:font-bold "
+          >
+            {`Go to Invoice >>`}
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="w-full p-2 mt-4 bg-blue-500 text-[var(--main-text-color)] hover:font-bold"
+          >
+            {`>> Pay With Lightning <<`}
+          </button>
+        )}
       </form>
     </>
   );
