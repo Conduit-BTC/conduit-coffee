@@ -54,6 +54,8 @@ export default function CheckoutLayout() {
           };
           //
           try {
+            console.log("VITE_API_URL: ");
+            console.log(import.meta.env.VITE_API_URL);
             const response = await fetch(
               `${import.meta.env.VITE_API_URL}/orders`,
               {
