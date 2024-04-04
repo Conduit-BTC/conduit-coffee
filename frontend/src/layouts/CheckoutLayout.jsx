@@ -1,7 +1,6 @@
 import CurrentHodlings from "../components/CurrentHodlings";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
-import { API_URL } from "../../constants";
 import { useState } from "react";
 
 export default function CheckoutLayout() {
@@ -23,9 +22,9 @@ export default function CheckoutLayout() {
         onSubmit={async (e) => {
           e.preventDefault();
           console.log("Creating order...");
-          if (!API_URL) {
+          if (!import.meta.env.VITE_API_URL) {
             console.error(
-              "CheckoutLayout: Environment Variable missing: API_URL"
+              "CheckoutLayout: Environment Variable missing: VITE_API_URL"
             );
             return;
           }
@@ -53,13 +52,16 @@ export default function CheckoutLayout() {
           };
 
           try {
-            const response = await fetch(`${API_URL}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(orderData),
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/orders`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(orderData),
+              }
+            );
 
             if (response.ok) {
               const data = await response.json();
