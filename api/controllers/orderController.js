@@ -25,6 +25,9 @@ exports.createOrder = async (req, res) => {
       cart,
     } = req.body;
 
+    console.log('req.body: ');
+    console.log(req.body);
+
     const createdOrder = await prisma.order.create({
       data: {
         first_name,
@@ -48,9 +51,6 @@ exports.createOrder = async (req, res) => {
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `token ${process.env.BTCPAY_API_KEY}`);
-
-    console.error('Created order: ');
-    console.error(createdOrder);
 
     var raw = JSON.stringify({
       metadata: createdOrder,
