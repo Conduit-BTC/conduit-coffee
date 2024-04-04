@@ -4,8 +4,9 @@ const cors = require('cors');
 
 const app = express();
 const allowedOrigins = [
-  'http://localhost:5173',
+  'localhost:5173',
   'conduit-coffee-terminal.vercel.app',
+  '*',
 ];
 
 app.use(
