@@ -25,9 +25,6 @@ exports.createOrder = async (req, res) => {
       cart,
     } = req.body;
 
-    console.log('req.body: ');
-    console.log(req.body);
-
     const createdOrder = await prisma.order.create({
       data: {
         first_name,
