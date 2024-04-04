@@ -56,7 +56,7 @@ exports.createOrder = async (req, res) => {
         showQR: true,
         showPayments: true,
       },
-      amount: cart.sats_price,
+      amount: createdOrder.cart.sats_price,
       currency: 'Sats',
     });
 
