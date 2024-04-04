@@ -1,8 +1,54 @@
+
 {
+  "name": "conduit-service",
+  "version": "1.0.0",
+  "description": "Your app description",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build": "babel src -d dist",
+    "test": "jest",
+    "lint": "eslint .",
+    "prettier": "prettier --write '**/*.js'"
+  },
   "dependencies": {
     "@prisma/client": "^5.12.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "dotenv": "^10.0.0",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.5",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.3.2"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "env": {
+      "node": true,
+      "es6": true,
+      "jest": true
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }
