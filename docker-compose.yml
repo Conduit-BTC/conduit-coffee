@@ -3,8 +3,8 @@ version: '3'
 services:
   db:
     build:
-      context: .
-      dockerfile: Dockerfile-db
+      context: ./db
+      dockerfile: Dockerfile
     restart: always
     environment:
       POSTGRES_USER: prisma
@@ -18,7 +18,7 @@ services:
   # api:
   #     build:
   #       context: ./api
-  #       dockerfile: Dockerfile-api
+  #       dockerfile: Dockerfile
   #     restart: always
   #     ports:
   #       - '3456:3456'
