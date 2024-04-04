@@ -52,13 +52,16 @@ export default function CheckoutLayout() {
           };
 
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(orderData),
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/orders`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(orderData),
+              }
+            );
 
             if (response.ok) {
               const data = await response.json();
