@@ -45,6 +45,7 @@ exports.createOrder = async (req, res) => {
       include: { cart: true },
     });
 
+
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Authorization', `token ${process.env.BTCPAY_API_KEY}`);
