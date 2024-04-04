@@ -1,0 +1,41 @@
+{
+    "id": "WFsfoHCde9feVJ5yMn1KPz",
+    "storeId": "enevfPMDK4coPh5yps6T8Z55qWMSYPesffazn95Lduz",
+    "amount": "30549",
+    "checkoutLink": "https://btcpay0.voltageapp.io/i/WFsfoHCde9feVJ5yMn1KPz",
+    "status": "New",
+    "additionalStatus": "None",
+    "monitoringExpiration": 1712212083,
+    "expirationTime": 1712208483,
+    "createdTime": 1712207583,
+    "availableStatusesForManualMarking": [
+        "Settled",
+        "Invalid"
+    ],
+    "archived": false,
+    "type": "Standard",
+    "currency": "SATS",
+    "metadata": {},
+    "checkout": {
+        "speedPolicy": "HighSpeed",
+        "paymentMethods": [
+            "BTC-LNURLPAY",
+            "BTC-LightningNetwork"
+        ],
+        "defaultPaymentMethod": "BTC",
+        "expirationMinutes": 15,
+        "monitoringMinutes": 60,
+        "paymentTolerance": 0.0,
+        "redirectURL": null,
+        "redirectAutomatically": false,
+        "requiresRefundEmail": null,
+        "defaultLanguage": null,
+        "checkoutType": null,
+        "lazyPaymentMethods": null
+    },
+    "receipt": {
+        "enabled": true,
+        "showQR": true,
+        "showPayments": true
+    }
+}

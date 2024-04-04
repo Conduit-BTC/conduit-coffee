@@ -13,7 +13,7 @@ export default function CartLayout() {
 
   useEffect(() => {
     const newHodlings = lightRoastBags + darkRoastBags;
-    setCartPrice(newHodlings * BASE_COST_PER_BAG);
+    setCartPrice(parseFloat((newHodlings * BASE_COST_PER_BAG).toFixed(2)));
   }, [lightRoastBags, darkRoastBags]);
 
   // useEffect(() => {
