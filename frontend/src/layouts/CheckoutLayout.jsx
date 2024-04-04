@@ -10,8 +10,10 @@ export default function CheckoutLayout() {
 
   return (
     <>
-      <h1 className="text-h2 pr-12 text-blue-500 mb-2">⚡️ Zap Lightning</h1>
-      <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get Coffee</h1>
+      <h1 className="text-h2 pr-12 text-blue-500 mb-2">
+        ⚡️ Zap the Lightning
+      </h1>
+      <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get the Coffee</h1>
       <div className="mb-8">
         <h3 className="mb-2">Your Order:</h3>
         <CurrentHodlings />
