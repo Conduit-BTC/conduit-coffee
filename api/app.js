@@ -3,23 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://conduit-coffee-terminal.vercel.app/',
-  '*',
-];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
-);
+app.use(cors());
 
 app.use(bodyParser.json());
 
