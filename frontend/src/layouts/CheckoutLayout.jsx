@@ -50,7 +50,7 @@ export default function CheckoutLayout() {
             email: document.getElementById("email").value,
             cart: cartData,
           };
-
+          //
           try {
             const response = await fetch(
               `${import.meta.env.VITE_API_URL}/orders`,
