@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-exports.getAllOrders = async (req, res) => {
+exports.getAllOrders = async (_, res) => {
   try {
     const orders = await prisma.order.findMany({
       include: { cart: true },

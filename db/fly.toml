@@ -1,34 +1,16 @@
-# fly.toml app configuration file generated for conduit-db on 2024-04-04T08:37:16-07:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'conduit-db'
-primary_region = 'lax'
+app = "conduit-db"
+primary_region = "lax"
 
 [build]
 
-[http_service]
-  internal_port = 5432
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
-
-[[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+[database]
+  engine = "postgres"
+  name = "conduit_db"
+  region = "lax"
 
 [[services]]
-  internal_port = 5432 # Postgres instance
+  internal_port = 5432
   protocol = "tcp"
 
 [[services.ports]]
-  handlers = ["pg_tls"]
-  port = 5432
-
-[mounts]
-  source = "pg_data"
-  destination = "/data"
+    port = 5432
