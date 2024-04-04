@@ -15,12 +15,10 @@ services:
     ports:
       - '5432:5432'
 
-  api:
-      build:
-        context: ./api
-        dockerfile: Dockerfile-api
-      restart: always
-      ports:
-        - '3456:3456'
-      environment:
-        DATABASE_URL: postgresql://prisma:prisma@conduit-db:5432/conduit-coffee?schema=public
+  # api:
+  #     build:
+  #       context: ./api
+  #       dockerfile: Dockerfile-api
+  #     restart: always
+  #     ports:
+  #       - '3456:3456'

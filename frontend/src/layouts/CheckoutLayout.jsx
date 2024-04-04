@@ -1,6 +1,7 @@
 import CurrentHodlings from "../components/CurrentHodlings";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
+import { API_URL } from "../../constants";
 
 export default function CheckoutLayout() {
   const { satsToUsd } = useCryptoContext();
@@ -20,6 +21,49 @@ export default function CheckoutLayout() {
         onSubmit={async (e) => {
           e.preventDefault();
           console.log("Creating order...");
+          if (!API_URL) {
+            console.error(
+              "CheckoutLayout: Environment Variable missing: API_URL"
+            );
+            return;
+          }
+          const formData = {
+            first_name: document.getElementById("first_name").value,
+            last_name: document.getElementById("last_name").value,
+            address:
+              document.getElementById("address-1").value +
+              ", " +
+              document.getElementById("address-2").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            zip: document.getElementById("zip").value,
+            special_instructions: document.getElementById(
+              "special-instructions"
+            ).value,
+            email: document.getElementById("email").value,
+            // Add other relevant form fields here
+          };
+
+          try {
+            // Send the form data to the Express API
+            const response = await fetch(`${API_URL}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+              // Order created successfully
+              console.log("Order created successfully");
+              // Reset the form or perform any other necessary actions
+            } else {
+              console.error("Failed to create order:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Error creating order:", error);
+          }
         }}
       >
         <input
@@ -49,8 +93,18 @@ export default function CheckoutLayout() {
           placeholder="Street Address (line 2)"
           id="address-2"
         />
-        {/* <input className="w-full p-2 mt-4" type="text" placeholder="City" id="city" />
-  <input className="w-full p-2 mt-4" type="text" placeholder="State" id="state" /> */}
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="City"
+          id="city"
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="State"
+          id="state"
+        />
         <input
           className="w-full p-2 mt-4"
           type="text"
