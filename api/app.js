@@ -10,7 +10,9 @@ app.use(bodyParser.json());
 
 // Import and use route handlers
 const orderRoutes = require('./routes/orderRoutes');
+const invoiceRoutes = require('./routes/invoiceRoutes');
 app.use('/orders', orderRoutes);
+app.use('/invoices', invoiceRoutes);
 
 // Start the server
 const port = process.env.PORT || 3456;
