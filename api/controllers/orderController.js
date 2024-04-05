@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
 const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.getAllOrders = async (_, res) => {
