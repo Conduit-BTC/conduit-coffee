@@ -28,6 +28,8 @@ exports.createOrder = async (req, res) => {
 
     const currentSatsPrice = await getCurrentSatsPrice();
 
+    console.log('Creating order...');
+
     const createdOrder = await prisma.order.create({
       data: {
         first_name,
@@ -47,6 +49,9 @@ exports.createOrder = async (req, res) => {
       },
       include: { cart: true },
     });
+
+    console.log('Order created!');
+    console.log('Creating invoice...');
 
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -78,6 +83,7 @@ exports.createOrder = async (req, res) => {
     )
       .then((response) => response.json())
       .then((result) => {
+        console.log('Invoice created!');
         res.json({ invoiceUrl: result.checkoutLink });
       })
       .catch((error) => {
