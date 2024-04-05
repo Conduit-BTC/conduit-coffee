@@ -16,36 +16,36 @@ exports.settleInvoice = async (req, _) => {
   }
 };
 
-function addInvoiceToOrder(data) {
-    const { invoiceId, metadata } = data;
-    const { orderId } = metadata;
+async function addInvoiceToOrder(data) {
+  const { invoiceId, metadata } = data;
+  const { orderId } = metadata;
 
-    const updatedOrder = await prisma.order.update({
-        where: {
-            id: orderId,
-        },
-        data: {
-            invoiceId: invoiceId,
-            invoiceStatus: 'pending',
-        }
-    });
+  const updatedOrder = await prisma.order.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      invoiceId: invoiceId,
+      invoiceStatus: 'pending',
+    },
+  });
 }
 
 
-function voidOrder(data) {
-    const { invoiceId, metadata } = data;
-    const { orderId } = metadata;
-    const voidOrder = await prisma.order.update({
-        where: {
-          id: orderId,
-        },
-        data: {
-          invoiceStatus: 'expired',
-        }
-      });
+async function voidOrder(data) {
+  const { invoiceId, metadata } = data;
+  const { orderId } = metadata;
+  const voidOrder = await prisma.order.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      invoiceStatus: 'expired',
+    },
+  });
 }
 
-function processPaidOrder(data) {
+async function processPaidOrder(data) {
   const { invoiceId, timestamp, metadata } = data;
   const { orderId } = metadata;
 
@@ -55,11 +55,11 @@ function processPaidOrder(data) {
 
   const updatedOrder = await prisma.order.update({
     where: {
-        invoiceId: invoiceId,
+      invoiceId: invoiceId,
     },
     data: {
       invoiceId: invoiceId,
       invoiceStatus: 'paid',
-    }
+    },
   });
 }
