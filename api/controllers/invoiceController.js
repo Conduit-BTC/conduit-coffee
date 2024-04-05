@@ -10,9 +10,7 @@ exports.settleInvoice = async (req, _) => {
     case 'InvoiceCreated':
         addInvoiceToOrder(req.body);
     default:
-      console.log(
-        `Invoice request received: ${req.body.type} - Invoice ID ${req.body.invoiceId} - All data: ${req.body}`,
-      );
+      return;
   }
 };
 
