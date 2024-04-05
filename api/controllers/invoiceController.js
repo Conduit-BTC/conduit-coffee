@@ -17,7 +17,7 @@ exports.settleInvoice = async (req, _) => {
 };
 
 async function addInvoiceToOrder(data) {
-  const { invoiceId, metadata } = data;
+  const { invoiceId, timestamp, metadata } = data;
   const { orderId } = metadata;
 
   console.log(
