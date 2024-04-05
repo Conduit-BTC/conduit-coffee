@@ -22,6 +22,8 @@ model Order {
   special_instructions String?
   email               String
   cart                Cart?
+  invoiceId           String?
+  invoiceStatus       String?
 }
 
 model Cart {
