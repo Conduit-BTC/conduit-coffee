@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build": "babel src -d dist",
+    "build": "yarn prisma:generate && babel app.js -d dist",
     "test": "jest",
     "lint": "eslint .",
     "prettier": "prettier --write '**/*.js'",
