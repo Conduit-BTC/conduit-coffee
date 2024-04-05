@@ -13,4 +13,5 @@ primary_region = "lax"
   protocol = "tcp"
 
 [[services.ports]]
-    port = 5432
+  handlers = ["pg_tls"]
+  port = 5432

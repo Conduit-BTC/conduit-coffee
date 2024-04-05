@@ -56,7 +56,7 @@ async function processPaidOrder(data) {
   const { orderId } = metadata;
 
   console.log(
-    `Invoice settled: ${invoiceId} - Time: ${timestamp} - Order ID: ${orderId}`,
+    `Invoice paid: ${invoiceId} - Time: ${timestamp} - Order ID: ${orderId}`,
   );
 
   const updatedOrder = await prisma.order.update({
