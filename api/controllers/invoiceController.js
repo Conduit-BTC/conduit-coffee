@@ -7,13 +7,13 @@ exports.settleInvoice = async (req, _) => {
       updateOrderPaymentStatus(req.body);
     default:
       console.log(
-        `Invoice request received: ${req.body.type} - Invoice ID ${req.body.invoiceId}`,
+        `Invoice request received: ${req.body.type} - Invoice ID ${req.body.invoiceId} - All data: ${req.body}`,
       );
   }
-  console.log(req.body);
 };
 
 function updateOrderPaymentStatus(data) {
   const { invoiceId, timestamp } = data;
   console.log(`Invoice settled: ${invoiceId} - Time: ${timestamp}`);
+  console.log('Full data object: ', data);
 }
