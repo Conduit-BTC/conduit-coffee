@@ -20,6 +20,10 @@ async function addInvoiceToOrder(data) {
   const { invoiceId, metadata } = data;
   const { orderId } = metadata;
 
+  console.log(
+    `Invoice added to Order: Invoice ID: ${invoiceId} - Time: ${timestamp} - Order ID: ${orderId}`,
+  );
+
   const updatedOrder = await prisma.order.update({
     where: {
       id: orderId,
@@ -31,13 +35,17 @@ async function addInvoiceToOrder(data) {
   });
 }
 
-
 async function voidOrder(data) {
-  const { invoiceId, metadata } = data;
+  const { invoiceId, timestamp, metadata } = data;
   const { orderId } = metadata;
+
+  console.log(
+    `Invoice expired: ${invoiceId} - Time: ${timestamp} - Order ID: ${orderId}`,
+  );
+
   const voidOrder = await prisma.order.update({
     where: {
-      id: orderId,
+      invoiceId: invoiceId,
     },
     data: {
       invoiceStatus: 'expired',
