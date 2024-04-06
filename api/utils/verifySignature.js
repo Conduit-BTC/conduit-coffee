@@ -4,7 +4,7 @@ async function verifySignature(secret, header, payload) {
   let parts = header.split('=');
   let sigHex = parts[1];
 
-  let algorithm = { name: 'HMAC256', hash: { name: 'SHA-256' } };
+  let algorithm = { name: 'HMAC', hash: { name: 'SHA-256' } };
 
   let encoder = new TextEncoder();
   let keyBytes = encoder.encode(secret);
