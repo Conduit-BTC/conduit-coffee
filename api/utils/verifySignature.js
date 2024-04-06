@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 async function verifySignature(secret, header, payload) {
   let parts = header.split('=');
   let sigHex = parts[1];
