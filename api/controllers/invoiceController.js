@@ -27,13 +27,8 @@ exports.settleInvoice = async (req, res) => {
         if (vs) res.status(200);
         else res.status(500);
         break;
-      case 'InvoiceCreated':
-        const as = addInvoiceToOrder(req.body);
-        if (as) res.status(200);
-        else res.status(500);
-        break;
       default:
-        res.status(500);
+        res.status(200);
         throw Error();
     }
   } catch (err) {
