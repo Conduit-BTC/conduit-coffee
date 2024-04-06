@@ -1,18 +1,35 @@
 const { PrismaClient } = require('@prisma/client');
+const { verifySignature } = require('../utils/verifySignature');
 const prisma = new PrismaClient();
 
 exports.settleInvoice = async (req, _) => {
+  const isValid = await validateRequest(req);
+  if (!isValid) {
+    console.error('Unauthorized request! - ' + req);
+    return;
+  }
+
   switch (req.body.type) {
     case 'InvoiceSettled':
       processPaidOrder(req.body);
-    case 'InvoiceExpired':
-        voidOrder(req.body);
+    case 'InvoiceExpired' || 'InvoiceInvalid':
+      voidOrder(req.body);
     case 'InvoiceCreated':
-        addInvoiceToOrder(req.body);
+      addInvoiceToOrder(req.body);
     default:
       return;
   }
 };
+
+async function validateRequest(req) {
+  const secret = process.env.BTCPAY_INVOICE_WEBHOOK_SECRET;
+  if (!secret) {
+    throw new Error('invoiceController.js - Missing ENV Variable');
+  }
+  const header = req.get('BTCPay-Sig');
+  const isValid = await verifySignature(secret, header, req.body);
+  return isValid;
+}
 
 async function addInvoiceToOrder(data) {
   const { invoiceId, timestamp, metadata } = data;
@@ -31,6 +48,8 @@ async function addInvoiceToOrder(data) {
       invoiceStatus: 'pending',
     },
   });
+
+  // If success, return success
 }
 
 async function voidOrder(data) {
@@ -38,7 +57,7 @@ async function voidOrder(data) {
   const { orderId } = metadata;
 
   console.log(
-    `Invoice expired: ${invoiceId} - Time: ${timestamp} - Order ID: ${orderId}`,
+    `Invoice expired/Invalid: ${invoiceId} - Time: ${timestamp} - Order ID: ${orderId}`,
   );
 
   const voidOrder = await prisma.order.update({
@@ -49,6 +68,8 @@ async function voidOrder(data) {
       invoiceStatus: 'expired',
     },
   });
+
+  // If success, return success
 }
 
 async function processPaidOrder(data) {
@@ -68,4 +89,6 @@ async function processPaidOrder(data) {
       invoiceStatus: 'paid',
     },
   });
+
+  // If success, return success
 }
