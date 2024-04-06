@@ -6,7 +6,13 @@ const app = express();
 
 app.use(cors());
 
-app.use(bodyParser.json());
+app.use(
+  bodyParser.json({
+    verify: (req, _, buf) => {
+      req.rawBody = buf;
+    },
+  }),
+);
 
 // Import and use route handlers
 const orderRoutes = require('./routes/orderRoutes');
