@@ -7,11 +7,12 @@ exports.settleInvoice = async (req, res) => {
   try {
     const isValid = await validateRequest(req);
     if (!isValid) {
-      log(stringifyRequest(req));
+      res.status(401);
       console.error('Unauthorized request! - ' + stringifyRequest(req));
       return;
     }
   } catch (err) {
+    res.status(500);
     throw new Error(
       'invoiceController.js - Error validating POST request to /invoices',
     );
@@ -22,19 +23,24 @@ exports.settleInvoice = async (req, res) => {
       case 'InvoiceSettled':
         const ps = processPaidOrder(req.body);
         if (ps) res.status(200);
+        else res.status(500);
         break;
       case 'InvoiceExpired' || 'InvoiceInvalid':
         const vs = voidOrder(req.body);
         if (vs) res.status(200);
+        else res.status(500);
         break;
       case 'InvoiceCreated':
         const as = addInvoiceToOrder(req.body);
         if (as) res.status(200);
+        else res.status(500);
         break;
       default:
+        res.status(500);
         throw Error();
     }
   } catch (err) {
+    res.status(500);
     throw new Error(
       'invoiceController.js - Error processing request to /invoices',
     );
