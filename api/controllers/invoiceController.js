@@ -62,6 +62,7 @@ async function validateRequest(req) {
 
 async function addInvoiceToOrder(data) {
   const { invoiceId, metadata } = data;
+  if (!metadata?.orderId) return false;
   const { orderId } = metadata;
 
   const updatedOrder = await prisma.order.update({
@@ -83,11 +84,13 @@ async function addInvoiceToOrder(data) {
 }
 
 async function voidOrder(data) {
-  const { invoiceId } = data;
+  const { invoiceId, metadata } = data;
+  if (!metadata?.orderId) return false;
+  const { orderId } = metadata;
 
   const updatedOrder = await prisma.order.update({
     where: {
-      invoiceId: invoiceId,
+      id: orderId,
     },
     data: {
       invoiceStatus: 'expired',
@@ -103,14 +106,15 @@ async function voidOrder(data) {
 }
 
 async function processPaidOrder(data) {
-  const { invoiceId } = data;
+  const { invoiceId, metadata } = data;
+  if (!metadata?.orderId) return false;
+  const { orderId } = metadata;
 
   const updatedOrder = await prisma.order.update({
     where: {
-      invoiceId: invoiceId,
+      id: orderId,
     },
     data: {
-      invoiceId: invoiceId,
       invoiceStatus: 'paid',
     },
   });
