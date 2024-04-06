@@ -1,4 +1,5 @@
 const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
+const { addInvoiceToOrder } = require('../utils/invoiceUtils');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -28,8 +29,6 @@ exports.createOrder = async (req, res) => {
 
     const currentSatsPrice = await getCurrentSatsPrice();
 
-    console.log('Creating order...');
-
     const createdOrder = await prisma.order.create({
       data: {
         first_name,
@@ -49,9 +48,6 @@ exports.createOrder = async (req, res) => {
       },
       include: { cart: true },
     });
-
-    console.log('Order created!');
-    console.log('Creating invoice...');
 
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -83,8 +79,11 @@ exports.createOrder = async (req, res) => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log('Invoice created!');
         res.json({ invoiceUrl: result.checkoutLink });
+        addInvoiceToOrder({
+          invoiceId: result.id,
+          metadata: { orderId: createdOrder.id },
+        });
       })
       .catch((error) => {
         console.error('Error creating invoice:', error);
