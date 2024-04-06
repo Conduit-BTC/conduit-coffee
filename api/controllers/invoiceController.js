@@ -1,11 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
 const { verifySignature } = require('../utils/verifySignature');
+const { log } = require('../utils/log');
 const prisma = new PrismaClient();
 
 exports.settleInvoice = async (req, _) => {
   const isValid = await validateRequest(req);
   if (!isValid) {
-    console.error('Unauthorized request! - ' + req);
+    log(stringifyRequest(req));
+    console.error('Unauthorized request! - ' + stringifyRequest(req));
     return;
   }
 
@@ -27,6 +29,7 @@ async function validateRequest(req) {
     throw new Error('invoiceController.js - Missing ENV Variable');
   }
   const header = req.get('BTCPay-Sig');
+  if (!header) return false;
   const isValid = await verifySignature(secret, header, req.body);
   return isValid;
 }
@@ -91,4 +94,19 @@ async function processPaidOrder(data) {
   });
 
   // If success, return success
+}
+
+function stringifyRequest(req) {
+  const { method, url, headers, params, query, body } = req;
+
+  const requestDetails = {
+    method,
+    url,
+    headers,
+    params,
+    query,
+    body,
+  };
+
+  return JSON.stringify(requestDetails, null, 2);
 }
