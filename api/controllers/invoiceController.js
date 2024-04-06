@@ -28,7 +28,9 @@ async function validateRequest(req) {
   if (!secret) {
     throw new Error('invoiceController.js - Missing ENV Variable');
   }
-  const header = req.get('BTCPay-Sig');
+  const header = req.get('btcpay-sig');
+  console.log('This is the header: ');
+  console.log(header);
   if (!header) return false;
   const isValid = await verifySignature(secret, header, req.body);
   return isValid;
