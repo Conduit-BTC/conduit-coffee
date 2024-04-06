@@ -30,7 +30,6 @@ async function validateRequest(req) {
   }
   const btcPaySig = req.get('btcpay-sig');
   console.log('This is the header: ');
-  console.log(header);
   if (typeof btcPaySig !== 'string') return false;
   const isValid = await verifySignature(secret, btcPaySig, req.rawBody);
   return isValid;
