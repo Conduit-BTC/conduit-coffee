@@ -80,11 +80,12 @@ exports.createOrder = async (req, res) => {
       .then((response) => response.json())
       .then((result) => {
         res.json({ invoiceUrl: result.checkoutLink });
-        const invoiceAdded = addInvoiceToOrder({
+        const invoice = addInvoiceToOrder({
           invoiceId: result.id,
           metadata: { orderId: createdOrder.id },
         });
-        if (invoiceAdded) return res.status(200);
+        console.log('Invoice: ', invoice);
+        if (invoice) return res.status(200);
         else return res.status(400);
       })
       .catch((error) => {

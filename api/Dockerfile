@@ -4,6 +4,8 @@ FROM node:18
 # Set the working directory
 WORKDIR /api
 
+RUN npm install -g pm2
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
@@ -23,4 +25,4 @@ COPY prisma ./prisma/
 RUN npx prisma generate
 
 # Start the API server
-CMD ["npm", "start", "--node-options='--inspect'"]
+CMD ["pm2-runtime", "start", "npm", "--", "start"]
