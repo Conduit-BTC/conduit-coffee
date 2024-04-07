@@ -23,4 +23,4 @@ COPY prisma ./prisma/
 RUN npx prisma generate
 
 # Start the API server
-CMD ["npm", "start"]
+CMD ["npm", "start", "--node-options='--inspect'"]
