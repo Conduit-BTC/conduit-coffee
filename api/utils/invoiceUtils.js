@@ -16,11 +16,7 @@ async function addInvoiceToOrder(data) {
     },
   });
 
-  if (updatedOrder?.affectedRows == 0) {
-    throw new Error(
-      `invoiceController.js # addInvoiceToOrder() - Order wasn't found. Order ID: ${orderId} - Invoice ID: ${invoiceId}`,
-    );
-  }
+  if (updatedOrder?.affectedRows == 0) return false;
   return true;
 }
 
@@ -38,11 +34,7 @@ async function voidOrder(data) {
     },
   });
 
-  if (updatedOrder?.affectedRows == 0) {
-    throw new Error(
-      `invoiceController.js # voidOrder() - Invoice wasn't found. Invoice ID: ${invoiceId}`,
-    );
-  }
+  if (updatedOrder?.affectedRows == 0) return false;
   return true;
 }
 
@@ -60,11 +52,7 @@ async function processPaidOrder(data) {
     },
   });
 
-  if (updatedOrder?.affectedRows == 0) {
-    throw new Error(
-      `invoiceController.js # processPaidOrder() - Invoice wasn't found. Invoice ID: ${invoiceId}`,
-    );
-  }
+  if (updatedOrder?.affectedRows == 0) return false;
   return true;
 }
 
