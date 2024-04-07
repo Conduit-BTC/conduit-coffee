@@ -49,11 +49,11 @@ exports.createOrder = async (req, res) => {
       include: { cart: true },
     });
 
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('Authorization', `token ${process.env.BTCPAY_API_KEY}`);
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', `token ${process.env.BTCPAY_API_KEY}`);
 
-    var raw = JSON.stringify({
+    var body = JSON.stringify({
       metadata: {
         orderId: createdOrder.id,
       },
@@ -68,8 +68,8 @@ exports.createOrder = async (req, res) => {
 
     var requestOptions = {
       method: 'POST',
-      headers: myHeaders,
-      body: raw,
+      headers: headers,
+      body: body,
       redirect: 'follow',
     };
 
@@ -80,10 +80,12 @@ exports.createOrder = async (req, res) => {
       .then((response) => response.json())
       .then((result) => {
         res.json({ invoiceUrl: result.checkoutLink });
-        addInvoiceToOrder({
+        const invoiceAdded = addInvoiceToOrder({
           invoiceId: result.id,
           metadata: { orderId: createdOrder.id },
         });
+        if (invoiceAdded) return res.status(200);
+        else return res.status(400);
       })
       .catch((error) => {
         console.error('Error creating invoice:', error);

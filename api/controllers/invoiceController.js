@@ -19,17 +19,14 @@ exports.settleInvoice = async (req, res) => {
     switch (req.body.type) {
       case 'InvoiceSettled':
         const ps = processPaidOrder(req.body);
-        if (ps) res.status(200);
-        else res.status(500);
-        break;
+        if (ps) return res.status(200);
+        else return res.status(400);
       case 'InvoiceExpired' || 'InvoiceInvalid':
         const vs = voidOrder(req.body);
-        if (vs) res.status(200);
-        else res.status(500);
-        break;
+        if (vs) return res.status(200);
+        else return res.status(400);
       default:
-        res.status(200);
-        throw Error();
+        return res.status(400);
     }
   } catch (err) {
     res.status(500);
