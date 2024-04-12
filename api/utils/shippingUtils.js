@@ -68,8 +68,6 @@ async function createShipStationOrder(orderId) {
       items: createShipStationItems(order.cart),
     };
 
-    console.table(shipStationOrder);
-
     const response = await fetch(
       'https://ssapi.shipstation.com/orders/createorder',
       {
@@ -91,7 +89,6 @@ async function createShipStationOrder(orderId) {
     }
 
     const data = await response.json();
-    console.log('ShipStation order created:', data);
     return data.orderId;
   } catch (error) {
     console.error('Error creating ShipStation order:', error);

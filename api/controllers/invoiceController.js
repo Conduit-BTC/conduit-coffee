@@ -34,7 +34,10 @@ exports.settleInvoice = async (req, res) => {
       case 'InvoiceSettled':
         const ps = processPaidOrder(orderId);
         if (ps) {
-          createShipStationOrder(orderId);
+          const shipId = await createShipStationOrder(orderId);
+          if (shipId) {
+            await updateOrderShipstationId(orderId, shipId);
+          }
           return res.status(200).json({ message: 'Success!' });
         }
       case 'InvoiceExpired' || 'InvoiceInvalid':
