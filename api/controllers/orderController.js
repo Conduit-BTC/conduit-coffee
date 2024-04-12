@@ -20,7 +20,8 @@ exports.createOrder = async (req, res) => {
     const {
       first_name,
       last_name,
-      address,
+      address1,
+      address2,
       zip,
       special_instructions,
       email,
@@ -33,7 +34,8 @@ exports.createOrder = async (req, res) => {
       data: {
         first_name,
         last_name,
-        address,
+        address1,
+        address2,
         zip,
         special_instructions,
         email,
@@ -80,13 +82,10 @@ exports.createOrder = async (req, res) => {
       .then((response) => response.json())
       .then((result) => {
         res.json({ invoiceUrl: result.checkoutLink });
-        const invoice = addInvoiceToOrder({
-          invoiceId: result.id,
-          metadata: { orderId: createdOrder.id },
+        addInvoiceToOrder(result.id, createdOrder.id).then((result) => {
+          if (result) return res.status(200);
+          else return res.status(400);
         });
-        console.log('Invoice: ', invoice);
-        if (invoice) return res.status(200);
-        else return res.status(400);
       })
       .catch((error) => {
         console.error('Error creating invoice:', error);

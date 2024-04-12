@@ -1,4 +1,10 @@
 const { verifySignature } = require('../utils/verifySignature');
+const { stringifyRequest } = require('../utils/stringifyRequest');
+const { processPaidOrder, voidOrder } = require('../utils/invoiceUtils');
+const {
+  createShipStationOrder,
+  updateOrderShipstationId,
+} = require('../utils/shippingUtils');
 
 exports.settleInvoice = async (req, res) => {
   try {
@@ -8,39 +14,42 @@ exports.settleInvoice = async (req, res) => {
       console.error('Unauthorized request! - ' + stringifyRequest(req));
       return;
     }
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: 'Server Error', error: 'Server Error' });
-    throw new Error(
+    console.error(
       'invoiceController.js - Error validating POST request to /invoices',
     );
+    console.error(error.message);
+    console.error('Stack trace:', error.stack);
   }
 
   try {
+    const orderId = req.body.metadata?.orderId;
+    if (!orderId)
+      return res
+        .status(400)
+        .json({ message: 'Missing Order ID', error: 'Missing Order ID' });
+
     switch (req.body.type) {
       case 'InvoiceSettled':
-        const ps = processPaidOrder(req.body);
-        if (ps) return res.status(200).json({ message: 'Success!' });
-        else
-          return res
-            .status(400)
-            .json({ message: 'Server Failed to Process Request' });
+        const ps = processPaidOrder(orderId);
+        if (ps) {
+          createShipStationOrder(orderId);
+          return res.status(200).json({ message: 'Success!' });
+        }
       case 'InvoiceExpired' || 'InvoiceInvalid':
-        const vs = voidOrder(req.body);
+        const vs = voidOrder(orderId);
         if (vs) return res.status(200).json({ message: 'Success!' });
-        else
-          return res
-            .status(400)
-            .json({ message: 'Server Failed to Process Request' });
       default:
-        return res
-          .status(400)
-          .json({ message: 'Server Failed to Process Request' });
+        return res.status(400).json({ message: 'Failed to Process Request' });
     }
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: 'Server Error', error: 'Server Error' });
-    throw new Error(
-      'invoiceController.js - Error processing request to /invoices',
+    console.error(
+      'invoiceController.js - Error processing request to /invoices: ',
     );
+    console.error(error.message);
+    console.error('Stack trace:', error.stack);
   }
 };
 

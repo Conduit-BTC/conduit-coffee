@@ -14,24 +14,28 @@ datasource db {
 }
 
 model Order {
-  id                  Int     @id @default(autoincrement())
+  id                  String     @id @default(uuid())
   first_name          String
   last_name           String
-  address             String
+  address1             String
+  address2             String?
   zip                 String
   special_instructions String?
   email               String
   cart                Cart?
   invoiceId           String?
   invoiceStatus       String?
+  shipstationId       String?
+    created_at         DateTime @default(now())
+
 }
 
 model Cart {
-  id          Int   @id @default(autoincrement())
+  id          String   @id @default(uuid())
   sats_price  Float
   cart_price  Float
   light_roast Int
   dark_roast  Int
   order       Order @relation(fields: [orderId], references: [id])
-  orderId     Int   @unique
+  orderId     String   @unique
 }

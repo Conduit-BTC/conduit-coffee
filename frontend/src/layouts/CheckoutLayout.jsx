@@ -39,10 +39,8 @@ export default function CheckoutLayout() {
           const orderData = {
             first_name: document.getElementById("first_name").value,
             last_name: document.getElementById("last_name").value,
-            address:
-              document.getElementById("address-1").value +
-              ", " +
-              document.getElementById("address-2").value,
+            address1: document.getElementById("address-1").value,
+            address2: document.getElementById("address-2").value,
             city: document.getElementById("city").value,
             state: document.getElementById("state").value,
             zip: document.getElementById("zip").value,

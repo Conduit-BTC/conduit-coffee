@@ -1,0 +1,32 @@
+{
+    orderNumber: db-orderId,
+    orderDate: Date.now(),
+    orderStatus: 'awaiting_shipment',
+    billTo: Address {
+        name: "",
+        company: null,
+        street1: "",
+        street2: null or "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "USA",
+        phone: null,
+        residential: true,
+    }
+    shipTo: same,
+    items: [OrderItem {
+        lineItemKey: "",
+        sku: "",
+        name: "",
+        imageUrl: null,
+        weight: {
+            value: 12,
+            units: "ounces",
+        },
+        quantity: #,
+        unitPrice: 20.00,
+        taxAmount: 0,
+        shippingAmount: #,
+    }],
+}
