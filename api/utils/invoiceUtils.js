@@ -1,11 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function addInvoiceToOrder(data) {
-  const { invoiceId, metadata } = data;
-  if (!metadata?.orderId) return false;
-  const { orderId } = metadata;
-
+async function addInvoiceToOrder(invoiceId, orderId) {
   const updatedOrder = await prisma.order.update({
     where: {
       id: orderId,
@@ -20,11 +16,7 @@ async function addInvoiceToOrder(data) {
   return true;
 }
 
-async function voidOrder(data) {
-  const { invoiceId, metadata } = data;
-  if (!metadata?.orderId) return false;
-  const { orderId } = metadata;
-
+async function voidOrder(orderId) {
   const updatedOrder = await prisma.order.update({
     where: {
       id: orderId,
@@ -38,11 +30,7 @@ async function voidOrder(data) {
   return true;
 }
 
-async function processPaidOrder(data) {
-  const { invoiceId, metadata } = data;
-  if (!metadata?.orderId) return false;
-  const { orderId } = metadata;
-
+async function processPaidOrder(orderId) {
   const updatedOrder = await prisma.order.update({
     where: {
       id: orderId,
@@ -53,6 +41,7 @@ async function processPaidOrder(data) {
   });
 
   if (updatedOrder?.affectedRows == 0) return false;
+  // Send order to ShipStation
   return true;
 }
 

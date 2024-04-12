@@ -1,24 +1,28 @@
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
+    "address1" TEXT NOT NULL,
+    "address2" TEXT,
     "zip" TEXT NOT NULL,
     "special_instructions" TEXT,
     "email" TEXT NOT NULL,
+    "invoiceId" TEXT,
+    "invoiceStatus" TEXT,
+    "shipstationId" TEXT,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Cart" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "sats_price" DOUBLE PRECISION NOT NULL,
     "cart_price" DOUBLE PRECISION NOT NULL,
     "light_roast" INTEGER NOT NULL,
     "dark_roast" INTEGER NOT NULL,
-    "orderId" INTEGER NOT NULL,
+    "orderId" TEXT NOT NULL,
 
     CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
 );
