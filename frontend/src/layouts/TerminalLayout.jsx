@@ -37,11 +37,13 @@ const TerminalLayout = () => {
               pingColor="blue"
               accentColor="text-blue-500"
               borderColor="border-blue-500"
-              quantity={
-                cartItems.filter((item) => item.id === product.id).quantity
-              }
-              increaseFunction={(product) => addItemToCart(product)}
-              decreaseFunction={(product) => removeItemFromCart(product)}
+              quantity={cartItems.reduce(
+                (sum, item) =>
+                  sum + (item.id === product.id ? item.quantity : 0),
+                0
+              )}
+              increaseFunction={() => addItemToCart(product)}
+              decreaseFunction={() => removeItemFromCart(product)}
             />
           );
         })}

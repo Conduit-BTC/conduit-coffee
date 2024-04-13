@@ -17,7 +17,7 @@ export default function ProductLineItem({
         className={`border-2 rounded-sm p-1 px-3 mr-2 flex items-center justify-center font-[700] ${borderColor}`}
         style={{ fontFamily: "Fira Code" }}
       >
-        {quantity}
+        {quantity || 0}
       </p>
       <h4 className="font-[700] px-2">
         <span className={accentColor}>{name}</span>
@@ -36,7 +36,7 @@ export default function ProductLineItem({
         >{`-`}</button>
         <button
           onClick={() => {
-            pingBorder(borderElement.current, pingColor);
+            // pingBorder(borderElement.current, pingColor);
             increaseFunction();
           }}
           className="p-1 w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center rounded-sm bg-green-800"

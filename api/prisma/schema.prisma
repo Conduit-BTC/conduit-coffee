@@ -46,7 +46,6 @@ model Product {
   name              String
   description       String
   price             Float
-  quantity          Int
   weight            Float
   size_width        Float
   size_length       Float
