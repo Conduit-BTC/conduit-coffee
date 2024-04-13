@@ -1,44 +1,61 @@
 import { create } from "zustand";
 
 export const useCartContext = create((set) => ({
-  lightRoastBags: 0,
-  darkRoastBags: 0,
-  cartPrice: 0, // Number of bags * cost per bag
+  cartItems: [],
+  cartPriceUsd: 0,
+  totalCartQty: 0,
 
-  setCartPrice: (price) =>
+  setcartPriceUsd: (price) =>
     set({
-      cartPrice: price,
+      cartPriceUsd: price,
     }),
 
-  increaseLightRoastBags: () =>
-    set((state) => ({ lightRoastBags: state.lightRoastBags + 1 })),
-
-  increaseDarkRoastBags: () =>
-    set((state) => ({ darkRoastBags: state.darkRoastBags + 1 })),
-
-  decreaseLightRoastBags: () =>
-    set((state) => ({
-      lightRoastBags:
-        state.lightRoastBags <= 0
-          ? (state.lightRoastBags = 0)
-          : state.lightRoastBags - 1,
-    })),
-
-  decreaseDarkRoastBags: () =>
-    set((state) => ({
-      darkRoastBags:
-        state.darkRoastBags <= 0
-          ? (state.darkRoastBags = 0)
-          : state.darkRoastBags - 1,
-    })),
-
-  resetLightRoastBags: () => set({ lightRoastBags: 0 }),
-
-  resetDarkRoastBags: () => set({ darkRoastBags: 0 }),
-
-  resetAllBags: () => set({ lightRoastBags: 0, darkRoastBags: 0 }),
-
-  setLightRoastBags: (qty) => set({ lightRoastBags: qty }),
-
-  setDarkRoastBags: (qty) => set({ darkRoastBags: qty }),
+  addItemToCart: (newItem) =>
+    set((state) => {
+      const existingItem = state.cartItems.find(
+        (item) => item.id === newItem.id
+      );
+      if (existingItem) {
+        return {
+          cartItems: state.cartItems.map((item) =>
+            item.id === newItem.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          ),
+          totalCartQty: state.totalCartQty + 1,
+        };
+      } else {
+        return {
+          cartItems: [...state.cartItems, { ...newItem, quantity: 1 }],
+          totalCartQty: state.totalCartQty + 1,
+        };
+      }
+    }),
+  removeItemFromCart: (itemToRemove) =>
+    set((state) => {
+      const existingItem = state.cartItems.find(
+        (item) => item.id === itemToRemove.id
+      );
+      if (existingItem) {
+        if (existingItem.quantity === 1) {
+          return {
+            cartItems: state.cartItems.filter(
+              (item) => item.id !== itemToRemove.id
+            ),
+            totalCartQty: state.totalCartQty - 1,
+          };
+        } else {
+          return {
+            cartItems: state.cartItems.map((item) =>
+              item.id === itemToRemove.id
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            ),
+            totalCartQty: state.totalCartQty - 1,
+          };
+        }
+      } else {
+        return state;
+      }
+    }),
 }));

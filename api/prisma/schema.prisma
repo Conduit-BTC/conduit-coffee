@@ -17,8 +17,8 @@ model Order {
   id                  String     @id @default(uuid())
   first_name          String
   last_name           String
-  address1             String
-  address2             String?
+  address1            String
+  address2            String?
   zip                 String
   special_instructions String?
   email               String
@@ -26,16 +26,32 @@ model Order {
   invoiceId           String?
   invoiceStatus       String?
   shipstationId       String?
-    created_at         DateTime @default(now())
-
+  created_at          DateTime @default(now())
 }
 
 model Cart {
-  id          String   @id @default(uuid())
-  sats_price  Float
-  cart_price  Float
-  light_roast Int
-  dark_roast  Int
-  order       Order @relation(fields: [orderId], references: [id])
-  orderId     String   @unique
+  id                  String   @id @default(uuid())
+  sats_cart_price     Float
+  usd_cart_price      Float
+  tax_cost_usd        Float
+  shipping_cost_usd   Float
+  products            Product[]
+  order               Order @relation(fields: [orderId], references: [id])
+  orderId             String   @unique
+}
+
+model Product {
+  id                String  @id @default(uuid())
+  sku               String
+  name              String
+  description       String
+  price             Float
+  quantity          Int
+  weight            Float
+  size_width        Float
+  size_length       Float
+  size_height       Float
+  image_url         String?
+  cart              Cart?   @relation(fields: [cartId], references: [id])
+  cartId            String?
 }

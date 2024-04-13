@@ -6,14 +6,18 @@ import { BASE_COST_PER_BAG } from "../constants";
 import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
 
 const BitcoinPriceChart = () => {
-  const { lightRoastBags, darkRoastBags } = useCartContext();
+  const { cartItems } = useCartContext();
   const { priceOverTime } = useCryptoContext();
 
   const chartContainer = useRef(null);
 
   useEffect(() => {
     const cartPriceOverTime = priceOverTime.map((item) => {
-      const hodlings = lightRoastBags + darkRoastBags;
+      const hodlings = cartItems.reduce(
+        (sum, product) => sum + product.quantity,
+        0
+      );
+
       const satsToUsd = item[1];
       const costPerBag = satsToUsd * BASE_COST_PER_BAG;
       const totalCost = costPerBag * hodlings;
@@ -73,11 +77,11 @@ const BitcoinPriceChart = () => {
             // min: 67000 * (lightRoastBags * darkRoastBags || 1),
             // max: 71000 * (lightRoastBags * darkRoastBags || 1),
             // min: (
-            //   (cartPrice || 0) * satsToUsd * BASE_COST_PER_BAG +
+            //   (cartPriceUsd || 0) * satsToUsd * BASE_COST_PER_BAG +
             //   1000
             // ).toFixed(3),
             // max: (
-            //   (cartPrice || 0) * satsToUsd * BASE_COST_PER_BAG -
+            //   (cartPriceUsd || 0) * satsToUsd * BASE_COST_PER_BAG -
             //   1000
             // ).toFixed(3),
             beginAtZero: false,
@@ -113,7 +117,7 @@ const BitcoinPriceChart = () => {
     return () => {
       chart.destroy();
     };
-  }, [lightRoastBags, darkRoastBags, priceOverTime]);
+  }, [cartItems, priceOverTime]);
 
   return <canvas ref={chartContainer} className="w-full h-full min-h-64" />;
 };

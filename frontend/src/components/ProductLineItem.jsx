@@ -1,28 +1,27 @@
 import pingBorder from "../lib/pingBorder";
 
 export default function ProductLineItem({
-  borderElement,
+  // borderElement,
   name,
-  number,
-  type,
+  description,
   pingColor,
   borderColor,
   accentColor,
-  bagCount,
+  quantity,
   increaseFunction,
   decreaseFunction,
 }) {
   return (
-    <div className="flex items-center px-4" ref={borderElement}>
+    <div className="flex items-center px-4">
       <p
         className={`border-2 rounded-sm p-1 px-3 mr-2 flex items-center justify-center font-[700] ${borderColor}`}
         style={{ fontFamily: "Fira Code" }}
       >
-        {bagCount}
+        {quantity}
       </p>
       <h4 className="font-[700] px-2">
         <span className={accentColor}>{name}</span>
-        <span className="text-h7">{` (${type})`}</span>
+        <span className="text-h7">{` (${description})`}</span>
       </h4>
       <div className="flex mx-2 gap-2 items-center">
         <button
@@ -31,9 +30,9 @@ export default function ProductLineItem({
           }}
           className={
             "p-1 w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center rounded-sm bg-red-800" +
-            (bagCount === 0 ? " opacity-50" : "")
+            (quantity === 0 ? " opacity-50" : "")
           }
-          disabled={bagCount === 0}
+          disabled={quantity === 0}
         >{`-`}</button>
         <button
           onClick={() => {

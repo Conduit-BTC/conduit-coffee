@@ -41,10 +41,9 @@ exports.createOrder = async (req, res) => {
         email,
         cart: {
           create: {
-            sats_price: currentSatsPrice * cart.cart_price,
-            cart_price: cart.cart_price,
-            light_roast: cart.light_roast,
-            dark_roast: cart.dark_roast,
+            sats_cart_price: cart.sats_cart_price,
+            usd_cart_price: cart.usd_cart_price,
+            products: cart.products,
           },
         },
       },
@@ -64,7 +63,7 @@ exports.createOrder = async (req, res) => {
         showQR: true,
         showPayments: true,
       },
-      amount: currentSatsPrice * createdOrder.cart.cart_price,
+      amount: currentSatsPrice * createdOrder.cart.usd_cart_price,
       currency: 'Sats',
     });
 
