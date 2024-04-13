@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function CheckoutLayout() {
   const [invoiceUrl, setInvoiceUrl] = useState("");
   const { satsToUsd } = useCryptoContext();
-  const { lightRoastBags, darkRoastBags, cartPrice } = useCartContext();
+  const { cartItems, cartPriceUsd } = useCartContext();
 
   return (
     <>
@@ -32,10 +32,9 @@ export default function CheckoutLayout() {
             return;
           }
           const cartData = {
-            sats_price: satsToUsd * cartPrice,
-            cart_price: cartPrice,
-            light_roast: lightRoastBags,
-            dark_roast: darkRoastBags,
+            sats_cart_price: satsToUsd * cartPriceUsd,
+            usd_cart_price: cartPriceUsd,
+            products: cartItems,
           };
           const orderData = {
             first_name: document.getElementById("first_name").value,

@@ -17,8 +17,11 @@ app.use(
 // Import and use route handlers
 const orderRoutes = require('./routes/orderRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
+const productRoutes = require('./routes/productRoutes');
+
 app.use('/orders', orderRoutes);
 app.use('/invoices', invoiceRoutes);
+app.use('/products', productRoutes);
 
 // Start the server
 const port = process.env.PORT || 3456;

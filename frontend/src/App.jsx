@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import HeaderLayout from "./layouts/HeaderLayout";
-import BodyLayout from "./layouts/BodyLayout";
+import TerminalLayout from "./layouts/TerminalLayout";
 import FooterLayout from "./layouts/FooterLayout";
 import CartLayout from "./layouts/CartLayout";
 import "@fontsource/fira-code/400.css";
@@ -81,7 +81,7 @@ function App() {
         </ModalWindowLayout>
         {/* <HeaderLayout /> */}
         <div className="flex flex-col lg:flex-row justify-between">
-          <BodyLayout />
+          <TerminalLayout />
           <CartLayout />
         </div>
         <FooterLayout />

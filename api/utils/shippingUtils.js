@@ -1,29 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-
-async function getCityStateFromZipCode(zipCode) {
-  try {
-    const response = await fetch(`https://api.zippopotam.us/us/${zipCode}`);
-
-    if (!response.ok) {
-      throw new Error(`Error fetching city and state: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    if (data.places && data.places.length > 0) {
-      const country = data['country abbreviation'];
-      const { 'place name': city, 'state abbreviation': state } =
-        data.places[0];
-      const trimmedState = typeof state === 'string' ? state.trim() : state;
-      return { city, state: trimmedState, country };
-    } else {
-      throw new Error(`No data found for zip code: ${zipCode}`);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    throw error;
-  }
-}
+const { getLocationFromZipCode } = require('./getLocationFromZipCode');
 
 async function createShipStationOrder(orderId) {
   const prisma = new PrismaClient();
@@ -35,7 +11,7 @@ async function createShipStationOrder(orderId) {
     if (!order) {
       throw new Error(`Order with ID ${orderId} not found`);
     }
-    const { city, state, country } = await getCityStateFromZipCode(order.zip);
+    const { city, state, country } = await getLocationFromZipCode(order.zip);
 
     const shipStationOrder = {
       orderNumber: order.id.toString(),
@@ -99,39 +75,22 @@ async function createShipStationOrder(orderId) {
 function createShipStationItems(cart) {
   const items = [];
 
-  if (cart.light_roast > 0) {
+  cart.products.forEach((p) => {
     items.push({
-      lineItemKey: 'light_roast',
-      sku: 'LIGHT_ROAST',
-      name: 'Light Roast Coffee',
-      imageUrl: null,
+      lineItemKey: p.id,
+      sku: p.sku,
+      name: p.name,
+      imageUrl: p.image_url || null,
       weight: {
-        value: 12,
+        value: p.weight,
         units: 'ounces',
       },
-      quantity: cart.light_roast,
-      unitPrice: 20.0,
-      taxAmount: 0,
-      shippingAmount: 5.0,
+      quantity: p.quantity,
+      unitPrice: p.price,
+      taxAmount: cart.tax_cost_usd,
+      shippingAmount: cart.shipping_cost_usd,
     });
-  }
-
-  if (cart.dark_roast > 0) {
-    items.push({
-      lineItemKey: 'dark_roast',
-      sku: 'DARK_ROAST',
-      name: 'Dark Roast Coffee',
-      imageUrl: null,
-      weight: {
-        value: 12,
-        units: 'ounces',
-      },
-      quantity: cart.dark_roast,
-      unitPrice: 20.0,
-      taxAmount: 0,
-      shippingAmount: 5.0,
-    });
-  }
+  });
 
   return items;
 }
@@ -153,7 +112,7 @@ async function updateOrderShipstationId(orderId, shipstationId) {
 }
 
 module.exports = {
-  getCityStateFromZipCode,
+  getLocationFromZipCode,
   createShipStationOrder,
   updateOrderShipstationId,
 };

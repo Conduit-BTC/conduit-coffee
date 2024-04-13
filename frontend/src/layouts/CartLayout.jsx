@@ -7,13 +7,13 @@ import CurrentHodlings from "../components/CurrentHodlings";
 
 export default function CartLayout() {
   const { openModal } = useUiContext();
-  const { lightRoastBags, darkRoastBags, setCartPrice } = useCartContext();
+  const { lightRoastBags, darkRoastBags, setcartPriceUsd } = useCartContext();
 
   // const borderRef = useRef(null);
 
   useEffect(() => {
     const newHodlings = lightRoastBags + darkRoastBags;
-    setCartPrice(parseFloat((newHodlings * BASE_COST_PER_BAG).toFixed(2)));
+    setcartPriceUsd(parseFloat((newHodlings * BASE_COST_PER_BAG).toFixed(2)));
   }, [lightRoastBags, darkRoastBags]);
 
   // useEffect(() => {
