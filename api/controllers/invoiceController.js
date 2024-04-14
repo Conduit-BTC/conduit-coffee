@@ -7,9 +7,11 @@ const {
 } = require('../utils/shippingUtils');
 
 exports.handleInvoiceWebhook = async (req, res) => {
+  console.log('Received invoice webhook');
   try {
     const isValid = await validateRequest(req);
     if (!isValid) {
+      console.log('Unauthorized request!');
       res.status(401).json({ message: 'Unauthorized', error: 'Unauthorized' });
       console.error('Unauthorized request! - ' + stringifyRequest(req));
       return;
@@ -21,18 +23,22 @@ exports.handleInvoiceWebhook = async (req, res) => {
     );
     console.error(error.message);
     console.error('Stack trace:', error.stack);
+    return;
   }
 
   try {
     const orderId = req.body.metadata?.orderId;
-    if (!orderId)
+    if (!orderId) {
+      console.log('No order ID!');
+      console.log(req.body);
       return res
         .status(400)
         .json({ message: 'Missing Order ID', error: 'Missing Order ID' });
+    }
 
     switch (req.body.type) {
       case 'InvoiceSettled':
-        const ps = processPaidOrder(orderId);
+        const ps = await processPaidOrder(orderId);
         if (ps) {
           const shipId = await createShipStationOrder(orderId);
           if (shipId) {
@@ -40,10 +46,12 @@ exports.handleInvoiceWebhook = async (req, res) => {
           }
           return res.status(200).json({ message: 'Success!' });
         }
-      case 'InvoiceExpired' || 'InvoiceInvalid':
-        const vs = voidOrder(orderId);
+      case 'InvoiceExpired':
+      case 'InvoiceInvalid':
+        const vs = await voidOrder(orderId);
         if (vs) return res.status(200).json({ message: 'Success!' });
       default:
+        console.log('Failed to process request');
         return res.status(400).json({ message: 'Failed to Process Request' });
     }
   } catch (error) {
