@@ -15,9 +15,10 @@ export default function CheckoutLayout() {
       </h1>
       <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get the Coffee</h1>
       <div className="mb-8">
-        <h3 className="mb-2">Your Order:</h3>
+        <h3 className="mb-8">Your Order:</h3>
         <CurrentHodlings />
       </div>
+      <div className="w-full h-1 bg-gray-600 mb-8" />
       <h3 className="mb-2">{`Shipping Address`}</h3>
       <h6>{`We don't need to know you, we just need a place to send your coffee. Use a codename if you'd like.`}</h6>
       <form
