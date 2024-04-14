@@ -1,6 +1,5 @@
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
-import { BASE_COST_PER_BAG } from "../constants";
 import SatsIcon from "./SatsIcon";
 
 export default function CurrentHodlings() {
@@ -20,9 +19,7 @@ export default function CurrentHodlings() {
         </span>
       </h5>
       <h5>
-        <span className="text-green-500">
-          ${totalCartQty * BASE_COST_PER_BAG} USD
-        </span>
+        <span className="text-green-500">${cartPriceUsd.toFixed(2)} USD</span>
       </h5>
       <h5>
         <span className="text-orange-500">

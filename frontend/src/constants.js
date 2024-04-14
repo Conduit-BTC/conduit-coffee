@@ -1,4 +1,2 @@
 export const BASE_COST_PER_BAG = 20.0;
-export const LIGHT_ROAST_COST_PER_BAG = BASE_COST_PER_BAG;
-export const DARK_ROAST_COST_PER_BAG = BASE_COST_PER_BAG;
 export const SATS_REFRESH_RATE = 30000;

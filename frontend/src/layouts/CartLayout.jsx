@@ -1,20 +1,13 @@
 import BitcoinPriceChart from "../components/PriceChart";
-import { BASE_COST_PER_BAG } from "../constants";
 import { useCartContext } from "../context/CartContext";
 import { useUiContext } from "../context/UiContext";
-import { useEffect } from "react";
 import CurrentHodlings from "../components/CurrentHodlings";
 
 export default function CartLayout() {
   const { openModal } = useUiContext();
-  const { lightRoastBags, darkRoastBags, setcartPriceUsd } = useCartContext();
+  const { totalCartQty } = useCartContext();
 
   // const borderRef = useRef(null);
-
-  useEffect(() => {
-    const newHodlings = lightRoastBags + darkRoastBags;
-    setcartPriceUsd(parseFloat((newHodlings * BASE_COST_PER_BAG).toFixed(2)));
-  }, [lightRoastBags, darkRoastBags]);
 
   // useEffect(() => {
   //   pingBorder(borderRef.current, "blue");
@@ -62,11 +55,9 @@ export default function CartLayout() {
               openModal();
             }}
             className={`p-4 text-[var(--main-text-color)] hover:font-bold w-full bg-blue-500 ${
-              lightRoastBags + darkRoastBags == 0
-                ? " opacity-50"
-                : "opacity-100"
+              totalCartQty == 0 ? " opacity-50" : "opacity-100"
             }`}
-            disabled={lightRoastBags + darkRoastBags == 0}
+            disabled={totalCartQty == 0}
           >
             {`step 3: zap out -> buy now`}
           </button>

@@ -30,6 +30,13 @@ exports.createOrder = async (req, res) => {
 
     const currentSatsPrice = await getCurrentSatsPrice();
 
+    const cartItems = cart.items.map((item) =>
+      JSON.stringify({
+        productId: item.id,
+        quantity: item.quantity,
+      }),
+    );
+
     const createdOrder = await prisma.order.create({
       data: {
         first_name,
@@ -43,7 +50,8 @@ exports.createOrder = async (req, res) => {
           create: {
             sats_cart_price: cart.sats_cart_price,
             usd_cart_price: cart.usd_cart_price,
-            products: cart.products,
+            shipping_cost_usd: cart.shipping_cost_usd || 0,
+            items: cartItems,
           },
         },
       },

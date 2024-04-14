@@ -34,8 +34,7 @@ exports.createSampleProducts = async (_, res) => {
         name: 'Light.ing',
         description:
           'A bright and lively blend of Central and South American beans...',
-        price: 19.99,
-        quantity: 50,
+        price: 21.0,
         weight: 12,
         size_width: 4,
         size_length: 4,
@@ -47,8 +46,7 @@ exports.createSampleProducts = async (_, res) => {
         name: 'Resist.nce',
         description:
           'A bold and robust blend of Indonesian and African beans...',
-        price: 21.99,
-        quantity: 40,
+        price: 21.0,
         weight: 12,
         size_width: 4,
         size_length: 4,
@@ -60,8 +58,7 @@ exports.createSampleProducts = async (_, res) => {
         name: 'Stat.c',
         description:
           'A harmonious blend of South American and African beans...',
-        price: 18.99,
-        quantity: 60,
+        price: 21.0,
         weight: 12,
         size_width: 4,
         size_length: 4,
@@ -75,6 +72,8 @@ exports.createSampleProducts = async (_, res) => {
     });
 
     res.json({ message: 'Products created successfully' });
+
+    // res.json({ message: 'ENDPOINT DISABLED' });
   } catch (error) {
     console.error('Error creating products:', error);
   } finally {

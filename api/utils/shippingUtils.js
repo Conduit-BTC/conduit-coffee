@@ -1,8 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const { getLocationFromZipCode } = require('./getLocationFromZipCode');
 
+const prisma = new PrismaClient();
+
 async function createShipStationOrder(orderId) {
-  const prisma = new PrismaClient();
   try {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
@@ -41,7 +42,7 @@ async function createShipStationOrder(orderId) {
         phone: null,
         residential: true,
       },
-      items: createShipStationItems(order.cart),
+      items: await createShipStationItems(order.cart),
     };
 
     const response = await fetch(
@@ -72,25 +73,36 @@ async function createShipStationOrder(orderId) {
   }
 }
 
-function createShipStationItems(cart) {
+async function createShipStationItems(cart) {
   const items = [];
 
-  cart.products.forEach((p) => {
+  for (const item of cart.items) {
+    const { productId, quantity } = JSON.parse(item);
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new Error(`Product with ID ${productId} not found`);
+    }
+
     items.push({
-      lineItemKey: p.id,
-      sku: p.sku,
-      name: p.name,
-      imageUrl: p.image_url || null,
+      lineItemKey: product.id,
+      sku: product.sku,
+      name: product.name,
+      imageUrl: product.image_url || null,
       weight: {
-        value: p.weight,
+        value: product.weight,
         units: 'ounces',
       },
-      quantity: p.quantity,
-      unitPrice: p.price,
-      taxAmount: cart.tax_cost_usd,
+      quantity: quantity,
+      unitPrice: product.price,
       shippingAmount: cart.shipping_cost_usd,
     });
-  });
+  }
 
   return items;
 }
@@ -102,8 +114,6 @@ async function updateOrderShipstationId(orderId, shipstationId) {
       where: { id: orderId },
       data: { shipstationId: shipstationId },
     });
-
-    console.log('Order updated with ShipStation ID:', updatedOrder);
     return updatedOrder;
   } catch (error) {
     console.error('Error updating Order with ShipStation ID:', error);

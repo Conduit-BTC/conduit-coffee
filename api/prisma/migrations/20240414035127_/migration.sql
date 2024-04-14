@@ -21,8 +21,8 @@ CREATE TABLE "Cart" (
     "id" TEXT NOT NULL,
     "sats_cart_price" DOUBLE PRECISION NOT NULL,
     "usd_cart_price" DOUBLE PRECISION NOT NULL,
-    "tax_cost_usd" DOUBLE PRECISION NOT NULL,
     "shipping_cost_usd" DOUBLE PRECISION NOT NULL,
+    "items" TEXT[],
     "orderId" TEXT NOT NULL,
 
     CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
@@ -35,13 +35,11 @@ CREATE TABLE "Product" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
-    "quantity" INTEGER NOT NULL,
     "weight" DOUBLE PRECISION NOT NULL,
     "size_width" DOUBLE PRECISION NOT NULL,
     "size_length" DOUBLE PRECISION NOT NULL,
     "size_height" DOUBLE PRECISION NOT NULL,
     "image_url" TEXT,
-    "cartId" TEXT,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -51,6 +49,3 @@ CREATE UNIQUE INDEX "Cart_orderId_key" ON "Cart"("orderId");
 
 -- AddForeignKey
 ALTER TABLE "Cart" ADD CONSTRAINT "Cart_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE SET NULL ON UPDATE CASCADE;
