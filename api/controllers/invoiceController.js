@@ -6,7 +6,7 @@ const {
   updateOrderShipstationId,
 } = require('../utils/shippingUtils');
 
-exports.settleInvoice = async (req, res) => {
+exports.handleInvoiceWebhook = async (req, res) => {
   try {
     const isValid = await validateRequest(req);
     if (!isValid) {
@@ -36,7 +36,7 @@ exports.settleInvoice = async (req, res) => {
         if (ps) {
           const shipId = await createShipStationOrder(orderId);
           if (shipId) {
-            await updateOrderShipstationId(orderId, shipId);
+            await updateOrderShipstationId(orderId, shipId.toString());
           }
           return res.status(200).json({ message: 'Success!' });
         }

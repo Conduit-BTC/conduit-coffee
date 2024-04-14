@@ -3,6 +3,6 @@ const invoiceController = require('../controllers/invoiceController');
 
 const router = express.Router();
 
-router.post('/', invoiceController.settleInvoice);
+router.post('/', invoiceController.handleInvoiceWebhook);
 
 module.exports = router;

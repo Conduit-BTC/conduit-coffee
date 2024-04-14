@@ -34,7 +34,7 @@ export default function CheckoutLayout() {
           const cartData = {
             sats_cart_price: satsToUsd * cartPriceUsd,
             usd_cart_price: cartPriceUsd,
-            products: cartItems,
+            items: cartItems,
           };
           const orderData = {
             first_name: document.getElementById("first_name").value,
@@ -62,8 +62,6 @@ export default function CheckoutLayout() {
 
             if (response.ok) {
               const data = await response.json();
-              console.log("Order created successfully. ");
-              console.log("Checkout Link:", data.invoiceUrl);
               setInvoiceUrl(data.invoiceUrl);
             } else {
               console.error("Failed to create order:", response.statusText);
