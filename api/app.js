@@ -23,7 +23,7 @@ if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
 }
 
 app.use(
-  '/admin/*',
+  ['/admin/*', '/products/sample'],
   basicAuth({
     users: {
       [process.env.ADMIN_USERNAME]: process.env.ADMIN_PASSWORD,
