@@ -1,6 +1,5 @@
 import React from "react";
 import "./App.css";
-import HeaderLayout from "./layouts/HeaderLayout";
 import TerminalLayout from "./layouts/TerminalLayout";
 import FooterLayout from "./layouts/FooterLayout";
 import CartLayout from "./layouts/CartLayout";
@@ -53,7 +52,7 @@ async function updateCryptoContext(
 }
 
 function App() {
-  const { lightRoastBags, darkRoastBags } = useCartContext();
+  const { cartItems } = useCartContext();
   const { isLooping, startLooping, setSatsPrice, setSatsPriceOverTime } =
     useCryptoContext();
 
@@ -71,7 +70,7 @@ function App() {
     return () => {
       if (interval) clearTimeout(interval);
     };
-  }, [lightRoastBags, darkRoastBags]);
+  }, [cartItems]);
 
   return (
     <main className="p-2 bg-[var(--secondary-bg-color)] min-h-screen">
