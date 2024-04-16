@@ -3,6 +3,19 @@ const { getLocationFromZipCode } = require('./getLocationFromZipCode');
 
 const prisma = new PrismaClient();
 
+async function calculateShippingCost(cart) {
+  const totalWeight = cart.items.reduce((acc, item) => {
+    const { productId, quantity } = JSON.parse(item);
+    const product = prisma.product.findUnique({
+      where: { id: productId },
+    });
+    return acc + product.weight * quantity;
+  }, 0);
+
+  const totalCost = totalWeight * 0.5;
+  return totalCost;
+}
+
 async function createShipStationOrder(orderId) {
   try {
     const order = await prisma.order.findUnique({
