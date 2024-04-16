@@ -1,7 +1,7 @@
 import BitcoinPriceChart from "../components/PriceChart";
 import { useCartContext } from "../context/CartContext";
 import { useUiContext } from "../context/UiContext";
-import CurrentHodlings from "../components/CurrentHodlings";
+import CurrentHodlingsSidebar from "../components/CurrentHodlingsSidebar";
 
 export default function CartLayout() {
   const { openModal } = useUiContext();
@@ -27,7 +27,7 @@ export default function CartLayout() {
           </h2>
         </div>
         <div className="p-2">
-          <CurrentHodlings />
+          <CurrentHodlingsSidebar />
         </div>
         {/* Light/Dark */}
         {/* <div className="flex flex-col gap-4">
