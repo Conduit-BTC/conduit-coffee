@@ -12,8 +12,61 @@ async function calculateShippingCost(cart) {
     return acc + product.weight * quantity;
   }, 0);
 
-  const totalCost = totalWeight * 0.5;
+  // Shipping via USPS Ground Advantage
+  // 1 bag - 10.5"x8" padded envelope
+  // 2-4 bags - 12x8x6 box
+  // 5+ bags - a combination of the above
+  // Shipstation Get Rates API used here
   return totalCost;
+}
+
+export function calculateDimensions(cart) {
+  // Determine package dimensions based on the number of bags
+  let packages = [];
+  let index = cart.items.length - 1;
+
+  const small = {
+    units: 'inches',
+    length: 10.5,
+    width: 8,
+    height: 1,
+  };
+
+  const large = {
+    units: 'inches',
+    length: 12,
+    width: 8,
+    height: 6,
+  };
+
+  if (index % 4 === 0) {
+    const p = { ...small, weight: cart.items[index].weight };
+    packages.push(p);
+    index -= 1;
+  }
+
+  if (index === 0) return packages;
+
+  let pkgQty = 0;
+  let weight = 0;
+
+  for (let i = index; i >= 0; i--) {
+    if (i === 0) {
+      weight += cart.items[i].weight;
+      pkgQty++;
+    }
+    if (i === 0 || pkgQty === 4) {
+      const p = { ...large, weight };
+      packages.push(p);
+      pkgQty = 0;
+      weight = 0;
+    }
+
+    weight += cart.items[i].weight;
+    pkgQty++;
+  }
+
+  return packages;
 }
 
 async function createShipStationOrder(orderId) {
@@ -135,7 +188,11 @@ async function updateOrderShipstationId(orderId, shipstationId) {
 }
 
 module.exports = {
-  getLocationFromZipCode,
-  createShipStationOrder,
-  updateOrderShipstationId,
+  __test__: {
+    calculateDimensions,
+    calculateShippingCost,
+    createShipStationItems,
+    createShipStationOrder,
+    updateOrderShipstationId,
+  },
 };
