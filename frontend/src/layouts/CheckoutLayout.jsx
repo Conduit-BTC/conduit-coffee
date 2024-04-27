@@ -9,7 +9,7 @@ export default function CheckoutLayout() {
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
 
-  async function postNewOrder(cartData, orderData) {
+  async function postNewOrder(orderData) {
     const url =
       import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
     if (!url) {
@@ -49,6 +49,8 @@ export default function CheckoutLayout() {
         <CurrentHodlings />
       </div>
       <div className="w-full h-1 bg-gray-600 mb-8" />
+      <ShippingCostCalculator />
+      <div className="w-full h-1 bg-gray-600 my-8" />
       <h3 className="mb-2">{`Shipping Address`}</h3>
       <h6>{`We don't need to know you, we just need a place to send your coffee. Use a codename if you'd like.`}</h6>
       <form
@@ -161,8 +163,6 @@ export default function CheckoutLayout() {
           </button>
         )}
       </form>
-      <br />
-      <ShippingCostCalculator />
     </>
   );
 }
