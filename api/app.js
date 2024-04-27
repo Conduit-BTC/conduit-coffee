@@ -36,11 +36,13 @@ app.use(
 const orderRoutes = require('./routes/orderRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const productRoutes = require('./routes/productRoutes');
+const shippingRoutes = require('./routes/shippingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 app.use('/orders', orderRoutes);
 app.use('/invoices', invoiceRoutes);
 app.use('/products', productRoutes);
+app.use('/shipping', shippingRoutes);
 app.use('/admin', adminRoutes);
 
 // Start the server

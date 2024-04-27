@@ -1,5 +1,3 @@
-const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
-const { addInvoiceToOrder } = require('../utils/invoiceUtils');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
