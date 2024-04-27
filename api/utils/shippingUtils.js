@@ -3,24 +3,80 @@ const { getLocationFromZipCode } = require('./getLocationFromZipCode');
 
 const prisma = new PrismaClient();
 
-async function calculateShippingCost(cart) {
-  const totalWeight = cart.items.reduce((acc, item) => {
-    const { productId, quantity } = JSON.parse(item);
-    const product = prisma.product.findUnique({
-      where: { id: productId },
-    });
-    return acc + product.weight * quantity;
-  }, 0);
+function createRatesPayload(zip, pkg) {
+  return {
+    carrierCode: 'stamps_com',
+    serviceCode: 'usps_ground_advantage',
+    packageCode: null,
+    fromPostalCode: '94710',
+    toCountry: 'US',
+    toPostalCode: zip,
+    weight: {
+      value: pkg.weight,
+      units: 'ounces',
+    },
+    dimensions: {
+      units: 'inches',
+      length: pkg.length,
+      width: pkg.width,
+      height: pkg.height,
+    },
+    confirmation: 'delivery',
+    residential: true,
+  };
+}
 
-  // Shipping via USPS Ground Advantage
-  // 1 bag - 10.5"x8" padded envelope
-  // 2-4 bags - 12x8x6 box
-  // 5+ bags - a combination of the above
+async function calculateShippingCost(zip, cart) {
+  const packages = calculatePackagesFromCart(cart);
   // Shipstation Get Rates API used here
+  let totalCost = 0.0;
+  let error;
+  for (const pkg of packages) {
+    const payload = createRatesPayload(zip, pkg);
+    try {
+      const response = await fetch(
+        'https://ssapi.shipstation.com/shipments/getrates',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${Buffer.from(
+              `${process.env.SHIPSTATION_API_KEY}:${process.env.SHIPSTATION_API_SECRET}`,
+            ).toString('base64')}`,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        totalCost += data[0].shipmentCost;
+        // Process the response and update the totalCost
+      } else {
+        console.error('Error calculating shipping cost:', response.status);
+        error = {
+          message: 'Error calculating shipping cost',
+          status: response.status,
+        };
+        // Handle the error based on the status code
+      }
+    } catch (error) {
+      console.error('Error calculating shipping cost:', error);
+      error = {
+        message: 'Error calculating shipping cost',
+        status: response.status,
+      };
+      // Handle any network or other errors
+    }
+  }
+  if (error) {
+    throw error;
+  }
+  console.log('Total Cost on server: ', totalCost);
   return totalCost;
 }
 
-export function calculateDimensions(cart) {
+function calculatePackagesFromCart(cart) {
   // Determine package dimensions based on the number of bags
   let packages = [];
   let index = cart.items.length - 1;
@@ -189,7 +245,7 @@ async function updateOrderShipstationId(orderId, shipstationId) {
 
 module.exports = {
   __test__: {
-    calculateDimensions,
+    calculatePackagesFromCart,
     calculateShippingCost,
     createShipStationItems,
     createShipStationOrder,
