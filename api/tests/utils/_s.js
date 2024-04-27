@@ -1,16 +1,16 @@
 const { __test__ } = require('../../utils/shippingUtils');
 const { calculateShippingCost } = __test__;
-const {
-  cart1,
-  cart3,
-  cart5,
-  cart7,
-  cart8,
-  cart9,
-} = require('../_fixtures/cartFixtures');
+
+const items = [
+  { weight: 12, quantity: 1 },
+  { weight: 12, quantity: 1 },
+  { weight: 12, quantity: 1 },
+  { weight: 12, quantity: 3 },
+  { weight: 12, quantity: 3 },
+];
 
 async function calculateCost() {
-  const cost = await calculateShippingCost('90046', cart7);
+  const cost = await calculateShippingCost('90046', items);
   console.log('Total cost: ', cost);
 }
 

@@ -51,14 +51,12 @@ async function calculateShippingCost(zip, cart) {
       if (response.ok) {
         const data = await response.json();
         totalCost += data[0].shipmentCost;
-        // Process the response and update the totalCost
       } else {
         console.error('Error calculating shipping cost:', response.status);
         error = {
           message: 'Error calculating shipping cost',
           status: response.status,
         };
-        // Handle the error based on the status code
       }
     } catch (error) {
       console.error('Error calculating shipping cost:', error);
@@ -66,20 +64,26 @@ async function calculateShippingCost(zip, cart) {
         message: 'Error calculating shipping cost',
         status: response.status,
       };
-      // Handle any network or other errors
     }
   }
   if (error) {
     throw error;
   }
-  console.log('Total Cost on server: ', totalCost);
   return totalCost;
 }
 
-function calculatePackagesFromCart(cart) {
+function calculatePackagesFromCart(_items) {
   // Determine package dimensions based on the number of bags
   let packages = [];
-  let index = cart.items.length - 1;
+  let items = [];
+
+  for (item of _items) {
+    for (let i = 0; i < item.quantity; i++) {
+      items.push({ weight: item.weight });
+    }
+  }
+
+  let index = items.length - 1;
 
   const small = {
     units: 'inches',
@@ -96,7 +100,7 @@ function calculatePackagesFromCart(cart) {
   };
 
   if (index % 4 === 0) {
-    const p = { ...small, weight: cart.items[index].weight };
+    const p = { ...small, weight: items[index].weight };
     packages.push(p);
     index -= 1;
   }
@@ -108,7 +112,7 @@ function calculatePackagesFromCart(cart) {
 
   for (let i = index; i >= 0; i--) {
     if (i === 0) {
-      weight += cart.items[i].weight;
+      weight += items[i].weight;
       pkgQty++;
     }
     if (i === 0 || pkgQty === 4) {
@@ -118,7 +122,7 @@ function calculatePackagesFromCart(cart) {
       weight = 0;
     }
 
-    weight += cart.items[i].weight;
+    weight += items[i].weight;
     pkgQty++;
   }
 
@@ -244,6 +248,7 @@ async function updateOrderShipstationId(orderId, shipstationId) {
 }
 
 module.exports = {
+  calculateShippingCost,
   __test__: {
     calculatePackagesFromCart,
     calculateShippingCost,

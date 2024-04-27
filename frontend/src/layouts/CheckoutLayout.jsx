@@ -2,6 +2,7 @@ import CurrentHodlings from "../components/CurrentHodlings";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 import { useState } from "react";
+import ShippingCostCalculator from "../components/ShippingCostCalculator";
 
 export default function CheckoutLayout() {
   const [invoiceUrl, setInvoiceUrl] = useState("");
@@ -144,7 +145,6 @@ export default function CheckoutLayout() {
           placeholder="Nostr npub key (optional)"
           id="email"
         />
-        <ShippingCostCalculator />
         {invoiceUrl ? (
           <button
             onClick={() => window.open(invoiceUrl, "_blank")}
@@ -161,6 +161,8 @@ export default function CheckoutLayout() {
           </button>
         )}
       </form>
+      <br />
+      <ShippingCostCalculator />
     </>
   );
 }
