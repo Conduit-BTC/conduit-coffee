@@ -8,6 +8,35 @@ export default function CheckoutLayout() {
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
 
+  async function postNewOrder(cartData, orderData) {
+    const url =
+      import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
+    if (!url) {
+      console.error(
+        "CheckoutLayout: Environment Variable missing: VITE_API_URL"
+      );
+      return;
+    }
+    try {
+      const response = await fetch(`${url}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInvoiceUrl(data.invoiceUrl);
+      } else {
+        console.error("Failed to create order:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+    }
+  }
+
   return (
     <>
       <h1 className="text-h2 pr-12 text-blue-500 mb-2">
@@ -24,14 +53,6 @@ export default function CheckoutLayout() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          const url =
-            import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
-          if (!url) {
-            console.error(
-              "CheckoutLayout: Environment Variable missing: VITE_API_URL"
-            );
-            return;
-          }
           const cartData = {
             sats_cart_price: satsToUsd * cartPriceUsd,
             usd_cart_price: cartPriceUsd,
@@ -51,25 +72,7 @@ export default function CheckoutLayout() {
             email: document.getElementById("email").value,
             cart: cartData,
           };
-          //
-          try {
-            const response = await fetch(`${url}/orders`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(orderData),
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              setInvoiceUrl(data.invoiceUrl);
-            } else {
-              console.error("Failed to create order:", response.statusText);
-            }
-          } catch (error) {
-            console.error("Error creating order:", error);
-          }
+          postNewOrder(cartData, orderData);
         }}
       >
         <input
@@ -141,6 +144,7 @@ export default function CheckoutLayout() {
           placeholder="Nostr npub key (optional)"
           id="email"
         />
+        <ShippingCostCalculator />
         {invoiceUrl ? (
           <button
             onClick={() => window.open(invoiceUrl, "_blank")}
