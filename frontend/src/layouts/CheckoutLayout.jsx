@@ -55,6 +55,13 @@ export default function CheckoutLayout() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
+          const url = import.meta.env.VITE_API_URL;
+          if (!url) {
+            console.error(
+              "CheckoutLayout: Environment Variable missing: VITE_API_URL"
+            );
+            return;
+          }
           const cartData = {
             sats_cart_price: satsToUsd * cartPriceUsd,
             usd_cart_price: cartPriceUsd,
