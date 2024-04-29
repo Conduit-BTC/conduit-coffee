@@ -24,8 +24,7 @@ export default function CheckoutLayout() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          const url =
-            import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
+          const url = import.meta.env.VITE_API_URL;
           if (!url) {
             console.error(
               "CheckoutLayout: Environment Variable missing: VITE_API_URL"
