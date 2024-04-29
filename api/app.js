@@ -45,6 +45,6 @@ app.use('/admin', adminRoutes);
 
 // Start the server
 const port = process.env.PORT || 3456;
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`API server running on port ${port}`);
 });
