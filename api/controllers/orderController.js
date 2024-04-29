@@ -2,6 +2,7 @@ const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
 const { addInvoiceToOrder } = require('../utils/invoiceUtils');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { calculateShippingCost } = require('../utils/shippingUtils');
 
 exports.getAllOrders = async (_, res) => {
   try {
@@ -58,6 +59,19 @@ exports.createOrder = async (req, res) => {
       include: { cart: true },
     });
 
+    const usdShippingCost = await calculateShippingCost(zip, cartItems);
+    const satsShippingCost = usdShippingCost * currentSatsPrice;
+
+    console.log('Shipping cost: ', satsShippingCost);
+    console.log(
+      'Cart cost: ',
+      createdOrder.cart.usd_cart_price * currentSatsPrice,
+    );
+    console.log(
+      'Total cost: ',
+      createdOrder.cart.usd_cart_price * currentSatsPrice + satsShippingCost,
+    );
+
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', `token ${process.env.BTCPAY_API_KEY}`);
@@ -71,7 +85,8 @@ exports.createOrder = async (req, res) => {
         showQR: true,
         showPayments: true,
       },
-      amount: currentSatsPrice * createdOrder.cart.usd_cart_price,
+      amount:
+        currentSatsPrice * createdOrder.cart.usd_cart_price + satsShippingCost,
       currency: 'Sats',
     });
 

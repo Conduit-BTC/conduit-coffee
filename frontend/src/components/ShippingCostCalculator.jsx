@@ -3,7 +3,7 @@ import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 import SatsIcon from "./SatsIcon";
 
-const performCalculation = async (zip) => {
+async function performCalculation(zip, cartItems) {
   const url = "http://localhost:3456/shipping/rate";
   //   import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
 
@@ -16,12 +16,12 @@ const performCalculation = async (zip) => {
   });
 
   if (response.ok) {
-    const data = await response.json();
+    const usdCost = await response.json();
     return usdCost;
   } else {
     console.error("Failed to calculate shipping cost:", response.statusText);
   }
-};
+}
 
 export default function ShippingCostCalculator() {
   const { cartItems } = useCartContext();
@@ -46,8 +46,8 @@ export default function ShippingCostCalculator() {
         className={`p-4 flex my-4 ${
           zip && zip.length >= 5 ? "bg-blue-500" : "bg-blue-500/20"
         }`}
-        onClick={() => {
-          const res = performCalculation();
+        onClick={async () => {
+          const res = await performCalculation(zip, cartItems);
           if (res) {
             setUsdCost(res);
             setSatsCost(res * satsToUsd);
@@ -58,13 +58,15 @@ export default function ShippingCostCalculator() {
       >
         {`>> Calculate Shipping Cost << `}
       </button>
+      <h4>Shipping Cost</h4>
       <h4>
-        Shipping Cost:
         <span className="text-orange-500">
           <SatsIcon color="orange" />
           {`${Math.floor(satsCost)} Sats`}
         </span>
-        <span className="text-green-500">{` ($${usdCost})`}</span>
+      </h4>
+      <h4>
+        <span className="text-green-500">{` ($${usdCost} USD)`}</span>
       </h4>
     </section>
   );
