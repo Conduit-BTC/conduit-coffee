@@ -2,7 +2,7 @@
 FROM node:18
 
 # Set the working directory
-WORKDIR /api
+WORKDIR /service
 
 RUN npm install -g pm2
 
