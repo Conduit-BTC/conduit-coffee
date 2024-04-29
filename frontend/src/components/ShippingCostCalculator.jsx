@@ -5,7 +5,7 @@ import SatsIcon from "./SatsIcon";
 
 async function performCalculation(zip, cartItems) {
   const url = "http://localhost:3456/shipping/rate";
-  //   import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
+  //   import.meta.env.VITE_API_URL;
 
   const response = await fetch(url, {
     method: "POST",

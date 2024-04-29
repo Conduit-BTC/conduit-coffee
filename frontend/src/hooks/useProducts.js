@@ -4,8 +4,7 @@ const useProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const url =
-      import.meta.env.VITE_API_URL || "https://conduit-service.fly.dev";
+    const url = import.meta.env.VITE_API_URL;
 
     if (!url) {
       console.error(
