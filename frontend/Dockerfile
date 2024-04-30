@@ -1,26 +1,29 @@
-# Use a Node.js base image
-FROM node:18-slim
+FROM node:18-slim AS build
 
-# Set the working directory to the root of your project
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV NPM_CONFIG_FUND=false
+ENV NODE_ENV=production
+
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy the entire project
-COPY . .
+COPY . ./
+
+# Specify any needed environment variables here
+ARG VITE_API_URL
 
 # Build the React app
 RUN npm run build
 
-# Set the environment to production
-ENV NODE_ENV=production
+FROM caddy
 
-# Expose the port your app runs on
-EXPOSE 3000
+WORKDIR /app
 
-# Start the app
-CMD ["npm", "run", "start"]
+COPY Caddyfile ./
+
+COPY --from=build /app/dist /app/dist
+
+CMD ["caddy", "run", "--config", "Caddyfile", "--adapter", "caddyfile"]
