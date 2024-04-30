@@ -720,11 +720,6 @@ browserslist@^4.23.0:
     node-releases "^2.0.14"
     update-browserslist-db "^1.0.13"
 
-caddy@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/caddy/-/caddy-0.0.13.tgz#d5bcf91ef4c11440842ef5253d901c704f0548c7"
-  integrity sha512-rc9RPEM0O32dzL52y9Udm+Y/2ll8cbaIVx0x4Q6yBrUtPvSyaDj46XPzhexLhfD0nh63+PsPVW1uMSsrTVZgag==
-
 call-bind@^1.0.2, call-bind@^1.0.5, call-bind@^1.0.6, call-bind@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.7.tgz#06016599c40c56498c18769d2730be242b6fa3b9"

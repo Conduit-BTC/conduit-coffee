@@ -15,7 +15,6 @@ COPY . ./
 # Specify any needed environment variables here
 ARG VITE_API_URL
 
-# Build the React app
 RUN npm run build
 
 FROM caddy
@@ -24,6 +23,6 @@ WORKDIR /app
 
 COPY Caddyfile ./
 
-COPY --from=build /app/dist /app/dist
+COPY --from=build ./dist /app/dist
 
 CMD ["caddy", "run", "--config", "Caddyfile", "--adapter", "caddyfile"]
