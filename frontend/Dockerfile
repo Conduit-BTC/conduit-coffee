@@ -2,15 +2,13 @@ FROM node:18-slim AS build
 
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 ENV NPM_CONFIG_FUND=false
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npx vite build
-
-RUN npm install
+RUN npm install --verbose
 
 COPY . ./
 
@@ -25,6 +23,6 @@ WORKDIR /app
 
 COPY Caddyfile ./
 
-COPY --from=build ./dist /app/dist
+COPY --from=build /app/dist /app/dist
 
 CMD ["caddy", "run", "--config", "Caddyfile", "--adapter", "caddyfile"]
