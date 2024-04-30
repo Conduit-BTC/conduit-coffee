@@ -7,18 +7,18 @@
     "dev": "vite && tailwindcss -i ./src/input.css -o ./src/output.css --watch",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "start": "serve -s dist"
+    "start": "caddy run --config Caddyfile --adapter caddyfile"
   },
   "dependencies": {
     "@fontsource/fira-code": "^5.0.17",
     "@fontsource/fira-sans": "^5.0.19",
+    "caddy": "^0.0.13",
     "chart.js": "^4.4.2",
     "chartjs-adapter-dayjs-4": "^1.0.4",
     "dayjs": "^1.11.10",
     "jsdoc": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "serve": "^14.2.3",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
