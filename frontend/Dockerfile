@@ -8,6 +8,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
+RUN npx vite build
+
 RUN npm install
 
 COPY . ./
