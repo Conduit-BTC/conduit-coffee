@@ -38,6 +38,9 @@ exports.createOrder = async (req, res) => {
       }),
     );
 
+    const usdShippingCost = await calculateShippingCost(zip, cartItems);
+    const satsShippingCost = usdShippingCost * currentSatsPrice;
+
     const createdOrder = await prisma.order.create({
       data: {
         first_name,
@@ -51,7 +54,8 @@ exports.createOrder = async (req, res) => {
           create: {
             sats_cart_price: cart.sats_cart_price,
             usd_cart_price: cart.usd_cart_price,
-            shipping_cost_usd: cart.shipping_cost_usd || 0,
+            shipping_cost_usd: usdShippingCost,
+            shipping_cost_sats: satsShippingCost,
             items: cartItems,
           },
         },
@@ -59,8 +63,7 @@ exports.createOrder = async (req, res) => {
       include: { cart: true },
     });
 
-    const usdShippingCost = await calculateShippingCost(zip, cartItems);
-    const satsShippingCost = usdShippingCost * currentSatsPrice;
+
 
     console.log('Shipping cost: ', satsShippingCost);
     console.log(
