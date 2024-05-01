@@ -1,7 +1,10 @@
 export async function getCurrentSatsPrice() {
-  return fetch(
-    `https://btcpay0.voltageapp.io/api/rates?storeId=enevfPMDK4coPh5yps6T8Z55qWMSYPesffazn95Lduz`
-  )
+  const storeId = import.meta.env.VITE_BTCPAY_STORE_ID;
+  if (!storeId) {
+    console.error("Environment Variable missing: VITE_BTCPAY_STORE_ID");
+    return;
+  }
+  return fetch(`https://btcpay0.voltageapp.io/api/rates?storeId=${storeId}`)
     .then((response) => {
       if (!response.ok) {
         console.error(response);

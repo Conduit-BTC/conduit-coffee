@@ -17,6 +17,11 @@ exports.getAllOrders = async (_, res) => {
 };
 
 exports.createOrder = async (req, res) => {
+  const storeId = process.env.BTCPAY_STORE_ID;
+  if (!storeId) {
+    console.error('Environment Variable missing: BTCPAY_STORE_ID');
+    return;
+  }
   try {
     const {
       first_name,
@@ -89,7 +94,7 @@ exports.createOrder = async (req, res) => {
     };
 
     fetch(
-      'https://btcpay0.voltageapp.io/api/v1/stores/enevfPMDK4coPh5yps6T8Z55qWMSYPesffazn95Lduz/invoices',
+      `https://btcpay0.voltageapp.io/api/v1/stores/${storeId}/invoices`,
       requestOptions,
     )
       .then((response) => response.json())

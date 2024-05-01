@@ -52,9 +52,13 @@ async function calculateShippingCost(zip, items) {
         const data = await response.json();
         totalCost += data[0].shipmentCost;
       } else {
-        console.error('Error calculating shipping cost:', response.status);
+        console.error(
+          'Issue requesting shipping cost estimation from ShipStation:',
+          response.status,
+        );
         error = {
-          message: 'Error calculating shipping cost',
+          message:
+            'Issue requesting shipping cost estimation from ShipStation:',
           status: response.status,
         };
       }
