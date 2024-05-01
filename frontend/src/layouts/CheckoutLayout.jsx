@@ -10,6 +10,7 @@ export default function CheckoutLayout() {
   const { cartItems, cartPriceUsd } = useCartContext();
 
   async function postNewOrder(orderData) {
+    console.log("orderData", orderData);
     const url = import.meta.env.VITE_API_URL;
     if (!url) {
       console.error(
@@ -81,7 +82,7 @@ export default function CheckoutLayout() {
             email: document.getElementById("email").value,
             cart: cartData,
           };
-          postNewOrder(cartData, orderData);
+          postNewOrder(orderData);
         }}
       >
         <input
