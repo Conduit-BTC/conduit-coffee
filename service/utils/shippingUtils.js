@@ -26,8 +26,8 @@ function createRatesPayload(zip, pkg) {
   };
 }
 
-async function calculateShippingCost(zip, cart) {
-  const packages = calculatePackagesFromCart(cart);
+async function calculateShippingCost(zip, items) {
+  const packages = calculatePackagesFromCart(items);
   // Shipstation Get Rates API used here
   let totalCost = 0.0;
   let error;
