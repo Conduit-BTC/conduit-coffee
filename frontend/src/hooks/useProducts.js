@@ -5,7 +5,6 @@ const useProducts = () => {
 
   useEffect(() => {
     const url = import.meta.env.VITE_API_URL;
-    console.log("VITE_API_URL: ", url);
 
     if (!url) {
       console.error(
