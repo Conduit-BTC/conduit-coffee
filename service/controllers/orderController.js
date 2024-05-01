@@ -31,12 +31,12 @@ exports.createOrder = async (req, res) => {
 
     const currentSatsPrice = await getCurrentSatsPrice();
 
-    const cartItems = cart.items.map((item) =>
-      JSON.stringify({
+    const cartItems = cart.items.map((item) => {
+      return {
         productId: item.id,
         quantity: item.quantity,
-      }),
-    );
+      };
+    });
 
     const usdShippingCost = await calculateShippingCost(zip, cartItems);
     const satsShippingCost = usdShippingCost * currentSatsPrice;
@@ -56,24 +56,12 @@ exports.createOrder = async (req, res) => {
             usd_cart_price: cart.usd_cart_price,
             shipping_cost_usd: usdShippingCost,
             shipping_cost_sats: satsShippingCost,
-            items: cartItems,
+            items: cartItems.map((item) => JSON.stringify(item)),
           },
         },
       },
       include: { cart: true },
     });
-
-
-
-    console.log('Shipping cost: ', satsShippingCost);
-    console.log(
-      'Cart cost: ',
-      createdOrder.cart.usd_cart_price * currentSatsPrice,
-    );
-    console.log(
-      'Total cost: ',
-      createdOrder.cart.usd_cart_price * currentSatsPrice + satsShippingCost,
-    );
 
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');

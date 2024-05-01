@@ -10,8 +10,8 @@ export default function CheckoutLayout() {
   const { cartItems, cartPriceUsd } = useCartContext();
 
   async function postNewOrder(orderData) {
-    console.log("orderData", orderData);
     const url = import.meta.env.VITE_API_URL;
+    console.log("url", url);
     if (!url) {
       console.error(
         "CheckoutLayout: Environment Variable missing: VITE_API_URL"

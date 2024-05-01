@@ -1,6 +1,4 @@
 import { useCryptoContext } from "../context/CryptoContext";
-import { BASE_COST_PER_BAG } from "../constants";
-import { useCartContext } from "../context/CartContext";
 
 import SatsIcon from "./SatsIcon";
 
