@@ -34,6 +34,7 @@ model Cart {
   sats_cart_price   Float
   usd_cart_price    Float
   shipping_cost_usd Float
+  shipping_cost_sats Float
   items             String[]
   order             Order           @relation(fields: [orderId], references: [id])
   orderId           String          @unique
