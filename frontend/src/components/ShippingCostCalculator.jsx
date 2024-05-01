@@ -4,7 +4,7 @@ import { useCryptoContext } from "../context/CryptoContext";
 import SatsIcon from "./SatsIcon";
 
 async function performCalculation(zip, cartItems) {
-  const url = import.meta.env.VITE_API_URL;
+  const url = `${import.meta.env.VITE_API_URL}/shipping/rate`;
 
   const response = await fetch(url, {
     method: "POST",
