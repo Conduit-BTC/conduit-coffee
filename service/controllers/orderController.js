@@ -44,8 +44,6 @@ exports.createOrder = async (req, res) => {
       };
     });
 
-    console.log('Cart items: ', cartItems);
-
     const usdShippingCost = await calculateShippingCost(zip, cartItems);
     const satsShippingCost = usdShippingCost * currentSatsPrice;
 
