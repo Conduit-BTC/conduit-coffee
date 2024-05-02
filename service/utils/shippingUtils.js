@@ -144,11 +144,6 @@ async function createShipStationOrder(orderId) {
     }
     const { city, state, country } = await getLocationFromZipCode(order.zip);
 
-    console.log(
-      'Result: ',
-      process.env.NODE_ENV === 'production' ? 'awaiting_shipment' : 'cancelled',
-    );
-
     const shipStationOrder = {
       orderNumber: order.id.toString(),
       orderDate: new Date().toISOString(),
