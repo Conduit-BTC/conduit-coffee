@@ -40,8 +40,11 @@ exports.createOrder = async (req, res) => {
       return {
         productId: item.id,
         quantity: item.quantity,
+        weight: item.weight,
       };
     });
+
+    console.log('Cart items: ', cartItems);
 
     const usdShippingCost = await calculateShippingCost(zip, cartItems);
     const satsShippingCost = usdShippingCost * currentSatsPrice;
