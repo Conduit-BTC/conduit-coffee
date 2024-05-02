@@ -57,7 +57,4 @@ console.log(
   process.env.NODE_ENV === 'production' ? 'awaiting_shipment' : 'cancelled',
 );
 
-console.log(
-  "Node ENV === 'production': ",
-  process.env.NODE_ENV === 'production',
-);
+console.log("Node ENV == 'production': ", process.env.NODE_ENV == 'production');
