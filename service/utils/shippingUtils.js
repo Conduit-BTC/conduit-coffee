@@ -254,6 +254,7 @@ async function updateOrderShipstationId(orderId, shipstationId) {
 module.exports = {
   calculateShippingCost,
   createShipStationOrder,
+  updateOrderShipstationId,
   __test__: {
     calculatePackagesFromCart,
     calculateShippingCost,
