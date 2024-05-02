@@ -147,7 +147,10 @@ async function createShipStationOrder(orderId) {
     const shipStationOrder = {
       orderNumber: order.id.toString(),
       orderDate: new Date().toISOString(),
-      orderStatus: 'awaiting_shipment',
+      orderStatus:
+        process.env.NODE_ENV === 'production'
+          ? 'awaiting_shipment'
+          : 'cancelled',
       billTo: {
         name: `${order.first_name} ${order.last_name}`,
         company: null,
