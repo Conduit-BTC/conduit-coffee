@@ -144,6 +144,8 @@ async function createShipStationOrder(orderId) {
     }
     const { city, state, country } = await getLocationFromZipCode(order.zip);
 
+    console.log('NODE_ENV: ', process.env.NODE_ENV);
+
     const shipStationOrder = {
       orderNumber: order.id.toString(),
       orderDate: new Date().toISOString(),
