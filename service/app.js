@@ -50,3 +50,14 @@ const port = process.env.PORT || 3456;
 app.listen(port, '0.0.0.0', () => {
   console.log(`API server running on port ${port}`);
 });
+
+console.log('Node ENV: ', process.env.NODE_ENV);
+console.log(
+  'Result: ',
+  process.env.NODE_ENV === 'production' ? 'awaiting_shipment' : 'cancelled',
+);
+
+console.log(
+  "Node ENV === 'production': ",
+  process.env.NODE_ENV === 'production',
+);
