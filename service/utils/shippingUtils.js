@@ -148,7 +148,7 @@ async function createShipStationOrder(orderId) {
       orderNumber: order.id.toString(),
       orderDate: new Date().toISOString(),
       orderStatus:
-        process.env.NODE_ENV === 'production'
+        process.env.APP_ENV === 'production'
           ? 'awaiting_shipment'
           : 'cancelled',
       billTo: {
