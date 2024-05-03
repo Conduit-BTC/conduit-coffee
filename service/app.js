@@ -51,10 +51,10 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`API server running on port ${port}`);
 });
 
-console.log('Node ENV: ', process.env.NODE_ENV);
+console.log('Node ENV: ', process.env.APP_ENV);
 console.log(
   'Result: ',
-  process.env.NODE_ENV === 'production' ? 'awaiting_shipment' : 'cancelled',
+  process.env.APP_ENV === 'production' ? 'awaiting_shipment' : 'cancelled',
 );
 
-console.log("Node ENV == 'production': ", process.env.NODE_ENV == 'production');
+console.log("Node ENV == 'production': ", process.env.APP_ENV == 'production');
