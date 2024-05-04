@@ -1,7 +1,7 @@
 import { useCartContext } from "../../context/CartContext";
 import { useUiContext } from "../../context/UiContext";
 
-export default function CheckoutButton({ text, onHandleClick }) {
+export default function CheckoutButton({ text, onHandleClick = () => {} }) {
   const { totalCartQty } = useCartContext();
   const { openCheckoutModal } = useUiContext();
   return (
