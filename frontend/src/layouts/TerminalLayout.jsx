@@ -1,10 +1,12 @@
 import { useCartContext } from "../context/CartContext";
 import ProductLineItem from "../components/ProductLineItem";
 import ExchangeRateBox from "../components/ExchangeRateBox";
+import { useUiContext } from "../context/UiContext";
 import useProducts from "../hooks/useProducts";
 
 const TerminalLayout = () => {
   const { cartItems, addItemToCart, removeItemFromCart } = useCartContext();
+  const { openProductDetailsModal } = useUiContext();
 
   const { products } = useProducts();
 
@@ -44,6 +46,7 @@ const TerminalLayout = () => {
               )}
               increaseFunction={() => addItemToCart(product)}
               decreaseFunction={() => removeItemFromCart(product)}
+              onShowProductDetails={() => openProductDetailsModal(product)}
             />
           );
         })}
