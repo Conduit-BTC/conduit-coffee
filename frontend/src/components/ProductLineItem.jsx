@@ -1,23 +1,25 @@
 import pingBorder from "../lib/pingBorder";
+import { useUiContext } from "../context/UiContext";
 
 export default function ProductLineItem({
   // borderElement,
-  name,
-  description,
+  product,
   pingColor,
   borderColor,
   accentColor,
   quantity,
   increaseFunction,
   decreaseFunction,
-  onShowProductDetails,
 }) {
+  const { openProductDetailsModal } = useUiContext();
+  const { name, description } = product;
+
   return (
     <section className="flex">
       <button
         aria-label={`Display product information about ${name}`}
         onClick={() => {
-          onShowProductDetails;
+          openProductDetailsModal(product);
         }}
         className="flex items-center p-4 border-2 border-blue-500/50 hover:border-blue-500 "
       >

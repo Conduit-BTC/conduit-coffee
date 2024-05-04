@@ -1,8 +1,8 @@
-import CurrentHodlings from "../components/CurrentHodlings";
-import { useCartContext } from "../context/CartContext";
-import { useCryptoContext } from "../context/CryptoContext";
+import CurrentHodlings from "../../components/CurrentHodlings";
+import { useCartContext } from "../../context/CartContext";
+import { useCryptoContext } from "../../context/CryptoContext";
 import { useState } from "react";
-import ShippingCostCalculator from "../components/ShippingCostCalculator";
+import ShippingCostCalculator from "../../components/ShippingCostCalculator";
 
 export default function CheckoutLayout() {
   const [invoiceUrl, setInvoiceUrl] = useState("");

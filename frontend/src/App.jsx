@@ -10,9 +10,7 @@ import { useCryptoContext } from "./context/CryptoContext";
 import { getHistoricSatsPrice } from "./lib/cryptoApiFunctions";
 import { useCartContext } from "./context/CartContext";
 import { SATS_REFRESH_RATE } from "./constants";
-import ModalWindowLayout from "./layouts/ModalWindowLayout";
-import CheckoutLayout from "./layouts/CheckoutLayout";
-import { useUiContext } from "./context/UiContext";
+import AppModals from "./layouts/Modals/AppModals";
 
 // Sets the global price via context, with the help of the app's useEffect()
 async function updateCryptoContext(
@@ -54,7 +52,6 @@ async function updateCryptoContext(
 
 function App() {
   const { cartItems } = useCartContext();
-  const { isCheckoutModalOpen, closeCheckoutModal } = useUiContext();
   const { isLooping, startLooping, setSatsPrice, setSatsPriceOverTime } =
     useCryptoContext();
 
@@ -77,11 +74,7 @@ function App() {
   return (
     <main className="p-2 bg-[var(--secondary-bg-color)] min-h-screen">
       <section className="relative bg-[var( bg-[var(--secondary-bg-color)])] flex flex-col justify-start w-full h-full border-4 border-[var(--main-text-color)] min-h-[97.5vh]">
-        {isCheckoutModalOpen && (
-          <ModalWindowLayout onCloseModal={closeCheckoutModal}>
-            <CheckoutLayout />
-          </ModalWindowLayout>
-        )}
+        <AppModals />
         {/* <HeaderLayout /> */}
         <div className="flex flex-col lg:flex-row justify-between">
           <TerminalLayout />
