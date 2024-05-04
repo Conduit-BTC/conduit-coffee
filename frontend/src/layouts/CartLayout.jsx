@@ -2,11 +2,9 @@ import BitcoinPriceChart from "../components/PriceChart";
 import { useCartContext } from "../context/CartContext";
 import { useUiContext } from "../context/UiContext";
 import CurrentHodlingsSidebar from "../components/CurrentHodlingsSidebar";
+import CheckoutButton from "../components/Buttons/CheckoutButton";
 
 export default function CartLayout() {
-  const { openCheckoutModal } = useUiContext();
-  const { totalCartQty } = useCartContext();
-
   // const borderRef = useRef(null);
 
   // useEffect(() => {
@@ -50,17 +48,7 @@ export default function CartLayout() {
           <div className="mb-8 w-full h-full">
             <BitcoinPriceChart />
           </div>
-          <button
-            onClick={() => {
-              openCheckoutModal();
-            }}
-            className={`p-4 text-[var(--main-text-color)] hover:font-bold w-full bg-blue-500 ${
-              totalCartQty == 0 ? " opacity-50" : "opacity-100"
-            }`}
-            disabled={totalCartQty == 0}
-          >
-            {`step 3: zap out -> buy now`}
-          </button>
+          <CheckoutButton text={`step 3: zap out -> buy now`} />
         </div>
       </div>
     </section>

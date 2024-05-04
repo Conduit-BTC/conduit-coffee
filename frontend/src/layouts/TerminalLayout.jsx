@@ -4,7 +4,7 @@ import ExchangeRateBox from "../components/ExchangeRateBox";
 import useProducts from "../hooks/useProducts";
 
 const TerminalLayout = () => {
-  const { cartItems, addItemToCart, removeItemFromCart } = useCartContext();
+  const { cartItems } = useCartContext();
 
   const { products } = useProducts();
 
@@ -41,8 +41,6 @@ const TerminalLayout = () => {
                   sum + (item.id === product.id ? item.quantity : 0),
                 0
               )}
-              increaseFunction={() => addItemToCart(product)}
-              decreaseFunction={() => removeItemFromCart(product)}
             />
           );
         })}

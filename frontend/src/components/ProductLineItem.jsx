@@ -1,5 +1,6 @@
 import pingBorder from "../lib/pingBorder";
 import { useUiContext } from "../context/UiContext";
+import { useCartContext } from "../context/CartContext";
 
 export default function ProductLineItem({
   // borderElement,
@@ -12,6 +13,7 @@ export default function ProductLineItem({
   decreaseFunction,
 }) {
   const { openProductDetailsModal } = useUiContext();
+  const { addItemToCart, removeItemFromCart } = useCartContext();
   const { name, description } = product;
 
   return (
@@ -37,7 +39,7 @@ export default function ProductLineItem({
       <div className="flex px-2 gap-2 items-center border-2 border-blue-500/75">
         <button
           onClick={() => {
-            decreaseFunction();
+            removeItemFromCart(product);
           }}
           aria-label={`Remove ${name} from cart`}
           className={
@@ -49,7 +51,7 @@ export default function ProductLineItem({
         <button
           onClick={() => {
             // pingBorder(borderElement.current, pingColor);
-            increaseFunction();
+            addItemToCart(product);
           }}
           aria-label={`Add ${name} to cart`}
           className="p-1 w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center rounded-sm bg-green-800"
