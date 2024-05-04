@@ -12,7 +12,7 @@ export default function ProductDetailsLayout() {
   const { name, description, price } = currentProductDetails;
 
   return (
-    <section className="min-h-[97.5vh] flex flex-col justify-between">
+    <section className="flex flex-col justify-between gap-24">
       <div className="mb-4">
         <img src="/images/coming-soon-banner.png" alt="Coming Soon" />
       </div>
