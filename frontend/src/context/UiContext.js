@@ -1,8 +1,14 @@
 import { create } from "zustand";
 
 export const useUiContext = create((set) => ({
-  isModalOpen: false,
+  isCheckoutModalOpen: false,
+  openCheckoutModal: () => set({ isCheckoutModalOpen: true }),
+  closeCheckoutModal: () => set({ isCheckoutModalOpen: false }),
 
-  openModal: () => set({ isModalOpen: true }),
-  closeModal: () => set({ isModalOpen: false }),
+  isProductDetailsModalOpen: false,
+  currentProductDetails: null,
+  openProductDetailsModal: (product) =>
+    set({ isProductDetailsModalOpen: true, currentProductDetails: product }),
+  closeProductDetailsModal: () =>
+    set({ isProductDetailsModalOpen: false, currentProductDetails: null }),
 }));

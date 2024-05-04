@@ -4,7 +4,7 @@ import { useUiContext } from "../context/UiContext";
 import CurrentHodlingsSidebar from "../components/CurrentHodlingsSidebar";
 
 export default function CartLayout() {
-  const { openModal } = useUiContext();
+  const { openCheckoutModal } = useUiContext();
   const { totalCartQty } = useCartContext();
 
   // const borderRef = useRef(null);
@@ -52,7 +52,7 @@ export default function CartLayout() {
           </div>
           <button
             onClick={() => {
-              openModal();
+              openCheckoutModal();
             }}
             className={`p-4 text-[var(--main-text-color)] hover:font-bold w-full bg-blue-500 ${
               totalCartQty == 0 ? " opacity-50" : "opacity-100"
