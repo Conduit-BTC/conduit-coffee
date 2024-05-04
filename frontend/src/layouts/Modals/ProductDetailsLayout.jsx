@@ -65,10 +65,10 @@ export default function ProductDetailsLayout() {
         >
           Go Back
         </button>
-        <div className="bg-red-200">
+        <div>
           <CheckoutButton
             onHandleClick={closeProductDetailsModal}
-            text={`step 3: zap out -> buy now`}
+            text={`zap out -> buy now`}
           />
         </div>
       </div>
