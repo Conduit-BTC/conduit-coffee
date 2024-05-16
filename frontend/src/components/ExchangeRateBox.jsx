@@ -6,7 +6,7 @@ export default function ExchangeRateBox() {
   const { satsToUsd } = useCryptoContext();
 
   return (
-    <div className="text-left p-2 bg-[var(--cart-bg-color)]">
+    <div className="text-left p-4 bg-white/5">
       <h4 className=" mb-2">Conversion Rate</h4>
       <h5 className="  mb-4">
         {" "}
