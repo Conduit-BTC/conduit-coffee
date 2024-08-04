@@ -15,7 +15,7 @@ export default function ProductDetailsLayout() {
     <section className="flex flex-col justify-between gap-24">
       <div className="mb-4">
         <img
-          src="/images/conduit-coffee-banner.jpeg"
+          src="/images/conduit-coffee-banner.jpg"
           alt="Conduit Coffee Banner"
         />
       </div>

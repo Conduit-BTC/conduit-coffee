@@ -15,14 +15,14 @@ const TerminalLayout = () => {
     <>
       <div className="block lg:hidden">
         <img
-          src="/images/conduit-coffee-banner.jpeg"
+          src="/images/conduit-coffee-banner.jpg"
           alt="Conduit Coffee Banner"
         />
       </div>
       <section className="my-2 mt-0 w-full bg-[var(--cart-bg-color)]">
         <div className="hidden lg:block mb-4">
           <img
-            src="/images/conduit-coffee-banner.jpeg"
+            src="/images/conduit-coffee-banner.jpg"
             alt="Conduit Coffee Banner"
           />
         </div>
