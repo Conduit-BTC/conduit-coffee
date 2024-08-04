@@ -14,7 +14,7 @@ export default function ProductDetailsLayout() {
   return (
     <section className="flex flex-col justify-between gap-24">
       <div className="mb-4">
-        <img src="/images/coming-soon-banner.png" alt="Coming Soon" />
+        <img src="/images/conduit-coffee-banner.png" alt="Coming Soon" />
       </div>
       <div className="flex flex-col gap-2">
         <h1>{name}</h1>
