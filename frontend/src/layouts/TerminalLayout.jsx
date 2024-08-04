@@ -14,11 +14,17 @@ const TerminalLayout = () => {
   return (
     <>
       <div className="block lg:hidden">
-        <img src="/images/conduit-coffee-banner.png" alt="Coming Soon" />
+        <img
+          src="/images/conduit-coffee-banner.png"
+          alt="Conduit Coffee Banner"
+        />
       </div>
       <section className="my-2 mt-0 w-full bg-[var(--cart-bg-color)]">
         <div className="hidden lg:block mb-4">
-          <img src="/images/conduit-coffee-banner.png" alt="Coming Soon" />
+          <img
+            src="/images/conduit-coffee-banner.png"
+            alt="Conduit Coffee Banner"
+          />
         </div>
         <div className="p-8">
           <h5 className="mb-8 w-full">
