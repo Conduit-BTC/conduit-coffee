@@ -3,6 +3,31 @@ import ProductLineItem from "../components/ProductLineItem";
 import ExchangeRateBox from "../components/ExchangeRateBox";
 import useProducts from "../hooks/useProducts";
 
+function getColors(name) {
+  switch (name) {
+    case "Light.ing":
+      return {
+        borderColor: "border-blue-500",
+        bgColor: "bg-blue-500",
+        textColor: "text-blue-500",
+      };
+    case "Resist.nce":
+      return {
+        borderColor: "border-red-500",
+        bgColor: "bg-red-500",
+        textColor: "text-red-500",
+      };
+    case "Stat.c":
+      return {
+        borderColor: "border-purple-500",
+        bgColor: "bg-purple-500",
+        textColor: "text-purple-500",
+      };
+    default:
+      return "text-blue-500";
+  }
+}
+
 const TerminalLayout = () => {
   const { cartItems } = useCartContext();
 
@@ -48,8 +73,9 @@ const TerminalLayout = () => {
                   product={product}
                   // borderElement={lightningRef}
                   pingColor="blue"
-                  accentColor="text-blue-500"
-                  borderColor="border-blue-500"
+                  bgColor={getColors(product.name).bgColor}
+                  borderColor={getColors(product.name).borderColor}
+                  textColor={getColors(product.name).textColor}
                   quantity={cartItems.reduce(
                     (sum, item) =>
                       sum + (item.id === product.id ? item.quantity : 0),
