@@ -22,7 +22,7 @@ export default function ModalWindowLayout({ onCloseModal, children }) {
       <div className="w-full border-2 border-[var(--main-text-color)] bg-[var(--main-bg-color)] p-4">
         <button
           onClick={onCloseModal}
-          className="absolute top-8 right-8 p-2 w-12 h-12 centered text-4xl bg-[var(--main-text-color)] text-[var(--main-bg-color)]"
+          className="absolute top-8 right-8 p-2 w-12 h-12 centered text-4xl bg-red-500 shadow-md shadow-black/50 text-[var(--main-bg-color)]"
         >
           {`×`}
         </button>
