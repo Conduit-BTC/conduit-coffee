@@ -7,7 +7,10 @@ import "@fontsource/fira-code/400.css";
 import "@fontsource/fira-code/700.css";
 import "@fontsource/fira-sans";
 import { useCryptoContext } from "./context/CryptoContext";
-import { getHistoricSatsPrice } from "./lib/cryptoApiFunctions";
+import {
+  getCurrentSatsPrice,
+  getHistoricSatsPrice,
+} from "./lib/cryptoApiFunctions";
 import { useCartContext } from "./context/CartContext";
 import { SATS_REFRESH_RATE } from "./constants";
 import AppModals from "./layouts/Modals/AppModals";
@@ -29,10 +32,7 @@ async function updateCryptoContext(
       return [item[0], satsToUsd];
     });
 
-    const currentPrice = priceOverTime[priceOverTime.length - 1][1];
-
-    // const currentBtcPrice = 1 / history.prices[history.prices.length - 1][1];
-    // const currentPrice = currentBtcPrice * 100000000;
+    const currentPrice = await getCurrentSatsPrice();
 
     if (currentPrice) setSatsPrice(currentPrice);
 

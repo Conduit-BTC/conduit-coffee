@@ -17,7 +17,7 @@ export default function ExchangeRateBox() {
           <span className="text-xs">{` (Satoshis)`}</span>
         </span>
       </h5>
-      <p className="text-xs mt-4">*CoinGecko Real-Time Rate</p>
+      <p className="text-xs mt-4">*Strike Real-Time Rate</p>
     </div>
   );
 }
