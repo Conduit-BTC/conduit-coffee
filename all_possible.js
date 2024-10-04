@@ -1,0 +1,38 @@
+const allPossiblePairs = [
+  { amount: "55382.1000", sourceCurrency: "BTC", targetCurrency: "EUR" },
+  {
+    amount: "0.0000180564770288",
+    sourceCurrency: "EUR",
+    targetCurrency: "BTC",
+  },
+  { amount: "1.1028", sourceCurrency: "EUR", targetCurrency: "USDT" },
+  { amount: "0.8397", sourceCurrency: "EUR", targetCurrency: "GBP" },
+  { amount: "1.1026", sourceCurrency: "EUR", targetCurrency: "USD" },
+  { amount: "0.9068", sourceCurrency: "USDT", targetCurrency: "EUR" },
+  { amount: "61073.0600", sourceCurrency: "BTC", targetCurrency: "USDT" },
+  {
+    amount: "0.0000163738351425",
+    sourceCurrency: "USDT",
+    targetCurrency: "BTC",
+  },
+  { amount: "0.7615", sourceCurrency: "USDT", targetCurrency: "GBP" },
+  { amount: "0.9998", sourceCurrency: "USDT", targetCurrency: "USD" },
+  { amount: "61063.3700", sourceCurrency: "BTC", targetCurrency: "USD" },
+  {
+    amount: "0.0000163764329249",
+    sourceCurrency: "USD",
+    targetCurrency: "BTC",
+  },
+  { amount: "0.9070", sourceCurrency: "USD", targetCurrency: "EUR" },
+  { amount: "0.7616", sourceCurrency: "USD", targetCurrency: "GBP" },
+  { amount: "1.0002", sourceCurrency: "USD", targetCurrency: "USDT" },
+  { amount: "1.1909", sourceCurrency: "GBP", targetCurrency: "EUR" },
+  { amount: "1.3132", sourceCurrency: "GBP", targetCurrency: "USDT" },
+  { amount: "46506.4300", sourceCurrency: "BTC", targetCurrency: "GBP" },
+  {
+    amount: "0.0000215025237561",
+    sourceCurrency: "GBP",
+    targetCurrency: "BTC",
+  },
+  { amount: "1.3130", sourceCurrency: "GBP", targetCurrency: "USD" },
+];

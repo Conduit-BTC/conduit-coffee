@@ -38,12 +38,14 @@ const invoiceRoutes = require('./routes/invoiceRoutes');
 const productRoutes = require('./routes/productRoutes');
 const shippingRoutes = require('./routes/shippingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const tickerRoutes = require('./routes/tickerRoutes');
 
 app.use('/orders', orderRoutes);
 app.use('/invoices', invoiceRoutes);
 app.use('/products', productRoutes);
 app.use('/shipping', shippingRoutes);
 app.use('/admin', adminRoutes);
+app.use('/ticker', tickerRoutes);
 
 // Start the server
 const port = process.env.PORT || 3456;
@@ -52,9 +54,3 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 console.log('Node ENV: ', process.env.APP_ENV);
-console.log(
-  'Result: ',
-  process.env.APP_ENV === 'production' ? 'awaiting_shipment' : 'cancelled',
-);
-
-console.log("Node ENV == 'production': ", process.env.APP_ENV == 'production');

@@ -1,4 +1,3 @@
-const { verifySignature } = require('../utils/verifySignature');
 const { stringifyRequest } = require('../utils/stringifyRequest');
 const { processPaidOrder, voidOrder } = require('../utils/invoiceUtils');
 const {
@@ -65,14 +64,12 @@ exports.handleInvoiceWebhook = async (req, res) => {
 };
 
 async function validateRequest(req) {
-  const secret = process.env.BTCPAY_INVOICE_WEBHOOK_SECRET;
-  if (!secret) {
+  const strikeWebhookSecret = process.env.STRIKE_INVOICE_WEBHOOK_SECRET;
+  if (!strikeWebhookSecret) {
     throw new Error(
       'invoiceController.js # validateRequest() - Missing ENV Variable',
     );
   }
-  const btcPaySig = req.get('btcpay-sig');
-  if (typeof btcPaySig !== 'string') return false;
-  const isValid = await verifySignature(secret, btcPaySig, req.rawBody);
-  return isValid;
+  console.log('BODY: ', req.body);
+  return false;
 }
