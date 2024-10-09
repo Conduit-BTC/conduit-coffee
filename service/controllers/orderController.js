@@ -18,6 +18,7 @@ exports.getAllOrders = async (_, res) => {
 };
 
 exports.createOrder = async (req, res) => {
+  // See https://docs.strike.me/walkthrough/receiving-payments
   console.log('Creating Order...');
   const strikeKey = process.env.STRIKE_API_KEY;
 
@@ -83,24 +84,28 @@ exports.createOrder = async (req, res) => {
       description: 'Invoice for Order #' + createdOrder.id || '__________',
       amount: {
         currency: 'USD',
-        amount: cart.usd_cart_price,
+        amount: cart.usd_cart_price + usdShippingCost,
       },
     });
 
     var requestOptions = {
       method: 'POST',
       headers: headers,
-      data: body,
+      body,
     };
 
     fetch(`https://api.strike.me/v1/invoices`, requestOptions)
       .then((response) => response.json())
-      .then((data) => {
-        res.json({ invoiceUrl: data.checkoutLink });
+      .then(async (data) => {
+        if (!data.invoiceId) {
+          console.error('Error creating Strike invoice:', data);
+          return res.status(500).json({ error: 'Error creating invoice' });
+        }
+        const lightningInvoice = await generateLightningInvoice(data.invoiceId);
         addInvoiceToOrder(data.invoiceId, createdOrder.id).then((result) => {
           if (result) console.log('Invoice added to order:' + createdOrder.id);
-          if (result) return res.status(200);
-          else return res.status(400);
+          if (result) res.json({ lightningInvoice }, 200);
+          else return res.status(500);
         });
       })
       .catch((error) => {
@@ -112,3 +117,25 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+async function generateLightningInvoice(invoiceId) {
+  try {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.STRIKE_API_KEY}`,
+        'ContentLength': 0,
+      }
+    }
+
+    const lightningInvoice = await fetch(`https://api.strike.me/v1/invoices/${invoiceId}/quote`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        return data.lnInvoice;
+      })
+    return lightningInvoice;
+  } catch (error) {
+    throw new Error('Error generating Strike quote:', error);
+  }
+}
