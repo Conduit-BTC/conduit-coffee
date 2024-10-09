@@ -1,48 +1,43 @@
 const { PrismaClient } = require('@prisma/client');
 const { getLocationFromZipCode } = require('./getLocationFromZipCode');
+const { getOauthToken } = require('./oauthUtils');
 
 const prisma = new PrismaClient();
 
 function createRatesPayload(zip, pkg) {
+  const originZIPCode = process.env.SHIPPING_ORIGIN_ZIP;
+
+  const ozToLbs = (oz) => oz / 16;
+
   return {
-    carrierCode: 'stamps_com',
-    serviceCode: 'usps_ground_advantage',
-    packageCode: null,
-    fromPostalCode: '94710',
-    toCountry: 'US',
-    toPostalCode: zip,
-    weight: {
-      value: pkg.weight,
-      units: 'ounces',
-    },
-    dimensions: {
-      units: 'inches',
-      length: pkg.length,
-      width: pkg.width,
-      height: pkg.height,
-    },
-    confirmation: 'delivery',
-    residential: true,
+    originZIPCode,
+    destinationZIPCode: zip,
+    weight: ozToLbs(pkg.weight),
+    length: pkg.length,
+    width: pkg.width,
+    height: pkg.height,
+    mailClasses: ['USPS_GROUND_ADVANTAGE'],
+    priceType: 'CONTRACT',
   };
 }
 
 async function calculateShippingCost(zip, items) {
   const packages = calculatePackagesFromCart(items);
-  // Shipstation Get Rates API used here
   let totalCost = 0.0;
   let error;
+  const token = await getOauthToken();
+  const bearer = token.access_token;
+
   for (const pkg of packages) {
     const payload = createRatesPayload(zip, pkg);
     try {
       const response = await fetch(
-        'https://ssapi.shipstation.com/shipments/getrates',
+        'https://api.usps.com/prices/v3/total-rates/search',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${Buffer.from(
-              `${process.env.SHIPSTATION_API_KEY}:${process.env.SHIPSTATION_API_SECRET}`,
-            ).toString('base64')}`,
+            Authorization: `Bearer ${bearer}`,
           },
           body: JSON.stringify(payload),
         },
@@ -50,15 +45,14 @@ async function calculateShippingCost(zip, items) {
 
       if (response.ok) {
         const data = await response.json();
-        totalCost += data[0].shipmentCost;
+        totalCost += data.rateOptions[0].totalBasePrice;
       } else {
         console.error(
-          'Issue requesting shipping cost estimation from ShipStation:',
+          'Issue requesting shipping cost estimation from USPS:',
           response.status,
         );
         error = {
-          message:
-            'Issue requesting shipping cost estimation from ShipStation:',
+          message: 'Issue requesting shipping cost estimation from USPS:',
           status: response.status,
         };
       }
@@ -73,6 +67,7 @@ async function calculateShippingCost(zip, items) {
   if (error) {
     throw error;
   }
+  console.log('Total Cost: ', totalCost);
   return totalCost;
 }
 
