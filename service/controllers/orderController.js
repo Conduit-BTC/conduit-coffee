@@ -50,7 +50,7 @@ exports.createOrder = async (req, res) => {
     });
 
     const usdShippingCost = await calculateShippingCost(zip, cartItems);
-    const satsShippingCost = usdShippingCost * currentSatsPrice;
+    const satsShippingCost = (usdShippingCost * currentSatsPrice);
 
     const createdOrder = await prisma.order.create({
       data: {
@@ -83,8 +83,8 @@ exports.createOrder = async (req, res) => {
       correlationId: randomUUID(),
       description: 'Invoice for Order #' + createdOrder.id || '__________',
       amount: {
-        currency: 'USD',
-        amount: cart.usd_cart_price + usdShippingCost,
+        currency: 'BTC',
+        amount: (cart.sats_cart_price + satsShippingCost) / 100000000
       },
     });
 

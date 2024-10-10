@@ -68,7 +68,7 @@ async function calculateShippingCost(zip, items) {
     throw error;
   }
   console.log('Total Cost: ', totalCost);
-  return totalCost;
+  return totalCost * 0.8;
 }
 
 function calculatePackagesFromCart(_items) {

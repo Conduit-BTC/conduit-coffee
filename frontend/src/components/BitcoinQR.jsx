@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
@@ -60,6 +60,7 @@ const BitcoinQR = ({ lightningInvoice, onChainAddress, amount, label, message })
 
             <div className="mt-4">
                 <h3 className="font-bold">Payment Details:</h3>
+                <p>Lightning Invoice: {lightningInvoice}</p>
                 <p>Amount: {amount} BTC</p>
                 <p>Label: {label}</p>
                 <p>Message: {message}</p>

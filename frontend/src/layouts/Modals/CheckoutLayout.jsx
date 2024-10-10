@@ -1,12 +1,12 @@
 import CurrentHodlings from "../../components/CurrentHodlings";
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShippingCostCalculator from "../../components/ShippingCostCalculator";
 import BitcoinQR from "../../components/BitcoinQR";
 
 export default function CheckoutLayout() {
-  const [lightningInvoice, setLightningInvoice] = useState("");
+  const [lightningInvoice, setLightningInvoice] = useState(null);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
 
@@ -158,7 +158,7 @@ export default function CheckoutLayout() {
           <BitcoinQR
             width={300}
             height={300}
-            lightning={lightningInvoice}
+            lightningInvoice={lightningInvoice}
             parameters="amount=0.00001&label=sbddesign%3A%20For%20lunch%20Tuesday&message=For%20lunch%20Tuesday"
             image="https://voltage.imgix.net/Team.png?fm=webp&w=160"
             type="svg"
