@@ -84,7 +84,8 @@ exports.createOrder = async (req, res) => {
       description: 'Invoice for Order #' + createdOrder.id || '__________',
       amount: {
         currency: 'BTC',
-        amount: (cart.sats_cart_price + satsShippingCost) / 100000000
+        amount: 0.00000001
+        // amount: (cart.sats_cart_price + satsShippingCost) / 100000000
       },
     });
 

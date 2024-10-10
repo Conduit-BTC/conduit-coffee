@@ -1,0 +1,150 @@
+// Veeqo is fun...
+// 1. Create a Customer
+// 2. Create an Order
+// 3. Create a Shipment
+
+async function createVeeqoCustomer(orderId, email = null) {
+    try {
+
+        const customer = await fetch(`https://api.veeqo.com/customers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.VEEQO_API_KEY,
+            },
+            body: JSON.stringify({
+                email: email ? email : `orderId+${orderId}@customers.conduit.coffee`
+            })
+        });
+
+        if (!customer.ok) {
+            throw new Error(
+                `Error POSTing to Veeqo - Veeqo Response: ${customer.status} - ${customer.statusText}`,
+            );
+        }
+
+        const data = await customer.json();
+        return data.id;
+    } catch (error) {
+        console.error('Error creating Veeqo customer:', error)
+        return null
+    }
+}
+
+async function createVeeqoOrder(customerId, order) {
+    try {
+        const { getLocationFromZipCode } = require('./getLocationFromZipCode');
+        const { first_name, last_name, address1, address2, zip, cart } = order;
+        const { city, state, country } = await getLocationFromZipCode(order.zip);
+
+        const body = JSON.stringify({
+            channelId: 0,
+            customer_id: customerId,
+            delivery_method_id: 0,
+            deliver_to_attributes: {
+                first_name,
+                last_name,
+                address1,
+                address2,
+                city,
+                state,
+                country,
+                zip,
+                customer_id: customerId
+            },
+            line_item_attributes: createLineItems(cart),
+
+        })
+
+        const order = await fetch(`https://api.veeqo.com/orders`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.VEEQO_API_KEY,
+            },
+            body
+        });
+
+        if (!order.ok) {
+            throw new Error(
+                `Error POSTing to Veeqo - Veeqo Response: ${order.status} - ${order.statusText}`,
+            );
+        }
+
+        const data = await order.json();
+        return data.order.id;
+    } catch (error) {
+        console.error('Error creating Veeqo order:', error);
+        return null;
+    }
+}
+
+async function createVeeqoShipment(orderId) {
+    try {
+        const body = JSON.stringify({
+            carrier_id: 0,
+            notify_customer: false,
+            update_remote_order: false,
+            allocation_id: 1,
+            order_id: orderId
+        })
+
+        const shipment = await fetch(`https://api.veeqo.com/shipments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.VEEQO_API_KEY,
+            },
+            body
+        })
+
+        if (!shipment.ok) {
+            throw new Error(
+                `Error POSTing to Veeqo - Veeqo Response: ${shipment.status} - ${shipment.statusText}`,
+            );
+        }
+
+        const data = await shipment.json();
+        return data.id;
+    } catch (error) {
+        throw new Error('Error creating Veeqo shipment:', error);
+    }
+}
+
+async function createLineItems(cart) {
+    try {
+        const items = [];
+
+        for (const item of cart.items) {
+            const { productId, quantity } = JSON.parse(item);
+
+            const product = await prisma.product.findUnique({
+                where: {
+                    id: productId,
+                },
+            });
+
+            if (!product) {
+                throw new Error(`Product with ID ${productId} not found`);
+            }
+
+            const { veeqoId, price } = product;
+
+            items.push({
+                sellable_id: veeqoId,
+                quantity: quantity,
+                price_per_unit: price
+            });
+        }
+
+        return items;
+    } catch (error) {
+        throw new Error('Error creating Veeqo line items:', error);
+    }
+}
+
+module.exports = {
+    createVeeqoCustomer,
+    createVeeqoOrder,
+    createVeeqoShipment
+}
