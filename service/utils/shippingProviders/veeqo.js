@@ -5,8 +5,7 @@
 
 async function createVeeqoCustomer(orderId, email = null) {
     try {
-
-        const customer = await fetch(`https://api.veeqo.com/customers`, {
+        const customer = await fetch(`${process.env.VEEQO_API_BASE_URL}/customers`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,7 +55,7 @@ async function createVeeqoOrder(customerId, order) {
 
         })
 
-        const order = await fetch(`https://api.veeqo.com/orders`, {
+        const order = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -89,7 +88,7 @@ async function createVeeqoShipment(orderId) {
             order_id: orderId
         })
 
-        const shipment = await fetch(`https://api.veeqo.com/shipments`, {
+        const shipment = await fetch(`${process.env.VEEQO_API_BASE_URL}/shipments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

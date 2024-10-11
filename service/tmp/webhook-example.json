@@ -1,0 +1,150 @@
+Received invoice webhook
+BODY: {
+  id: '70715048-0a0b-4679-abfd-d2b4cec0a72f',
+  eventType: 'invoice.updated',
+  webhookVersion: 'v1',
+  data: {
+    entityId: '98cba68f-9537-4259-ae3c-0411a2b39293',
+    changes: [ 'state'
+        ]
+    },
+  created: '2024-10-10T00: 42: 33.8070428+00: 00'
+}
+Unauthorized request!
+Unauthorized request! - {
+    "method": "POST",
+    "url": "/",
+    "headers": {
+        "host": "localhost:3456",
+        "traceparent": "00-2551501b3fbb43c51ad57c02481ffe42-c1dc3ff4ff1565d5-01",
+        "x-request-id": "fc21dae19e9387a1b0af73f210b59ce9",
+        "x-real-ip": "10.240.0.69",
+        "x-forwarded-port": "443",
+        "x-forwarded-scheme": "https",
+        "x-original-uri": "/invoices",
+        "x-scheme": "https",
+        "x-b3-traceid": "2551501b3fbb43c51ad57c02481ffe42",
+        "x-b3-spanid": "c1dc3ff4ff1565d5",
+        "x-b3-sampled": "1",
+        "x-webhook-signature": "7F11189AEBC10DB910AEDABAAC6579B0370D5D8E26892FAD6EFAABD5043CFB8D",
+        "x-original-proto": "https",
+        "x-forwarded-proto": "https",
+        "x-forwarded-host": "n667z0kz-3456.usw3.devtunnels.ms",
+        "x-forwarded-for": "10.240.0.69",
+        "proxy-connection": "Keep-Alive",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "270"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+        "id": "70715048-0a0b-4679-abfd-d2b4cec0a72f",
+        "eventType": "invoice.updated",
+        "webhookVersion": "v1",
+        "data": {
+            "entityId": "98cba68f-9537-4259-ae3c-0411a2b39293",
+            "changes": [
+                "state"
+            ]
+        },
+        "created": "2024-10-10T00:42:33.8070428+00:00"
+    }
+}
+Received invoice webhook
+BODY: {
+  id: '70715048-0a0b-4679-abfd-d2b4cec0a72f',
+  eventType: 'invoice.updated',
+  webhookVersion: 'v1',
+  data: {
+    entityId: '98cba68f-9537-4259-ae3c-0411a2b39293',
+    changes: [ 'state'
+        ]
+    },
+  created: '2024-10-10T00: 42: 33.8070428+00: 00'
+}
+Unauthorized request!
+Unauthorized request! - {
+    "method": "POST",
+    "url": "/",
+    "headers": {
+        "host": "localhost:3456",
+        "traceparent": "00-32532d1b8c3f145ee06ded153efee3ff-766a5f346e313574-01",
+        "x-request-id": "d747fdaa2607debdfeef1294c8094430",
+        "x-real-ip": "10.240.0.69",
+        "x-forwarded-port": "443",
+        "x-forwarded-scheme": "https",
+        "x-original-uri": "/invoices",
+        "x-scheme": "https",
+        "x-b3-traceid": "32532d1b8c3f145ee06ded153efee3ff",
+        "x-b3-spanid": "766a5f346e313574",
+        "x-b3-sampled": "1",
+        "x-webhook-signature": "7F11189AEBC10DB910AEDABAAC6579B0370D5D8E26892FAD6EFAABD5043CFB8D",
+        "x-original-proto": "https",
+        "x-forwarded-proto": "https",
+        "x-forwarded-host": "n667z0kz-3456.usw3.devtunnels.ms",
+        "x-forwarded-for": "10.240.0.69",
+        "proxy-connection": "Keep-Alive",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "270"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+        "id": "70715048-0a0b-4679-abfd-d2b4cec0a72f",
+        "eventType": "invoice.updated",
+        "webhookVersion": "v1",
+        "data": {
+            "entityId": "98cba68f-9537-4259-ae3c-0411a2b39293",
+            "changes": [
+                "state"
+            ]
+        },
+        "created": "2024-10-10T00:42:33.8070428+00:00"
+    }
+}
+Received invoice webhook
+BODY: {
+  id: 'cd0b04e3-81bc-4a6b-8833-ba204558cba6',
+  eventType: 'invoice.created',
+  webhookVersion: 'v1',
+  data: { entityId: '98cba68f-9537-4259-ae3c-0411a2b39293'
+    },
+  created: '2024-10-10T00: 42: 09.1654714+00: 00'
+}
+Unauthorized request!
+Unauthorized request! - {
+    "method": "POST",
+    "url": "/",
+    "headers": {
+        "host": "localhost:3456",
+        "traceparent": "00-80ee3ae75ee0420e4abaf8ffd453ae9f-24a74f5bd4f0b689-01",
+        "x-request-id": "a8f7718338d5e35839f12093b0bf32ce",
+        "x-real-ip": "10.240.0.69",
+        "x-forwarded-port": "443",
+        "x-forwarded-scheme": "https",
+        "x-original-uri": "/invoices",
+        "x-scheme": "https",
+        "x-b3-traceid": "80ee3ae75ee0420e4abaf8ffd453ae9f",
+        "x-b3-spanid": "24a74f5bd4f0b689",
+        "x-b3-sampled": "1",
+        "x-webhook-signature": "758221E274A60D5F55C69581D15DDE3B4202784C697450BD155BB28E9C8DFEC9",
+        "x-original-proto": "https",
+        "x-forwarded-proto": "https",
+        "x-forwarded-host": "n667z0kz-3456.usw3.devtunnels.ms",
+        "x-forwarded-for": "10.240.0.69",
+        "proxy-connection": "Keep-Alive",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "232"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+        "id": "cd0b04e3-81bc-4a6b-8833-ba204558cba6",
+        "eventType": "invoice.created",
+        "webhookVersion": "v1",
+        "data": {
+            "entityId": "98cba68f-9537-4259-ae3c-0411a2b39293"
+        },
+        "created": "2024-10-10T00:42:09.1654714+00:00"
+    }
+}

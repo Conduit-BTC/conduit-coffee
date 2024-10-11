@@ -22,20 +22,11 @@ exports.handleInvoiceWebhook = async (req, res) => {
     switch (req.body.eventType) {
       case 'invoice.created':
         return res.status(200).json({ message: 'Webhook received' });
+
       case 'invoice.updated':
-        const invoiceStatus = await checkInvoiceStatus(orderId);
-        if (invoiceStatus !== 'PAID') return res.status(200).json({ message: 'Webhook received' });
+        const result = handleInvoiceUpdate(orderId);
+        return res.status(result.status).json(result.message);
 
-        const ps = await processPaidOrder(orderId);
-
-        if (ps) {
-          const shipId = await createShipment(orderId);
-
-          if (shipId) {
-            await updateOrderWithShipmentId(orderId, shipId.toString());
-          }
-          return res.status(200).json({ message: 'Success!' });
-        }
       default:
         console.log('Failed to process request');
         return res.status(400).json({ message: 'Failed to Process Request' });
@@ -49,6 +40,28 @@ exports.handleInvoiceWebhook = async (req, res) => {
     console.error('Stack trace:', error.stack);
   }
 };
+
+async function handleInvoiceUpdate(orderId) {
+  const invoiceStatus = await checkInvoiceStatus(orderId);
+
+  if (invoiceStatus !== 'PAID') return { status: 200, message: "Webhook received!" }
+
+  const ps = await processPaidOrder(orderId);
+
+  if (!ps) {
+    console.log('Failed to process order');
+    return { status: 400, message: 'Failed to Process Order' };
+  }
+
+  const sh = await createShipment(orderId);
+
+  if (!sh) {
+    console.log('Failed to create shipment');
+    return { status: 400, message: 'Failed to Create Shipment' };
+  }
+
+  return { status: 200, message: 'Success!' };
+}
 
 async function validateRequest(req) {
   const strikeWebhookSecret = process.env.STRIKE_INVOICE_WEBHOOK_SECRET;
