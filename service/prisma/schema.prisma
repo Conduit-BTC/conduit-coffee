@@ -23,9 +23,9 @@ model Order {
   special_instructions String?
   email               String
   cart                Cart?
-  invoiceId           String?
+  invoiceId           String? @unique
   invoiceStatus       String?
-  shipstationId       String?
+  shippingStatus      String?
   created_at          DateTime @default(now())
 }
 
@@ -42,6 +42,7 @@ model Cart {
 
 model Product {
   id           String        @id @default(uuid())
+  veeqoProductId  String?    @unique
   sku          String
   name         String
   description  String
