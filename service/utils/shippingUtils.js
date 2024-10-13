@@ -1,50 +1,60 @@
 const { PrismaClient } = require('@prisma/client');
-const { getLocationFromZipCode } = require('./getLocationFromZipCode');
 const { getOauthToken } = require('./oauthUtils');
+const { createVeeqoCustomer, createVeeqoOrder, createVeeqoShipment } = require('./shippingProviders/veeqo');
 
 const prisma = new PrismaClient();
 
-
-async function createShipment(orderId) {
+async function createShipment(invoiceId) {
   try {
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
+    const order = await prisma.order.findFirst({
+      where: { invoiceId: invoiceId },
       include: { cart: true },
     });
+
     if (!order) {
-      throw new Error(`Order with ID ${orderId} not found`);
+      throw new Error(`Order with Invoice ID ${invoiceId} not found`);
     }
 
-    const vCustomerId = await createVeeqoCustomer(orderId);
+    console.log('Creating customer for order:', order.id);
+    const vCustomerId = await createVeeqoCustomer(order.id);
 
     if (!vCustomerId) {
       throw new Error('Error creating Veeqo customer');
     }
 
-    const vOrderId = await createVeeqoOrder(vCustomer, order);
+    console.log('Customer Created. Veeqo customer ID:', vCustomerId);
+    console.log('Creating Veeqo order for customer');
+
+    const vOrderId = await createVeeqoOrder(vCustomerId, order);
 
     if (!vOrderId) {
       throw new Error('Error creating Veeqo order');
     }
 
+    console.log('Order Created. Veeqo order ID:', vOrderId);
+    console.log('Creating Veeqo shipment for order');
     const vShipmentId = await createVeeqoShipment(vOrderId);
 
     if (!vShipmentId) {
       throw new Error('Error creating Veeqo shipment');
     }
 
-    updateOrderWithShipmentId(orderId, vShipmentId);
+    console.log('Shipment Created. Veeqo shipment ID:', vShipmentId);
+    console.log('Updating order with shipment ID');
+    updateOrderWithShipmentId(order.id, vShipmentId);
+
+    console.log('Order updated with shipment ID');
 
     return { orderId: vOrderId, shipmentId: vShipmentId };
   } catch (error) {
-    console.error('Error creating ShipStation order:', error);
+    console.error('Error creating shipment:', error);
     throw error;
   }
 
 }
 
-async function updateOrderWithShipmentId(orderId) {
-
+async function updateOrderWithShipmentId(orderId, vShipmentId) {
+  // Update the database order to include the Shipment ID
 }
 
 function createRatesPayload(zip, pkg) {
@@ -178,8 +188,5 @@ module.exports = {
   __test__: {
     calculatePackagesFromCart,
     calculateShippingCost,
-    createShipStationItems,
-    createShipStationOrder,
-    updateOrderShipstationId,
   },
 };

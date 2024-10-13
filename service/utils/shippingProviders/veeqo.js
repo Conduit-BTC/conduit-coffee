@@ -3,6 +3,10 @@
 // 2. Create an Order
 // 3. Create a Shipment
 
+const { getLocationFromZipCode } = require('../getLocationFromZipCode');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 async function createVeeqoCustomer(orderId, email = null) {
     try {
         const customer = await fetch(`${process.env.VEEQO_API_BASE_URL}/customers`, {
@@ -32,9 +36,8 @@ async function createVeeqoCustomer(orderId, email = null) {
 
 async function createVeeqoOrder(customerId, order) {
     try {
-        const { getLocationFromZipCode } = require('./getLocationFromZipCode');
         const { first_name, last_name, address1, address2, zip, cart } = order;
-        const { city, state, country } = await getLocationFromZipCode(order.zip);
+        const { city, state, country } = await getLocationFromZipCode(zip);
 
         const body = JSON.stringify({
             channelId: 0,
@@ -55,7 +58,7 @@ async function createVeeqoOrder(customerId, order) {
 
         })
 
-        const order = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
+        const vOrder = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,13 +67,13 @@ async function createVeeqoOrder(customerId, order) {
             body
         });
 
-        if (!order.ok) {
+        if (!vOrder.ok) {
             throw new Error(
-                `Error POSTing to Veeqo - Veeqo Response: ${order.status} - ${order.statusText}`,
+                `Error POSTing to Veeqo - Veeqo Response: ${vOrder.status} - ${vOrder.statusText}`,
             );
         }
 
-        const data = await order.json();
+        const data = await vOrder.json();
         return data.order.id;
     } catch (error) {
         console.error('Error creating Veeqo order:', error);
@@ -113,32 +116,32 @@ async function createVeeqoShipment(orderId) {
 async function createLineItems(cart) {
     try {
         const items = [];
-
         for (const item of cart.items) {
             const { productId, quantity } = JSON.parse(item);
-
             const product = await prisma.product.findUnique({
                 where: {
                     id: productId,
                 },
             });
-
             if (!product) {
                 throw new Error(`Product with ID ${productId} not found`);
             }
-
-            const { veeqoId, price } = product;
-
+            if (!product.veeqoProductId) {
+                throw new Error(`Shipping ID not found for product with ID ${productId}`);
+            }
+            if (typeof product.price === 'undefined') {
+                throw new Error(`Price not found for product with ID ${productId}`);
+            }
             items.push({
-                sellable_id: veeqoId,
+                sellable_id: product.veeqoProductId, // HERE: Get the Veeqo ID for the product and add to the DB
                 quantity: quantity,
-                price_per_unit: price
+                price_per_unit: product.price
             });
         }
-
         return items;
     } catch (error) {
-        throw new Error('Error creating Veeqo line items:', error);
+        console.error('Error in createLineItems:', error);
+        throw error; // Re-throw the error to be caught by the caller
     }
 }
 

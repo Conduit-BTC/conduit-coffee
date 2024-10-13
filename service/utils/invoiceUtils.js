@@ -38,16 +38,26 @@ async function checkInvoiceStatus(invoiceId) {
         Authorization: `Bearer ${process.env.STRIKE_API_KEY}`,
       }
     });
-    if (status.state) return status.state;
+    const data = await status.json();
+    if (data.state) return data.state;
+    return 'ERROR';
   } catch (error) {
     throw new Error('Error checking invoice status:', error);
   }
 }
 
-async function processPaidOrder(orderId) {
+async function processPaidOrder(invoiceId) {
+  const order = await prisma.order.findFirst({
+    where: {
+      invoiceId: invoiceId
+    }
+  });
+
+  if (!order) return false;
+
   const updatedOrder = await prisma.order.update({
     where: {
-      id: orderId,
+      id: order.id
     },
     data: {
       invoiceStatus: 'paid',
@@ -55,8 +65,7 @@ async function processPaidOrder(orderId) {
   });
 
   if (updatedOrder?.affectedRows == 0) return false;
-  // Send order to shipping provider
   return true;
 }
 
-module.exports = { addInvoiceToOrder, voidOrder, processPaidOrder };
+module.exports = { addInvoiceToOrder, voidOrder, processPaidOrder, checkInvoiceStatus };

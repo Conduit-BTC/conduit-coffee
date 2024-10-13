@@ -8,15 +8,16 @@ const { checkInvoiceStatus } = require('../utils/invoiceUtils');
 
 exports.handleInvoiceWebhook = async (req, res) => {
   console.log('Received invoice webhook');
+  console.log(req.body);
 
   try {
-    const orderId = req.body.data?.entityId;
-    if (!orderId) {
-      console.log('No order ID in webhook request');
-      console.log(req.body);
+    const invoiceId = req.body.data?.entityId;
+    if (!invoiceId) {
+      console.warn('No entityId (invoiceId) in webhook request');
+      console.warn(req.body);
       return res
         .status(400)
-        .json({ message: 'Missing Order ID', error: 'Missing Order ID' });
+        .json({ message: 'Missing Invoice ID', error: 'Missing Invoice ID' });
     }
 
     switch (req.body.eventType) {
@@ -24,7 +25,7 @@ exports.handleInvoiceWebhook = async (req, res) => {
         return res.status(200).json({ message: 'Webhook received' });
 
       case 'invoice.updated':
-        const result = handleInvoiceUpdate(orderId);
+        const result = await handleInvoiceUpdate(invoiceId);
         return res.status(result.status).json(result.message);
 
       default:
@@ -41,24 +42,28 @@ exports.handleInvoiceWebhook = async (req, res) => {
   }
 };
 
-async function handleInvoiceUpdate(orderId) {
-  const invoiceStatus = await checkInvoiceStatus(orderId);
+async function handleInvoiceUpdate(invoiceId) {
+  const invoiceStatus = await checkInvoiceStatus(invoiceId);
 
   if (invoiceStatus !== 'PAID') return { status: 200, message: "Webhook received!" }
 
-  const ps = await processPaidOrder(orderId);
+  const ps = await processPaidOrder(invoiceId);
 
   if (!ps) {
     console.log('Failed to process order');
     return { status: 400, message: 'Failed to Process Order' };
   }
 
-  const sh = await createShipment(orderId);
+  console.log('Creating shipment');
+
+  const sh = await createShipment(invoiceId);
 
   if (!sh) {
     console.log('Failed to create shipment');
     return { status: 400, message: 'Failed to Create Shipment' };
   }
+
+  console.log('Shipment created:', sh);
 
   return { status: 200, message: 'Success!' };
 }
