@@ -1,2 +1,3 @@
 postgres-data
 certs
+.env_prod

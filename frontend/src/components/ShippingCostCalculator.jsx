@@ -48,16 +48,17 @@ export default function ShippingCostCalculator() {
         onClick={async () => {
           const res = await performCalculation(zip, cartItems);
           if (res) {
-            setUsdCost(res);
-            setSatsCost(res * satsToUsd);
+            baseCost = (res * 0.8).toFixed(2);
+            setUsdCost(baseCost);
+            setSatsCost(baseCost * satsToUsd);
           } else {
             // TODO: Display error state
           }
         }}
       >
-        {`>> Calculate Shipping Cost << `}
+        {`>> Calculate Estimated Shipping Cost << `}
       </button>
-      <h4>Shipping Cost</h4>
+      <h4>Estimated Shipping Cost</h4>
       <h4>
         <span className="text-orange-500">
           <SatsIcon color="orange" />

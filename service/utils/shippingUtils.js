@@ -1,48 +1,96 @@
 const { PrismaClient } = require('@prisma/client');
-const { getLocationFromZipCode } = require('./getLocationFromZipCode');
+const { getOauthToken } = require('./oauthUtils');
+const { createVeeqoCustomer, createVeeqoOrder, createVeeqoShipment } = require('./shippingProviders/veeqo');
 
 const prisma = new PrismaClient();
 
+async function createShipment(invoiceId) {
+  try {
+    const order = await prisma.order.findFirst({
+      where: { invoiceId: invoiceId },
+      include: { cart: true },
+    });
+
+    if (!order) {
+      throw new Error(`Order with Invoice ID ${invoiceId} not found`);
+    }
+
+    console.log('Creating customer for order:', order.id);
+    const vCustomerId = await createVeeqoCustomer(order.id);
+
+    if (!vCustomerId) {
+      throw new Error('Error creating Veeqo customer');
+    }
+
+    console.log('Customer Created. Veeqo customer ID:', vCustomerId);
+    console.log('Creating Veeqo order for customer');
+
+    const vOrderId = await createVeeqoOrder(vCustomerId, order);
+
+    if (!vOrderId) {
+      throw new Error('Error creating Veeqo order');
+    }
+
+    console.log('Order Created. Veeqo order ID:', vOrderId);
+    console.log('Creating Veeqo shipment for order');
+    const vShipmentId = await createVeeqoShipment(vOrderId);
+
+    if (!vShipmentId) {
+      throw new Error('Error creating Veeqo shipment');
+    }
+
+    console.log('Shipment Created. Veeqo shipment ID:', vShipmentId);
+    console.log('Updating order with shipment ID');
+    updateOrderWithShipmentId(order.id, vShipmentId);
+
+    console.log('Order updated with shipment ID');
+
+    return { orderId: vOrderId, shipmentId: vShipmentId };
+  } catch (error) {
+    console.error('Error creating shipment:', error);
+    throw error;
+  }
+
+}
+
+async function updateOrderWithShipmentId(orderId, vShipmentId) {
+  // Update the database order to include the Shipment ID
+}
+
 function createRatesPayload(zip, pkg) {
+  const originZIPCode = process.env.SHIPPING_ORIGIN_ZIP;
+
+  const ozToLbs = (oz) => oz / 16;
+
   return {
-    carrierCode: 'stamps_com',
-    serviceCode: 'usps_ground_advantage',
-    packageCode: null,
-    fromPostalCode: '94710',
-    toCountry: 'US',
-    toPostalCode: zip,
-    weight: {
-      value: pkg.weight,
-      units: 'ounces',
-    },
-    dimensions: {
-      units: 'inches',
-      length: pkg.length,
-      width: pkg.width,
-      height: pkg.height,
-    },
-    confirmation: 'delivery',
-    residential: true,
+    originZIPCode,
+    destinationZIPCode: zip,
+    weight: ozToLbs(pkg.weight),
+    length: pkg.length,
+    width: pkg.width,
+    height: pkg.height,
+    mailClasses: ['USPS_GROUND_ADVANTAGE'],
+    priceType: 'CONTRACT',
   };
 }
 
 async function calculateShippingCost(zip, items) {
   const packages = calculatePackagesFromCart(items);
-  // Shipstation Get Rates API used here
   let totalCost = 0.0;
   let error;
+  const token = await getOauthToken();
+  const bearer = token.access_token;
+
   for (const pkg of packages) {
     const payload = createRatesPayload(zip, pkg);
     try {
       const response = await fetch(
-        'https://ssapi.shipstation.com/shipments/getrates',
+        'https://api.usps.com/prices/v3/total-rates/search',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${Buffer.from(
-              `${process.env.SHIPSTATION_API_KEY}:${process.env.SHIPSTATION_API_SECRET}`,
-            ).toString('base64')}`,
+            Authorization: `Bearer ${bearer}`,
           },
           body: JSON.stringify(payload),
         },
@@ -50,15 +98,14 @@ async function calculateShippingCost(zip, items) {
 
       if (response.ok) {
         const data = await response.json();
-        totalCost += data[0].shipmentCost;
+        totalCost += data.rateOptions[0].totalBasePrice;
       } else {
         console.error(
-          'Issue requesting shipping cost estimation from ShipStation:',
+          'Issue requesting shipping cost estimation from USPS:',
           response.status,
         );
         error = {
-          message:
-            'Issue requesting shipping cost estimation from ShipStation:',
+          message: 'Issue requesting shipping cost estimation from USPS:',
           status: response.status,
         };
       }
@@ -73,7 +120,8 @@ async function calculateShippingCost(zip, items) {
   if (error) {
     throw error;
   }
-  return totalCost;
+  console.log('Total Cost: ', totalCost);
+  return totalCost * 0.8;
 }
 
 function calculatePackagesFromCart(_items) {
@@ -133,136 +181,12 @@ function calculatePackagesFromCart(_items) {
   return packages;
 }
 
-async function createShipStationOrder(orderId) {
-  try {
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
-      include: { cart: true },
-    });
-    if (!order) {
-      throw new Error(`Order with ID ${orderId} not found`);
-    }
-    const { city, state, country } = await getLocationFromZipCode(order.zip);
-
-    const shipStationOrder = {
-      orderNumber: order.id.toString(),
-      orderDate: new Date().toISOString(),
-      orderStatus:
-        process.env.APP_ENV === 'production'
-          ? 'awaiting_shipment'
-          : 'cancelled',
-      billTo: {
-        name: `${order.first_name} ${order.last_name}`,
-        company: null,
-        street1: order.address1,
-        street2: order.address2 || null,
-        city,
-        state,
-        postalCode: order.zip,
-        country: country,
-        phone: null,
-        residential: true,
-      },
-      shipTo: {
-        name: `${order.first_name} ${order.last_name}`,
-        company: null,
-        street1: order.address1,
-        street2: order.address2 || null,
-        city,
-        state,
-        postalCode: order.zip,
-        country: country,
-        phone: null,
-        residential: true,
-      },
-      items: await createShipStationItems(order.cart),
-    };
-
-    const response = await fetch(
-      'https://ssapi.shipstation.com/orders/createorder',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${Buffer.from(
-            `${process.env.SHIPSTATION_API_KEY}:${process.env.SHIPSTATION_API_SECRET}`,
-          ).toString('base64')}`,
-        },
-        body: JSON.stringify(shipStationOrder),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `Error POSTing to ShipStation - ShipStation Response: ${response.status} - ${response.statusText}`,
-      );
-    }
-
-    const data = await response.json();
-    return data.orderId;
-  } catch (error) {
-    console.error('Error creating ShipStation order:', error);
-    throw error;
-  }
-}
-
-async function createShipStationItems(cart) {
-  const items = [];
-
-  for (const item of cart.items) {
-    const { productId, quantity } = JSON.parse(item);
-
-    const product = await prisma.product.findUnique({
-      where: {
-        id: productId,
-      },
-    });
-
-    if (!product) {
-      throw new Error(`Product with ID ${productId} not found`);
-    }
-
-    items.push({
-      lineItemKey: product.id,
-      sku: product.sku,
-      name: product.name,
-      imageUrl: product.image_url || null,
-      weight: {
-        value: product.weight,
-        units: 'ounces',
-      },
-      quantity: quantity,
-      unitPrice: product.price,
-      shippingAmount: cart.shipping_cost_usd,
-    });
-  }
-
-  return items;
-}
-
-async function updateOrderShipstationId(orderId, shipstationId) {
-  try {
-    // Update the Order's shipstationId field using Prisma
-    const updatedOrder = await prisma.order.update({
-      where: { id: orderId },
-      data: { shipstationId: shipstationId },
-    });
-    return updatedOrder;
-  } catch (error) {
-    console.error('Error updating Order with ShipStation ID:', error);
-    throw error;
-  }
-}
-
 module.exports = {
   calculateShippingCost,
-  createShipStationOrder,
-  updateOrderShipstationId,
+  createShipment,
+  updateOrderWithShipmentId,
   __test__: {
     calculatePackagesFromCart,
     calculateShippingCost,
-    createShipStationItems,
-    createShipStationOrder,
-    updateOrderShipstationId,
   },
 };

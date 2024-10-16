@@ -15,6 +15,7 @@
   "dependencies": {
     "@prisma/client": "^5.12.1",
     "@vercel/postgres": "^0.8.0",
+    "axios": "^1.7.7",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",

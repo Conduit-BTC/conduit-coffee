@@ -30,10 +30,34 @@ async function voidOrder(orderId) {
   return true;
 }
 
-async function processPaidOrder(orderId) {
+async function checkInvoiceStatus(invoiceId) {
+  try {
+    const status = await fetch(`https://api.strike.me/v1/invoices/${invoiceId}`, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${process.env.STRIKE_API_KEY}`,
+      }
+    });
+    const data = await status.json();
+    if (data.state) return data.state;
+    return 'ERROR';
+  } catch (error) {
+    throw new Error('Error checking invoice status:', error);
+  }
+}
+
+async function processPaidOrder(invoiceId) {
+  const order = await prisma.order.findFirst({
+    where: {
+      invoiceId: invoiceId
+    }
+  });
+
+  if (!order) return false;
+
   const updatedOrder = await prisma.order.update({
     where: {
-      id: orderId,
+      id: order.id
     },
     data: {
       invoiceStatus: 'paid',
@@ -41,8 +65,7 @@ async function processPaidOrder(orderId) {
   });
 
   if (updatedOrder?.affectedRows == 0) return false;
-  // Send order to ShipStation
   return true;
 }
 
-module.exports = { addInvoiceToOrder, voidOrder, processPaidOrder };
+module.exports = { addInvoiceToOrder, voidOrder, processPaidOrder, checkInvoiceStatus };

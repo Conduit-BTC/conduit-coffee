@@ -1,11 +1,12 @@
 import CurrentHodlings from "../../components/CurrentHodlings";
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShippingCostCalculator from "../../components/ShippingCostCalculator";
+import BitcoinQR from "../../components/BitcoinQR";
 
 export default function CheckoutLayout() {
-  const [invoiceUrl, setInvoiceUrl] = useState("");
+  const [lightningInvoice, setLightningInvoice] = useState(null);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
 
@@ -28,7 +29,7 @@ export default function CheckoutLayout() {
 
       if (response.ok) {
         const data = await response.json();
-        setInvoiceUrl(data.invoiceUrl);
+        setLightningInvoice(data.lightningInvoice);
       } else {
         console.error("Failed to create order:", response.statusText);
       }
@@ -48,7 +49,7 @@ export default function CheckoutLayout() {
         <CurrentHodlings />
       </div>
       <div className="w-full h-1 bg-gray-600 mb-8" />
-      {/* <ShippingCostCalculator /> */}
+      <ShippingCostCalculator />
       <div className="w-full h-1 bg-gray-600 my-8" />
       <h3 className="mb-2">{`Shipping Address`}</h3>
       <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6>
@@ -153,13 +154,20 @@ export default function CheckoutLayout() {
           placeholder="Nostr npub key (optional)"
           id="email"
         />
-        {invoiceUrl ? (
-          <button
-            onClick={() => window.open(invoiceUrl, "_blank")}
-            className="w-full p-2 mt-4 bg-orange-500 text-[var(--main-text-color)] hover:font-bold "
-          >
-            {`Go to Invoice >>`}
-          </button>
+        {lightningInvoice ? (
+          <BitcoinQR
+            width={300}
+            height={300}
+            lightningInvoice={lightningInvoice}
+            parameters="amount=0.00001&label=sbddesign%3A%20For%20lunch%20Tuesday&message=For%20lunch%20Tuesday"
+            image="https://voltage.imgix.net/Team.png?fm=webp&w=160"
+            type="svg"
+            cornersSquareColor="#b23c05"
+            cornersDotColor="#e24a04"
+            cornersSquareType="extra-rounded"
+            dotsType="classy-rounded"
+            dotsColor="#ff5000"
+          />
         ) : (
           <button
             type="submit"
