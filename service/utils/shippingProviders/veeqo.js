@@ -40,23 +40,27 @@ async function createVeeqoOrder(customerId, order) {
         const { city, state, country } = await getLocationFromZipCode(zip);
 
         const body = JSON.stringify({
-            channelId: 0,
-            customer_id: customerId,
-            delivery_method_id: 0,
-            deliver_to_attributes: {
-                first_name,
-                last_name,
-                address1,
-                address2,
-                city,
-                state,
-                country,
-                zip,
-                customer_id: customerId
-            },
-            line_item_attributes: createLineItems(cart),
-
+            order: {
+                channel_id: Number(process.env.VEEQO_CHANNEL_ID),
+                customer_id: Number(customerId),
+                delivery_method_id: Number(process.env.VEEQO_DELIVERY_METHOD_ID),
+                deliver_to_attributes: {
+                    first_name,
+                    last_name,
+                    address1,
+                    city,
+                    state,
+                    country,
+                    zip,
+                },
+                line_item_attributes: await createLineItems(cart),
+                payment_attributes: {
+                    "payment_type": "lightning",
+                }
+            }
         })
+
+        console.log("Veeqo Order Body:", body);
 
         const vOrder = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
             method: 'POST',
@@ -74,6 +78,7 @@ async function createVeeqoOrder(customerId, order) {
         }
 
         const data = await vOrder.json();
+        console.log("Veeqo Order Data:", data);
         return data.order.id;
     } catch (error) {
         console.error('Error creating Veeqo order:', error);
@@ -127,17 +132,18 @@ async function createLineItems(cart) {
                 throw new Error(`Product with ID ${productId} not found`);
             }
             if (!product.veeqoProductId) {
-                throw new Error(`Shipping ID not found for product with ID ${productId}`);
+                throw new Error(`Veeqo Product ID not found for product with ID ${productId}`);
             }
             if (typeof product.price === 'undefined') {
                 throw new Error(`Price not found for product with ID ${productId}`);
             }
             items.push({
-                sellable_id: product.veeqoProductId, // HERE: Get the Veeqo ID for the product and add to the DB
+                sellable_id: product.veeqoProductId,
                 quantity: quantity,
                 price_per_unit: product.price
             });
         }
+        console.log("Items:     ", items);
         return items;
     } catch (error) {
         console.error('Error in createLineItems:', error);

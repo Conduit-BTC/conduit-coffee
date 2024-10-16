@@ -15,6 +15,7 @@ exports.getAllProducts = async (_, res) => {
         size_length: true,
         size_height: true,
         image_url: true,
+        veeqoProductId: true,
       },
     });
     res.json(products);
