@@ -54,16 +54,16 @@ async function handleInvoiceUpdate(invoiceId) {
     return { status: 400, message: 'Failed to Process Order' };
   }
 
-  console.log('Creating shipment');
+  // console.log('Creating shipment');
 
-  const sh = await createShipment(invoiceId);
+  // const sh = await createShipment(invoiceId);
 
-  if (!sh) {
-    console.log('Failed to create shipment');
-    return { status: 400, message: 'Failed to Create Shipment' };
-  }
+  // if (!sh) {
+  //   console.log('Failed to create shipment');
+  //   return { status: 400, message: 'Failed to Create Shipment' };
+  // }
 
-  console.log('Shipment created:', sh);
+  // console.log('Shipment created:', sh);
 
   return { status: 200, message: 'Success!' };
 }

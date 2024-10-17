@@ -19,7 +19,7 @@ export default function CheckoutLayout() {
       return;
     }
     try {
-      const response = await fetch(`${url}/orders`, {
+      const response = await fetch(`${url}/orders/pos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,11 +48,11 @@ export default function CheckoutLayout() {
         <h3 className="mb-8">Your Order:</h3>
         <CurrentHodlings />
       </div>
-      <div className="w-full h-1 bg-gray-600 mb-8" />
-      <ShippingCostCalculator />
+      <div className="w-full h-1 bg-gray-600" />
+      {/* <ShippingCostCalculator />
       <div className="w-full h-1 bg-gray-600 my-8" />
       <h3 className="mb-2">{`Shipping Address`}</h3>
-      <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6>
+      <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6> */}
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -69,23 +69,23 @@ export default function CheckoutLayout() {
             items: cartItems,
           };
           const orderData = {
-            first_name: document.getElementById("first_name").value,
-            last_name: document.getElementById("last_name").value,
-            address1: document.getElementById("address-1").value,
-            address2: document.getElementById("address-2").value,
-            city: document.getElementById("city").value,
-            state: document.getElementById("state").value,
-            zip: document.getElementById("zip").value,
-            special_instructions: document.getElementById(
-              "special-instructions"
-            ).value,
-            email: document.getElementById("email").value,
+            // first_name: document.getElementById("first_name").value,
+            // last_name: document.getElementById("last_name").value,
+            // address1: document.getElementById("address-1").value,
+            // address2: document.getElementById("address-2").value,
+            // city: document.getElementById("city").value,
+            // state: document.getElementById("state").value,
+            // zip: document.getElementById("zip").value,
+            // special_instructions: document.getElementById(
+            //   "special-instructions"
+            // ).value,
+            // email: document.getElementById("email").value,
             cart: cartData,
           };
           postNewOrder(orderData);
         }}
       >
-        <input
+        {/* <input
           className="w-full p-2 mt-4"
           type="text"
           placeholder="First Name"
@@ -153,8 +153,7 @@ export default function CheckoutLayout() {
           type="text"
           placeholder="Nostr npub key (optional)"
           id="email"
-        />
-        {lightningInvoice ? (
+        /> */}
           <BitcoinQR
             width={300}
             height={300}
@@ -167,15 +166,7 @@ export default function CheckoutLayout() {
             cornersSquareType="extra-rounded"
             dotsType="classy-rounded"
             dotsColor="#ff5000"
-          />
-        ) : (
-          <button
-            type="submit"
-            className="w-full p-2 mt-4 bg-blue-500 text-[var(--main-text-color)] hover:font-bold"
-          >
-            {`>> Pay With Lightning <<`}
-          </button>
-        )}
+        />
       </form>
     </>
   );
