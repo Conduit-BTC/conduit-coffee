@@ -18,7 +18,7 @@ export default function ModalWindowLayout({ onCloseModal, children }) {
     };
   }, [onCloseModal]);
   return (
-    <section className="absolute top-0 left-0 w-full h-full p-4 bg-black/75 z-[9999]">
+    <section className="absolute top-0 left-0 w-full h-full p-4 bg-black/75 backdrop-blur z-[9999]">
       <div className="w-full border-2 border-[var(--main-text-color)] bg-[var(--main-bg-color)] p-4">
         <button
           onClick={onCloseModal}
