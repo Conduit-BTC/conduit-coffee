@@ -25,7 +25,6 @@ const useProducts = () => {
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
-          console.log("Product Veeqo ID:", data[0]);
         } else {
           console.error("Failed to create order:", response.statusText);
         }

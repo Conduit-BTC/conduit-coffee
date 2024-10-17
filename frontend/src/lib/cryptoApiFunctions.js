@@ -1,5 +1,14 @@
 export async function getCurrentSatsPrice() {
-  return fetch("http://localhost:3456/ticker/sats")
+  const url = import.meta.env.VITE_API_URL;
+
+  if (!url) {
+    console.error(
+      "useProducts.js: Environment Variable missing: VITE_API_URL"
+    );
+    return;
+  }
+
+  return fetch(`${url}/ticker/sats`)
     .then((response) => {
       if (!response.ok) {
         console.error(response);
