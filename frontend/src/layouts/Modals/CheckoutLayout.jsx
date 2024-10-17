@@ -85,75 +85,7 @@ export default function CheckoutLayout() {
           postNewOrder(orderData);
         }}
       >
-        {/* <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="First Name"
-          id="first_name"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Last Name"
-          id="last_name"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="address"
-          placeholder="Street Address"
-          id="address-1"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="address"
-          placeholder="Street Address (line 2)"
-          id="address-2"
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="City"
-          id="city"
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="State"
-          id="state"
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Zip Code"
-          id="zip"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Special Instructions?"
-          id="special-instructions"
-        />
-        <h3 className="mt-8 mb-2">
-          {`Contact Info`}
-          <span className="text-sm">{` (Optional)`}</span>
-        </h3>
-        <h6>{`We'll send you a tracking number and receipt, nothing else. Skip it if you're off-the-radar `}</h6>
-        <input
-          className="w-full p-2 mt-4"
-          type="email"
-          placeholder="Email (optional)"
-          id="email"
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Nostr npub key (optional)"
-          id="email"
-        /> */}
+        {lightningInvoice ? (
           <BitcoinQR
             width={300}
             height={300}
@@ -166,7 +98,15 @@ export default function CheckoutLayout() {
             cornersSquareType="extra-rounded"
             dotsType="classy-rounded"
             dotsColor="#ff5000"
-        />
+          />
+        ) : (
+          <button
+            type="submit"
+            className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
+          >
+            {`>> Pay With Lightning <<`}
+          </button>
+        )}
       </form>
     </>
   );
