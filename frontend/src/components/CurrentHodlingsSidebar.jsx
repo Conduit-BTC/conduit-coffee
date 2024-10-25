@@ -1,10 +1,18 @@
+import { useEffect, useState } from "react";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 import SatsIcon from "./SatsIcon";
+import { SATS_LOADING_STRING } from "../constants";
 
 export default function CurrentHodlingsSidebar() {
   const { cartPriceUsd, totalCartQty, cartItems } = useCartContext();
   const { satsToUsd } = useCryptoContext();
+  const [finalPriceSats, setFinalPriceSats] = useState(0.0);
+
+  useEffect(() => {
+    setFinalPriceSats((cartPriceUsd * satsToUsd).toFixed(0))
+  }, [cartPriceUsd, satsToUsd])
+
   return (
     <div className="text-left bg-[var(--cart-bg-color)] flex w-full flex-col gap-4">
       {cartItems.map((item) => (
@@ -46,7 +54,7 @@ export default function CurrentHodlingsSidebar() {
         <h4>
           <span className="text-orange-500">
             <SatsIcon width="w-[24px]" height="h-[24px]" color="orange" />
-            {`${((cartPriceUsd || 0) * satsToUsd).toFixed(0)}`}
+            {`${finalPriceSats > 0 ? finalPriceSats : SATS_LOADING_STRING}`}
           </span>
         </h4>
       </div>

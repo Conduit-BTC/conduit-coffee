@@ -102,6 +102,7 @@ export default function CheckoutLayout() {
         ) : (
           <button
             type="submit"
+              disabled={cartPriceUsd <= 0.0}
             className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
           >
             {`>> Pay With Lightning <<`}

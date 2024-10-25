@@ -1,10 +1,18 @@
+import { useState, useEffect } from "react";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 import SatsIcon from "./SatsIcon";
+import { SATS_LOADING_STRING } from "../constants";
 
 export default function CurrentHodlings() {
   const { cartPriceUsd, cartItems } = useCartContext();
   const { satsToUsd } = useCryptoContext();
+  const [finalPriceSats, setFinalPriceSats] = useState(0.0);
+
+  useEffect(() => {
+    setFinalPriceSats((cartPriceUsd * satsToUsd).toFixed(0))
+  }, [cartPriceUsd, satsToUsd])
+
   return (
     <div className="text-left bg-[var(--cart-bg-color)] flex w-full flex-col gap-4">
       {cartItems.map((item) => (
@@ -17,7 +25,7 @@ export default function CurrentHodlings() {
             <h5>{`${item.quantity} ${item.quantity == 1 ? "Bag" : "Bags"}`}</h5>
             <h5 className="text-orange-500">
               <SatsIcon color="orange" />
-              {(item.price * item.quantity * satsToUsd).toFixed(0)} Sats
+              {(item.price * item.quantity * satsToUsd) > 0 ? (item.price * item.quantity * satsToUsd.toFixed(0)) : SATS_LOADING_STRING} Sats
             </h5>
             <h5 className="text-green-500">
               {`($${item.price * item.quantity} USD)`}
@@ -40,7 +48,7 @@ export default function CurrentHodlings() {
         <h4>
           <span className="text-orange-500 font-bold">
             <SatsIcon color="orange" />
-            {`${((cartPriceUsd || 0) * satsToUsd).toFixed(0)} Sats`}
+            {`${finalPriceSats > 0 ? finalPriceSats : SATS_LOADING_STRING} Sats`}
           </span>
         </h4>
         <h4>
