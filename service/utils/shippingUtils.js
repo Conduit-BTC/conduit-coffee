@@ -1,10 +1,12 @@
-const { PrismaClient } = require('@prisma/client');
 const { getOauthToken } = require('./oauthUtils');
 const { createVeeqoCustomer, createVeeqoOrder, createVeeqoShipment } = require('./shippingProviders/veeqo');
 
-const prisma = new PrismaClient();
+const { dbService } = require('../services/dbService');
+const prisma = dbService.getPrismaClient();
 
 async function createShipment(invoiceId) {
+  console.log('Creating shipment for invoice ID:', invoiceId);
+
   try {
     const order = await prisma.order.findFirst({
       where: { invoiceId: invoiceId },
@@ -15,17 +17,17 @@ async function createShipment(invoiceId) {
       throw new Error(`Order with Invoice ID ${invoiceId} not found`);
     }
 
-    console.log('Creating customer for order:', order.id);
+    console.log('Creating customer for order: ', order.id);
     const vCustomerId = await createVeeqoCustomer(order.id);
 
     if (!vCustomerId) {
       throw new Error('Error creating Veeqo customer');
     }
 
-    console.log('Customer Created. Veeqo customer ID:', vCustomerId);
+    console.log('Customer Created. Veeqo customer ID: ', vCustomerId);
     console.log('Creating Veeqo order for customer');
 
-    const vOrderId = await createVeeqoOrder(vCustomerId, order);
+    const vOrderId = await createVeeqoOrder(vCustomerId, order, invoiceId);
 
     if (!vOrderId) {
       throw new Error('Error creating Veeqo order');

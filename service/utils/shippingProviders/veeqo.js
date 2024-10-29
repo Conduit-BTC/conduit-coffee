@@ -4,8 +4,8 @@
 // 3. Create a Shipment
 
 const { getLocationFromZipCode } = require('../getLocationFromZipCode');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { dbService } = require('../../services/dbService');
+const prisma = dbService.getPrismaClient();
 
 async function createVeeqoCustomer(orderId, email = null) {
     try {
@@ -34,7 +34,7 @@ async function createVeeqoCustomer(orderId, email = null) {
     }
 }
 
-async function createVeeqoOrder(customerId, order) {
+async function createVeeqoOrder(customerId, order, invoiceId) {
     try {
         const { first_name, last_name, address1, address2, zip, cart } = order;
         const { city, state, country } = await getLocationFromZipCode(zip);
@@ -53,14 +53,14 @@ async function createVeeqoOrder(customerId, order) {
                     country,
                     zip,
                 },
-                line_item_attributes: await createLineItems(cart),
+                line_items_attributes: await createLineItems(cart),
                 payment_attributes: {
                     "payment_type": "lightning",
+                    "reference_number": `Strike Invoice ID: ${invoiceId} - Conduit Order Number: ${order.id}`
                 }
             }
         })
 
-        console.log("Veeqo Order Body:", body);
 
         const vOrder = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
             method: 'POST',
@@ -71,14 +71,19 @@ async function createVeeqoOrder(customerId, order) {
             body
         });
 
+        console.log("Veeqo Order Request:", body);
+
+        const vOrderJson = await vOrder.json();
+        console.log('Veeqo Order Response:', JSON.stringify(vOrderJson, null, 2));
+
         if (!vOrder.ok) {
             throw new Error(
-                `Error POSTing to Veeqo - Veeqo Response: ${vOrder.status} - ${vOrder.statusText}`,
+                `Error POSTing to Veeqo - Veeqo Response: ${vOrder.body} - ${vOrder.statusText} - ${vOrder.status}`,
             );
         }
 
         const data = await vOrder.json();
-        console.log("Veeqo Order Data:", data);
+        console.log("Veeqo Order Data:", vOrderJson);
         return data.order.id;
     } catch (error) {
         console.error('Error creating Veeqo order:', error);
@@ -119,6 +124,7 @@ async function createVeeqoShipment(orderId) {
 }
 
 async function createLineItems(cart) {
+    console.log("Creating line items for cart");
     try {
         const items = [];
         for (const item of cart.items) {

@@ -1,37 +1,30 @@
-const { processPaidOrder } = require('../utils/invoiceUtils');
-const {
-  createShipment,
-  updateShipment,
-} = require('../utils/shippingUtils');
-
-const { checkInvoiceStatus } = require('../utils/invoiceUtils');
+const { checkInvoiceStatus, InvoiceStatus } = require('../utils/invoiceUtils');
+const { InvoiceEvents } = require('../events/eventTypes');
+const { eventBus } = require('../events/eventBus');
 
 exports.handleInvoiceWebhook = async (req, res) => {
-  console.log('Received invoice webhook');
-  console.log(req.body);
-
   try {
+    res.status(200).json({ received: true });
+
+    console.log('Received invoice webhook. Body: ', req.body);
+
     const invoiceId = req.body.data?.entityId;
+
     if (!invoiceId) {
-      console.warn('No entityId (invoiceId) in webhook request');
-      console.warn(req.body);
-      return res
-        .status(400)
-        .json({ message: 'Missing Invoice ID', error: 'Missing Invoice ID' });
+      console.warn('No entityId (invoiceId) in webhook request body: ', req.body);
+      return;
     }
 
-    switch (req.body.eventType) {
-      case 'invoice.created':
-        return res.status(200).json({ message: 'Webhook received' });
+    if (!req.body.eventType || req.body.eventType !== 'invoice.updated') return;
 
-      case 'invoice.updated':
-        const result = await handleInvoiceUpdate(invoiceId);
-        return res.status(result.status).json(result.message);
+    const invoiceStatus = await checkInvoiceStatus(invoiceId); // Verify that this is a legitimate paid invoice
 
-      default:
-        console.log('Failed to process request');
-        return res.status(400).json({ message: 'Failed to Process Request' });
-    }
+    if (invoiceStatus !== InvoiceStatus.PAID) return;
+
+    console.log("Paid invoice received. Emitting event to create shipment");
+
+    eventBus.emit(InvoiceEvents.INVOICE_PAID, invoiceId);
+
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: 'Server Error' });
     console.error(
@@ -41,40 +34,3 @@ exports.handleInvoiceWebhook = async (req, res) => {
     console.error('Stack trace:', error.stack);
   }
 };
-
-async function handleInvoiceUpdate(invoiceId) {
-  const invoiceStatus = await checkInvoiceStatus(invoiceId);
-
-  if (invoiceStatus !== 'PAID') return { status: 200, message: "Webhook received!" }
-
-  const ps = await processPaidOrder(invoiceId);
-
-  if (!ps) {
-    console.log('Failed to process order');
-    return { status: 400, message: 'Failed to Process Order' };
-  }
-
-  // console.log('Creating shipment');
-
-  // const sh = await createShipment(invoiceId);
-
-  // if (!sh) {
-  //   console.log('Failed to create shipment');
-  //   return { status: 400, message: 'Failed to Create Shipment' };
-  // }
-
-  // console.log('Shipment created:', sh);
-
-  return { status: 200, message: 'Success!' };
-}
-
-async function validateRequest(req) {
-  const strikeWebhookSecret = process.env.STRIKE_INVOICE_WEBHOOK_SECRET;
-  if (!strikeWebhookSecret) {
-    throw new Error(
-      'invoiceController.js # validateRequest() - Missing ENV Variable',
-    );
-  }
-  console.log('BODY: ', req.body);
-  return false;
-}

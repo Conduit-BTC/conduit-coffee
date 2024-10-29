@@ -19,7 +19,7 @@ export default function CheckoutLayout() {
       return;
     }
     try {
-      const response = await fetch(`${url}/orders/pos`, {
+      const response = await fetch(`${url}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,10 +49,10 @@ export default function CheckoutLayout() {
         <CurrentHodlings />
       </div>
       <div className="w-full h-1 bg-gray-600" />
-      {/* <ShippingCostCalculator />
+      <ShippingCostCalculator />
       <div className="w-full h-1 bg-gray-600 my-8" />
       <h3 className="mb-2">{`Shipping Address`}</h3>
-      <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6> */}
+      <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -69,44 +69,113 @@ export default function CheckoutLayout() {
             items: cartItems,
           };
           const orderData = {
-            // first_name: document.getElementById("first_name").value,
-            // last_name: document.getElementById("last_name").value,
-            // address1: document.getElementById("address-1").value,
-            // address2: document.getElementById("address-2").value,
-            // city: document.getElementById("city").value,
-            // state: document.getElementById("state").value,
-            // zip: document.getElementById("zip").value,
-            // special_instructions: document.getElementById(
-            //   "special-instructions"
-            // ).value,
-            // email: document.getElementById("email").value,
+            first_name: document.getElementById("first_name").value,
+            last_name: document.getElementById("last_name").value,
+            address1: document.getElementById("address-1").value,
+            address2: document.getElementById("address-2").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            zip: document.getElementById("zip").value,
+            special_instructions: document.getElementById(
+              "special-instructions"
+            ).value,
+            email: document.getElementById("email").value,
             cart: cartData,
           };
           postNewOrder(orderData);
         }}
       >
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="First Name"
+          id="first_name"
+          required
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="Last Name"
+          id="last_name"
+          required
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="address"
+          placeholder="Street Address"
+          id="address-1"
+          required
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="address"
+          placeholder="Street Address (line 2)"
+          id="address-2"
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="City"
+          id="city"
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="State"
+          id="state"
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="Zip Code"
+          id="zip"
+          required
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="Special Instructions?"
+          id="special-instructions"
+        />
+        <h3 className="mt-8 mb-2">
+          {`Contact Info`}
+          <span className="text-sm">{` (Optional)`}</span>
+        </h3>
+        <h6>{`We'll send you a tracking number and receipt, nothing else. Skip it if you're off-the-radar `}</h6>
+        <input
+          className="w-full p-2 mt-4"
+          type="email"
+          placeholder="Email (optional)"
+          id="email"
+        />
+        <input
+          className="w-full p-2 mt-4"
+          type="text"
+          placeholder="Nostr npub key (optional)"
+          id="email"
+        />
         {lightningInvoice ? (
-          <BitcoinQR
-            width={300}
-            height={300}
-            lightningInvoice={lightningInvoice}
-            parameters="amount=0.00001&label=sbddesign%3A%20For%20lunch%20Tuesday&message=For%20lunch%20Tuesday"
-            image="https://voltage.imgix.net/Team.png?fm=webp&w=160"
-            type="svg"
-            cornersSquareColor="#b23c05"
-            cornersDotColor="#e24a04"
-            cornersSquareType="extra-rounded"
-            dotsType="classy-rounded"
-            dotsColor="#ff5000"
-          />
+        <BitcoinQR
+          width={300}
+          height={300}
+          lightningInvoice={lightningInvoice}
+          parameters="amount=0.00001&label=sbddesign%3A%20For%20lunch%20Tuesday&message=For%20lunch%20Tuesday"
+          image="https://voltage.imgix.net/Team.png?fm=webp&w=160"
+          type="svg"
+          cornersSquareColor="#b23c05"
+          cornersDotColor="#e24a04"
+          cornersSquareType="extra-rounded"
+          dotsType="classy-rounded"
+          dotsColor="#ff5000"
+        />
         ) : (
-          <button
-            type="submit"
-              disabled={cartPriceUsd <= 0.0}
-            className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
-          >
-            {`>> Pay With Lightning <<`}
-          </button>
+        <button
+          type="submit"
+          disabled={cartPriceUsd <= 0.0}
+          className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
+        >
+          {`>> Pay With Lightning <<`}
+        </button>
         )}
       </form>
     </>

@@ -1,9 +1,10 @@
 const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
 const { addInvoiceToOrder } = require('../utils/invoiceUtils');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 const { calculateShippingCost } = require('../utils/shippingUtils');
 const { randomUUID } = require('crypto');
+
+const { dbService } = require('../services/dbService');
+const prisma = dbService.getPrismaClient();
 
 exports.getAllOrders = async (_, res) => {
   try {
@@ -184,8 +185,8 @@ exports.createOrder = async (req, res) => {
       description: 'Invoice for Order #' + createdOrder.id || '__________',
       amount: {
         currency: 'BTC',
-        amount: (cart.sats_cart_price) / 100000000
-        // amount: 0.00000001 << TESTING
+        // amount: (cart.sats_cart_price) / 100000000
+        amount: 0.00000001 //<< TESTING
         // amount: (cart.sats_cart_price + satsShippingCost) / 100000000 << PROD with SHIPPING
       },
     });

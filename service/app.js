@@ -5,6 +5,12 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env' });
 
+// Initialize services
+require('./services/dbService');
+require('./services/shippingService');
+require('./services/orderService');
+
+// Initialize express
 const app = express();
 
 app.use(cors());
@@ -33,6 +39,7 @@ app.use(
   }),
 );
 
+// Routes
 const orderRoutes = require('./routes/orderRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const productRoutes = require('./routes/productRoutes');

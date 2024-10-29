@@ -1,5 +1,12 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { dbService } = require('../services/dbService');
+const prisma = dbService.getPrismaClient();
+
+
+const InvoiceStatus = {
+  PAID: 'PAID',
+  PENDING: 'PENDING',
+  EXPIRED: 'EXPIRED',
+}
 
 async function addInvoiceToOrder(invoiceId, orderId) {
   const updatedOrder = await prisma.order.update({
@@ -8,7 +15,7 @@ async function addInvoiceToOrder(invoiceId, orderId) {
     },
     data: {
       invoiceId: invoiceId,
-      invoiceStatus: 'pending',
+      invoiceStatus: InvoiceStatus.PENDING,
     },
   });
 
@@ -22,7 +29,7 @@ async function voidOrder(orderId) {
       id: orderId,
     },
     data: {
-      invoiceStatus: 'expired',
+      invoiceStatus: InvoiceStatus.EXPIRED,
     },
   });
 
@@ -46,26 +53,4 @@ async function checkInvoiceStatus(invoiceId) {
   }
 }
 
-async function processPaidOrder(invoiceId) {
-  const order = await prisma.order.findFirst({
-    where: {
-      invoiceId: invoiceId
-    }
-  });
-
-  if (!order) return false;
-
-  const updatedOrder = await prisma.order.update({
-    where: {
-      id: order.id
-    },
-    data: {
-      invoiceStatus: 'paid',
-    },
-  });
-
-  if (updatedOrder?.affectedRows == 0) return false;
-  return true;
-}
-
-module.exports = { addInvoiceToOrder, voidOrder, processPaidOrder, checkInvoiceStatus };
+module.exports = { addInvoiceToOrder, voidOrder, checkInvoiceStatus, InvoiceStatus };

@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { dbService } = require('../services/dbService');
+const prisma = dbService.getPrismaClient();
 
 exports.exportOrdersCsv = async (_, res) => {
   console.log('exportOrdersCsv');
