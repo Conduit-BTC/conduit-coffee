@@ -25,6 +25,8 @@ model Order {
   cart                Cart?
   invoiceId           String? @unique
   invoiceStatus       String?
+  shippingProvider    String?
+  shippingOrderId     String?
   shippingStatus      String?
   created_at          DateTime @default(now())
 }

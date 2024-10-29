@@ -71,10 +71,7 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
             body
         });
 
-        console.log("Veeqo Order Request:", body);
-
         const vOrderJson = await vOrder.json();
-        console.log('Veeqo Order Response:', JSON.stringify(vOrderJson, null, 2));
 
         if (!vOrder.ok) {
             throw new Error(
@@ -82,9 +79,7 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
             );
         }
 
-        const data = await vOrder.json();
-        console.log("Veeqo Order Data:", vOrderJson);
-        return data.order.id;
+        return vOrderJson.id;
     } catch (error) {
         console.error('Error creating Veeqo order:', error);
         return null;

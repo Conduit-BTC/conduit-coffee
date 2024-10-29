@@ -1,5 +1,5 @@
 const { getOauthToken } = require('./oauthUtils');
-const { createVeeqoCustomer, createVeeqoOrder, createVeeqoShipment } = require('./shippingProviders/veeqo');
+const { createVeeqoCustomer, createVeeqoOrder } = require('./shippingProviders/veeqo');
 
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
@@ -34,29 +34,33 @@ async function createShipment(invoiceId) {
     }
 
     console.log('Order Created. Veeqo order ID:', vOrderId);
-    console.log('Creating Veeqo shipment for order');
-    const vShipmentId = await createVeeqoShipment(vOrderId);
 
-    if (!vShipmentId) {
-      throw new Error('Error creating Veeqo shipment');
+    const orderShipmentUpdate = updateOrderWithShipmentInfo(order.id, vOrderId, "Veeqo");
+
+    if (!orderShipmentUpdate) {
+      throw new Error('Error updating order with shipment ID');
     }
 
-    console.log('Shipment Created. Veeqo shipment ID:', vShipmentId);
-    console.log('Updating order with shipment ID');
-    updateOrderWithShipmentId(order.id, vShipmentId);
-
-    console.log('Order updated with shipment ID');
-
-    return { orderId: vOrderId, shipmentId: vShipmentId };
+    console.log('Order updated with shipment info: ', order.id, vOrderId, 'Veeqo');
+    console.log("----- Payment Processing Pipeline COMPLETE -----");
   } catch (error) {
     console.error('Error creating shipment:', error);
     throw error;
   }
-
 }
 
-async function updateOrderWithShipmentId(orderId, vShipmentId) {
-  // Update the database order to include the Shipment ID
+async function updateOrderWithShipmentInfo(orderId, shippingOrderId, shippingProvider) {
+  console.log('Updating order with shipment ID:', orderId, shippingOrderId, shippingProvider);
+  const updatedOrder = await prisma.order.update({
+    where: { id: orderId },
+    data: { shippingOrderId: shippingOrderId.toString(), shippingProvider, shippingStatus: 'PROCESSING' },
+  });
+
+  if (updatedOrder?.affectedRows == 0) {
+    throw new Error(`Error updating order with shipment ID: ${orderId}`);
+  }
+
+  return true;
 }
 
 function createRatesPayload(zip, pkg) {
@@ -186,7 +190,7 @@ function calculatePackagesFromCart(_items) {
 module.exports = {
   calculateShippingCost,
   createShipment,
-  updateOrderWithShipmentId,
+  updateOrderWithShipmentInfo,
   __test__: {
     calculatePackagesFromCart,
     calculateShippingCost,
