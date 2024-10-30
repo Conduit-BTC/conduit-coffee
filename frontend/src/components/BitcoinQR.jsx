@@ -1,7 +1,7 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 
-const BitcoinQR = ({ lightningInvoice }) => {
+export const BitcoinQR = ({ lightningInvoice }) => {
     const lightningUri = `lightning:${lightningInvoice}`;
 
     return (
@@ -13,5 +13,3 @@ const BitcoinQR = ({ lightningInvoice }) => {
         </div>
     );
 };
-
-export default BitcoinQR;

@@ -1,21 +1,22 @@
+import React, { useState } from 'react';
 import CurrentHodlings from "../../components/CurrentHodlings";
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
-import { useEffect, useState } from "react";
 import ShippingCostCalculator from "../../components/ShippingCostCalculator";
-import BitcoinQR from "../../components/BitcoinQR";
+import { useWebSocketPayment } from '../../hooks/useWebSocketPayment';
+import PaymentStatus from '../../components/PaymentStatus';
 
 export default function CheckoutLayout() {
   const [lightningInvoice, setLightningInvoice] = useState(null);
+  const [invoiceId, setInvoiceId] = useState(null);
+  const { paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
 
   async function postNewOrder(orderData) {
     const url = import.meta.env.VITE_API_URL;
     if (!url) {
-      console.error(
-        "CheckoutLayout: Environment Variable missing: VITE_API_URL"
-      );
+      console.error("CheckoutLayout: Environment Variable missing: VITE_API_URL");
       return;
     }
     try {
@@ -30,6 +31,7 @@ export default function CheckoutLayout() {
       if (response.ok) {
         const data = await response.json();
         setLightningInvoice(data.lightningInvoice);
+        setInvoiceId(data.invoiceId);
       } else {
         console.error("Failed to create order:", response.statusText);
       }
@@ -38,11 +40,36 @@ export default function CheckoutLayout() {
     }
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = import.meta.env.VITE_API_URL;
+    if (!url) {
+      console.error("CheckoutLayout: Environment Variable missing: VITE_API_URL");
+      return;
+    }
+    const cartData = {
+      sats_cart_price: satsToUsd * cartPriceUsd,
+      usd_cart_price: cartPriceUsd,
+      items: cartItems,
+    };
+    const orderData = {
+      first_name: document.getElementById("first_name").value,
+      last_name: document.getElementById("last_name").value,
+      address1: document.getElementById("address-1").value,
+      address2: document.getElementById("address-2").value,
+      city: document.getElementById("city").value,
+      state: document.getElementById("state").value,
+      zip: document.getElementById("zip").value,
+      special_instructions: document.getElementById("special-instructions").value,
+      email: document.getElementById("email").value,
+      cart: cartData,
+    };
+    postNewOrder(orderData);
+  };
+
   return (
     <>
-      <h1 className="text-h2 pr-12 text-blue-500 mb-2">
-        ⚡️ Zap the Lightning
-      </h1>
+      <h1 className="text-h2 pr-12 text-blue-500 mb-2">⚡️ Zap the Lightning</h1>
       <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get the Coffee</h1>
       <div className="mb-8">
         <h3 className="mb-8">Your Order:</h3>
@@ -53,38 +80,7 @@ export default function CheckoutLayout() {
       <div className="w-full h-1 bg-gray-600 my-8" />
       <h3 className="mb-2">{`Shipping Address`}</h3>
       <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const url = import.meta.env.VITE_API_URL;
-          if (!url) {
-            console.error(
-              "CheckoutLayout: Environment Variable missing: VITE_API_URL"
-            );
-            return;
-          }
-          const cartData = {
-            sats_cart_price: satsToUsd * cartPriceUsd,
-            usd_cart_price: cartPriceUsd,
-            items: cartItems,
-          };
-          const orderData = {
-            first_name: document.getElementById("first_name").value,
-            last_name: document.getElementById("last_name").value,
-            address1: document.getElementById("address-1").value,
-            address2: document.getElementById("address-2").value,
-            city: document.getElementById("city").value,
-            state: document.getElementById("state").value,
-            zip: document.getElementById("zip").value,
-            special_instructions: document.getElementById(
-              "special-instructions"
-            ).value,
-            email: document.getElementById("email").value,
-            cart: cartData,
-          };
-          postNewOrder(orderData);
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <input
           className="w-full p-2 mt-4"
           type="text"
@@ -117,12 +113,14 @@ export default function CheckoutLayout() {
           type="text"
           placeholder="City"
           id="city"
+          required
         />
         <input
           className="w-full p-2 mt-4"
           type="text"
           placeholder="State"
           id="state"
+          required
         />
         <input
           className="w-full p-2 mt-4"
@@ -152,31 +150,16 @@ export default function CheckoutLayout() {
           className="w-full p-2 mt-4"
           type="text"
           placeholder="Nostr npub key (optional)"
-          id="email"
+          id="npub"
         />
-        {lightningInvoice ? (
-        <BitcoinQR
-          width={300}
-          height={300}
+
+        <PaymentStatus
           lightningInvoice={lightningInvoice}
-          parameters="amount=0.00001&label=sbddesign%3A%20For%20lunch%20Tuesday&message=For%20lunch%20Tuesday"
-          image="https://voltage.imgix.net/Team.png?fm=webp&w=160"
-          type="svg"
-          cornersSquareColor="#b23c05"
-          cornersDotColor="#e24a04"
-          cornersSquareType="extra-rounded"
-          dotsType="classy-rounded"
-          dotsColor="#ff5000"
+          paymentStatus={paymentStatus}
+          connectionStatus={connectionStatus}
+          error={error}
+          cartPriceUsd={cartPriceUsd}
         />
-        ) : (
-        <button
-          type="submit"
-          disabled={cartPriceUsd <= 0.0}
-          className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
-        >
-          {`>> Pay With Lightning <<`}
-        </button>
-        )}
       </form>
     </>
   );
