@@ -1,7 +1,6 @@
 export default function pingBorder(element, pingColor) {
-  const pingType = pingColor == "red" ? "ping-red" : "ping-blue";
-  element.classList.add(pingType);
+  element.classList.add(pingColor);
   setTimeout(function () {
-    element.classList.remove(pingType);
+    element.classList.remove(pingColor);
   }, 1000);
 }

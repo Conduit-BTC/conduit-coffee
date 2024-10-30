@@ -1,24 +1,22 @@
 import pingBorder from "../lib/pingBorder";
 import { useUiContext } from "../context/UiContext";
 import { useCartContext } from "../context/CartContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 
 export default function ProductLineItem({
-  // borderElement,
   product,
-  pingColor,
   borderColor,
   bgColor,
   textColor,
   quantity,
-  increaseFunction,
-  decreaseFunction,
 }) {
   const { openProductDetailsModal } = useUiContext();
   const { addItemToCart, removeItemFromCart } = useCartContext();
   const [formattedDescription, setFormattedDescription] = useState("");
   const { name, description } = product;
+
+  const borderRef = useRef(null);
 
   useEffect(() => {
     const d = [...description.split("//").join("\n//")].slice(1);
@@ -26,13 +24,13 @@ export default function ProductLineItem({
   }, [description, setFormattedDescription]);
 
   return (
-    <section className="flex w-full group">
+    <section className="flex w-full group border-4 border-blue-500/50" ref={borderRef}>
       <button
         aria-label={`Display product information about ${name}`}
         onClick={() => {
           openProductDetailsModal(product);
         }}
-        className={`flex flex-col p-4 border-2 group-hover:${borderColor} w-full`}
+        className={`flex flex-col p-4 w-full`}
       >
         <h4 className={`font-[700] ${textColor}`}>{name}</h4>
         <span className="whitespace-pre-line text-left mt-4">
@@ -40,7 +38,7 @@ export default function ProductLineItem({
         </span>
       </button>
       <div
-        className={`flex flex-col justify-center group-hover:${bgColor} p-2 gap-2 items-center bg-[var(--main-text-color)]`}
+        className={`flex flex-col justify-center p-2 gap-2 items-center bg-blue-500/50`}
       >
         <p
           className={`border-2 rounded-sm p-1 px-3 flex items-center justify-center bg-black font-[700] bg-[var(--main-text-color)]`}
@@ -50,7 +48,7 @@ export default function ProductLineItem({
         </p>
         <button
           onClick={() => {
-            // pingBorder(borderElement.current, pingColor);
+            pingBorder(borderRef.current, "ping-green");
             addItemToCart(product);
           }}
           aria-label={`Add ${name} to cart`}
@@ -58,6 +56,7 @@ export default function ProductLineItem({
         >{`+`}</button>
         <button
           onClick={() => {
+            pingBorder(borderRef.current, "ping-red");
             removeItemFromCart(product);
           }}
           aria-label={`Remove ${name} from cart`}

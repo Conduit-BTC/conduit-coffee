@@ -38,8 +38,8 @@
     animation: red-ping 1s forwards;
   }
 
-  .ping-blue {
-    animation: blue-ping 1s forwards;
+                .ping-green {
+                  animation: green-ping 1s forwards;
   }
 
   @keyframes red-ping {
@@ -51,9 +51,9 @@
     }
   }
 
-  @keyframes blue-ping {
+        @keyframes green-ping {
     0% {
-      border-color: blue;
+      border-color: lightgreen;
     }
     100% {
       border-color: var(--secondary-bg-color);

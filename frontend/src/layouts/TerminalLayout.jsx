@@ -2,6 +2,7 @@ import { useCartContext } from "../context/CartContext";
 import ProductLineItem from "../components/ProductLineItem";
 import ExchangeRateBox from "../components/ExchangeRateBox";
 import useProducts from "../hooks/useProducts";
+import { useRef } from "react";
 
 function getColors(name) {
   switch (name) {
@@ -32,9 +33,6 @@ const TerminalLayout = () => {
   const { cartItems } = useCartContext();
 
   const { products } = useProducts();
-
-  // const lightningRef = useRef(null);
-  // const resistanceRef = useRef(null);
 
   return (
     <>
@@ -71,8 +69,6 @@ const TerminalLayout = () => {
                 <ProductLineItem
                   key={product.id}
                   product={product}
-                  // borderElement={lightningRef}
-                  pingColor="blue"
                   bgColor={getColors(product.name).bgColor}
                   borderColor={getColors(product.name).borderColor}
                   textColor={getColors(product.name).textColor}
