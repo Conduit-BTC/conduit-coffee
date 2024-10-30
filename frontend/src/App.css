@@ -9,7 +9,7 @@
 }
 
 .nav-item {
-    border-radius: 0px;
+  border-radius: 0px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
     font-size: 1em;
@@ -22,49 +22,53 @@
     background: var(--secondary-text-color);
     margin: 2px;
   }
-  .nav-item:hover {
-    border-color: var(--main-text-color);
-  }
-  .nav-item:focus,
-  .nav-item:focus:not(:focus-visible) {
-    outline: 0;
-    box-shadow:
-      0 0 0 .05rem var(--secondary-text-color),
-      0 0 0 .15rem var(--main-text-color);
-      font-weight: 700;
+
+.nav-item:hover {
+  border-color: var(--main-text-color);
+}
+
+.nav-item:focus,
+.nav-item:focus:not(:focus-visible) {
+  outline: 0;
+  box-shadow:
+    0 0 0 .05rem var(--secondary-text-color),
+    0 0 0 .15rem var(--main-text-color);
+  font-weight: 700;
+}
+
+.ping-red {
+  animation: red-ping 1s forwards;
+}
+
+.ping-green {
+  animation: green-ping 1s forwards;
+}
+
+@keyframes red-ping {
+  0% {
+    border-color: red;
+    box-shadow: 0 0 2px red, 0 0 5px red, 0 0 10px rgba(255, 0, 0, 0.5);
   }
 
-  .ping-red {
-    animation: red-ping 1s forwards;
-  }
-
-                .ping-green {
-                  animation: green-ping 1s forwards;
-  }
-
-  @keyframes red-ping {
-    0% {
-      border-color: red;
-      box-shadow: 0 0 2px red, 0 0 5px red, 0 0 10px rgba(255, 0, 0, 0.5);
-    }
     100% {
       border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: none;
+      box-shadow: none;
     }
-  }
+        }
 
 @keyframes green-ping {
-    0% {
+  0% {
       border-color: lime;
       box-shadow: 0 0 2px lime, 0 0 5px lime, 0 0 10px rgba(0, 255, 0, 0.5);
     }
+
     100% {
       border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: none;
+      box-shadow: none;
     }
-  }
+        }
 
-  @layer base {
+@layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 100%;
@@ -92,6 +96,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -120,10 +125,11 @@
   }
 }
 
-  @layer base {
+@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

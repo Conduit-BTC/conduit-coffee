@@ -6,8 +6,6 @@ import { useState, useEffect, useRef } from "react";
 
 export default function ProductLineItem({
   product,
-  borderColor,
-  bgColor,
   textColor,
   quantity,
 }) {

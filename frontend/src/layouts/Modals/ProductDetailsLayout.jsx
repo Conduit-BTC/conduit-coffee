@@ -1,9 +1,11 @@
+import { useRef } from "react";
 import { useUiContext } from "../../context/UiContext";
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
 import CheckoutButton from "../../components/Buttons/CheckoutButton";
 import SatsIcon from "../../components/SatsIcon";
 import { useState, useEffect } from "react";
+import pingBorder from "../../lib/pingBorder";
 
 export default function ProductDetailsLayout() {
   const { currentProductDetails: product } = useUiContext();
@@ -58,10 +60,13 @@ const AddRemoveProduct = ({ product }) => {
 
   const { name, quantity } = product;
 
+  const borderRef = useRef(null);
+
   return (
     <div className="flex gap-2">
       <div className="flex items-center gap-2">
         <p
+          ref={borderRef}
           className={`border-2 rounded-sm p-4 mr-2 flex items-center justify-center font-[700] border-blue-500`}
           style={{ fontFamily: "Fira Code" }}
         >
@@ -72,6 +77,7 @@ const AddRemoveProduct = ({ product }) => {
         </p>
         <button
           onClick={() => {
+            borderRef && pingBorder(borderRef.current, "ping-red");
             removeItemFromCart(product);
           }}
           aria-label={`Remove ${name} from cart`}
@@ -83,7 +89,7 @@ const AddRemoveProduct = ({ product }) => {
         >{`-`}</button>
         <button
           onClick={() => {
-            // pingBorder(borderElement.current, pingColor);
+            borderRef && pingBorder(borderRef.current, "ping-green");
             addItemToCart(product);
           }}
           aria-label={`Add ${name} to cart`}
