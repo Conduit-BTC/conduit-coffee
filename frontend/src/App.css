@@ -45,18 +45,22 @@
   @keyframes red-ping {
     0% {
       border-color: red;
+      box-shadow: 0 0 2px red, 0 0 5px red, 0 0 10px rgba(255, 0, 0, 0.5);
     }
     100% {
-      border-color: --secondary-bg-color;
+      border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: none;
     }
   }
 
-        @keyframes green-ping {
+@keyframes green-ping {
     0% {
       border-color: lime;
+      box-shadow: 0 0 2px lime, 0 0 5px lime, 0 0 10px rgba(0, 255, 0, 0.5);
     }
     100% {
-      border-color: var(--secondary-bg-color);
+      border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: none;
     }
   }
 
