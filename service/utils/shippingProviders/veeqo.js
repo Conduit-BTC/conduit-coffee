@@ -119,7 +119,6 @@ async function createVeeqoShipment(orderId) {
 }
 
 async function createLineItems(cart) {
-    console.log("Creating line items for cart");
     try {
         const items = [];
         for (const item of cart.items) {
@@ -144,7 +143,6 @@ async function createLineItems(cart) {
                 price_per_unit: product.price
             });
         }
-        console.log("Items:     ", items);
         return items;
     } catch (error) {
         console.error('Error in createLineItems:', error);

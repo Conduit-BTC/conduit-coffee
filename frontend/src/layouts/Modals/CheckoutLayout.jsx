@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CurrentHodlings from "../../components/CurrentHodlings";
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
-import ShippingCostCalculator from "../../components/ShippingCostCalculator";
 import { useWebSocketPayment } from '../../hooks/useWebSocketPayment';
 import PaymentStatus from '../../components/PaymentStatus';
+import ShippingForm from '../../components/ShippingForm';
 
 export default function CheckoutLayout() {
   const [lightningInvoice, setLightningInvoice] = useState(null);
@@ -12,6 +12,26 @@ export default function CheckoutLayout() {
   const { paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const shouldShowShippingForm = !lightningInvoice && paymentStatus !== 'paid';
+
+  useEffect(() => {
+    if (!shouldShowShippingForm) {
+      // Start transition
+      setIsTransitioning(true);
+
+      // Smooth scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Reset transition state after animation completes
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300); // Match this with CSS transition duration
+
+      return () => clearTimeout(timer);
+    }
+  }, [shouldShowShippingForm]);
 
   async function postNewOrder(orderData) {
     const url = import.meta.env.VITE_API_URL;
@@ -69,98 +89,34 @@ export default function CheckoutLayout() {
 
   return (
     <>
-      <h1 className="text-h2 pr-12 text-blue-500 mb-2">⚡️ Zap the Lightning</h1>
-      <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get the Coffee</h1>
-      <div className="mb-8">
-        <h3 className="mb-8">Your Order:</h3>
-        <CurrentHodlings />
+      <div className="transition-opacity duration-300 ease-in-out">
+        <h1 className="text-h2 pr-12 text-blue-500 mb-2">⚡️ Zap the Lightning</h1>
+        <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get the Coffee</h1>
+        <div className="mb-8">
+          <h3 className="mb-8">Your Order:</h3>
+          <CurrentHodlings />
+        </div>
+        <div className="w-full h-1 bg-gray-600" />
       </div>
-      <div className="w-full h-1 bg-gray-600" />
-      <ShippingCostCalculator />
-      <div className="w-full h-1 bg-gray-600 my-8" />
-      <h3 className="mb-2">{`Shipping Address`}</h3>
-      <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6>
-      <form onSubmit={handleSubmit}>
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="First Name"
-          id="first_name"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Last Name"
-          id="last_name"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="address"
-          placeholder="Street Address"
-          id="address-1"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="address"
-          placeholder="Street Address (line 2)"
-          id="address-2"
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="City"
-          id="city"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="State"
-          id="state"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Zip Code"
-          id="zip"
-          required
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Special Instructions?"
-          id="special-instructions"
-        />
-        <h3 className="mt-8 mb-2">
-          {`Contact Info`}
-          <span className="text-sm">{` (Optional)`}</span>
-        </h3>
-        <h6>{`We'll send you a tracking number and receipt, nothing else. Skip it if you're off-the-radar `}</h6>
-        <input
-          className="w-full p-2 mt-4"
-          type="email"
-          placeholder="Email (optional)"
-          id="email"
-        />
-        <input
-          className="w-full p-2 mt-4"
-          type="text"
-          placeholder="Nostr npub key (optional)"
-          id="npub"
-        />
 
-        <PaymentStatus
-          lightningInvoice={lightningInvoice}
-          paymentStatus={paymentStatus}
-          connectionStatus={connectionStatus}
-          error={error}
-          cartPriceUsd={cartPriceUsd}
-        />
-      </form>
+      <div className={`transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
+        {shouldShowShippingForm ? (
+          <ShippingForm
+            onSubmit={handleSubmit}
+            cartPriceUsd={cartPriceUsd}
+          />
+        ) : (
+          <div className="mt-8 flex justify-center">
+            <PaymentStatus
+              lightningInvoice={lightningInvoice}
+              paymentStatus={paymentStatus}
+              connectionStatus={connectionStatus}
+              error={error}
+              cartPriceUsd={cartPriceUsd}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 }

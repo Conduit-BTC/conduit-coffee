@@ -27,16 +27,12 @@ class WebSocketService {
 
         if (this.wss) {
             this.wss.on('connection', this.handleConnection);
-            console.log('WebSocket connection handler registered');
         }
 
         return this;
     }
 
     handleConnection(ws) {
-        console.log('New WebSocket connection established');
-
-        // Send initial connection acknowledgment
         ws.send(JSON.stringify({ type: 'CONNECTED' }));
 
         ws.on('message', (message) => this.handleMessage(ws, message));
@@ -46,13 +42,11 @@ class WebSocketService {
 
     handleMessage(ws, message) {
         try {
-            const data = JSON.parse(message.toString()); // Add toString() to handle Buffer
+            const data = JSON.parse(message.toString());
 
             if (data.type === 'WATCH_INVOICE') {
                 const { invoiceId } = data;
-                console.log(`Client watching invoice: ${invoiceId}`);
 
-                // Remove any existing connection for this invoice
                 if (this.connections.has(invoiceId)) {
                     const existingWs = this.connections.get(invoiceId);
                     if (existingWs !== ws && existingWs.readyState === WebSocket.OPEN) {
@@ -63,7 +57,6 @@ class WebSocketService {
                 this.connections.set(invoiceId, ws);
                 ws.invoiceId = invoiceId;
 
-                // Acknowledge watching
                 ws.send(JSON.stringify({
                     type: 'WATCHING_CONFIRMED',
                     invoiceId: invoiceId
@@ -80,7 +73,6 @@ class WebSocketService {
 
     handleDisconnect(ws) {
         if (ws.invoiceId) {
-            console.log(`Client disconnected from invoice: ${ws.invoiceId}`);
             this.connections.delete(ws.invoiceId);
         }
     }
@@ -90,7 +82,6 @@ class WebSocketService {
     }
 
     notifyPaymentReceived(invoiceId) {
-        console.log("WebSocketService.notifyPaymentReceived", invoiceId);
         const ws = this.connections.get(invoiceId);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
@@ -102,9 +93,7 @@ class WebSocketService {
                 });
 
                 ws.send(message);
-                console.log(`Payment notification sent for invoice ${invoiceId}`);
 
-                // Delay connection cleanup to ensure message delivery
                 setTimeout(() => {
                     if (ws.readyState === WebSocket.OPEN) {
                         this.connections.delete(invoiceId);

@@ -22,10 +22,7 @@ exports.handleInvoiceWebhook = async (req, res) => {
     if (invoiceStatus !== InvoiceStatus.PAID) return;
 
     console.log("----- START Payment Processing Pipeline -----");
-    console.log("Paid invoice received. Emitting event to create shipment");
-
     eventBus.emit(InvoiceEvents.INVOICE_PAID, invoiceId);
-
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: 'Server Error' });
     console.error(

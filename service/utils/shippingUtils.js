@@ -5,8 +5,6 @@ const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
 
 async function createShipment(invoiceId) {
-  console.log('Creating shipment for invoice ID:', invoiceId);
-
   try {
     const order = await prisma.order.findFirst({
       where: { invoiceId: invoiceId },
@@ -16,16 +14,11 @@ async function createShipment(invoiceId) {
     if (!order) {
       throw new Error(`Order with Invoice ID ${invoiceId} not found`);
     }
-
-    console.log('Creating customer for order: ', order.id);
     const vCustomerId = await createVeeqoCustomer(order.id);
 
     if (!vCustomerId) {
       throw new Error('Error creating Veeqo customer');
     }
-
-    console.log('Customer Created. Veeqo customer ID: ', vCustomerId);
-    console.log('Creating Veeqo order for customer');
 
     const vOrderId = await createVeeqoOrder(vCustomerId, order, invoiceId);
 
@@ -33,15 +26,12 @@ async function createShipment(invoiceId) {
       throw new Error('Error creating Veeqo order');
     }
 
-    console.log('Order Created. Veeqo order ID:', vOrderId);
-
     const orderShipmentUpdate = updateOrderWithShipmentInfo(order.id, vOrderId, "Veeqo");
 
     if (!orderShipmentUpdate) {
       throw new Error('Error updating order with shipment ID');
     }
 
-    console.log('Order updated with shipment info: ', order.id, vOrderId, 'Veeqo');
     console.log("----- Payment Processing Pipeline COMPLETE -----");
   } catch (error) {
     console.error('Error creating shipment:', error);
@@ -50,7 +40,6 @@ async function createShipment(invoiceId) {
 }
 
 async function updateOrderWithShipmentInfo(orderId, shippingOrderId, shippingProvider) {
-  console.log('Updating order with shipment ID:', orderId, shippingOrderId, shippingProvider);
   const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: { shippingOrderId: shippingOrderId.toString(), shippingProvider, shippingStatus: 'PROCESSING' },
