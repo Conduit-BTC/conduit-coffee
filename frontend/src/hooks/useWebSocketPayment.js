@@ -14,7 +14,7 @@ export function useWebSocketPayment(invoiceId) {
         try {
             const wsUrl = import.meta.env.VITE_WEBSOCKET_URL;
             if (!wsUrl) {
-                throw new Error('WebSocket URL not configured');
+                throw new Error('WARNING: Connection to the server is not available, please reload the page');
             }
 
             socketRef.current = new WebSocket(wsUrl);

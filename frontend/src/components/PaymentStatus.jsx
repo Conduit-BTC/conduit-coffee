@@ -10,7 +10,7 @@ const PaymentStatus = ({
     cartPriceUsd,
     onSubmitPayment
 }) => {
-    // Show payment success state
+    // Payment successful state
     if (paymentStatus === 'paid') {
         return (
             <div>
@@ -22,8 +22,8 @@ const PaymentStatus = ({
         );
     }
 
-    // Show QR code with connection status
-    if (lightningInvoice) {
+    // Show QR code only when server is connected and we have an invoice
+    if (lightningInvoice && connectionStatus === 'connected') {
         return (
             <div className="flex flex-col items-center">
                 <BitcoinQR
@@ -39,11 +39,17 @@ const PaymentStatus = ({
                     dotsType="classy-rounded"
                     dotsColor="#ff5000"
                 />
-                {connectionStatus === 'connected' && (
-                    <div className="mt-2 text-green-500">
-                        Watching for payment... ⚡
-                    </div>
-                )}
+                <div className="mt-2 text-green-500">
+                    Watching for payment... ⚡
+                </div>
+            </div>
+        );
+    }
+
+    // Show status messages when there's an invoice but server isn't connected
+    if (lightningInvoice) {
+        return (
+            <div className="flex flex-col items-center">
                 {connectionStatus === 'disconnected' && (
                     <div className="mt-2 text-yellow-500">
                         Reconnecting to payment server... 🔄
