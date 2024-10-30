@@ -66,14 +66,21 @@ const PaymentStatus = ({
 
     // Initial payment button
     return (
-        <button
-            type="submit"
-            disabled={cartPriceUsd <= 0.0}
-            className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
-            onClick={onSubmitPayment}
-        >
-            {`>> Pay With Lightning <<`}
-        </button>
+        <div className="flex flex-col items-center w-full">
+            {error && (
+                <div className="w-full mb-4 p-4 bg-red-100 border border-red-400 text-red-700 text-center rounded">
+                    Unable to connect to payment server. Please try again later. ❌
+                </div>
+            )}
+            <button
+                type="submit"
+                disabled={cartPriceUsd <= 0.0}
+                className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
+                onClick={onSubmitPayment}
+            >
+                {`>> Pay With Lightning <<`}
+            </button>
+        </div>
     );
 };
 

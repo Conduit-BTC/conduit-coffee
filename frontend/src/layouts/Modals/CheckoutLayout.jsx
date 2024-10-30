@@ -9,6 +9,7 @@ import ShippingForm from '../../components/ShippingForm';
 export default function CheckoutLayout() {
   const [lightningInvoice, setLightningInvoice] = useState(null);
   const [invoiceId, setInvoiceId] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
   const { paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
@@ -18,17 +19,11 @@ export default function CheckoutLayout() {
 
   useEffect(() => {
     if (!shouldShowShippingForm) {
-      // Start transition
       setIsTransitioning(true);
-
-      // Smooth scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Reset transition state after animation completes
       const timer = setTimeout(() => {
         setIsTransitioning(false);
-      }, 300); // Match this with CSS transition duration
-
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [shouldShowShippingForm]);
@@ -36,9 +31,9 @@ export default function CheckoutLayout() {
   async function postNewOrder(orderData) {
     const url = import.meta.env.VITE_API_URL;
     if (!url) {
-      console.error("CheckoutLayout: Environment Variable missing: VITE_API_URL");
-      return;
+      throw new Error("Configuration error: API URL not found");
     }
+
     try {
       const response = await fetch(`${url}/orders`, {
         method: "POST",
@@ -48,43 +43,48 @@ export default function CheckoutLayout() {
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setLightningInvoice(data.lightningInvoice);
-        setInvoiceId(data.invoiceId);
-      } else {
-        console.error("Failed to create order:", response.statusText);
+      if (!response.ok) {
+        throw new Error('Unable to connect to payment server');
       }
+
+      const data = await response.json();
+      setLightningInvoice(data.lightningInvoice);
+      setInvoiceId(data.invoiceId);
+      setSubmitError(null);
     } catch (error) {
       console.error("Error creating order:", error);
+      throw error; // Re-throw to be caught by handleSubmit
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = import.meta.env.VITE_API_URL;
-    if (!url) {
-      console.error("CheckoutLayout: Environment Variable missing: VITE_API_URL");
-      return;
+    setSubmitError(null);
+
+    try {
+      const cartData = {
+        sats_cart_price: satsToUsd * cartPriceUsd,
+        usd_cart_price: cartPriceUsd,
+        items: cartItems,
+      };
+
+      const orderData = {
+        first_name: document.getElementById("first_name").value,
+        last_name: document.getElementById("last_name").value,
+        address1: document.getElementById("address-1").value,
+        address2: document.getElementById("address-2").value,
+        city: document.getElementById("city").value,
+        state: document.getElementById("state").value,
+        zip: document.getElementById("zip").value,
+        special_instructions: document.getElementById("special-instructions").value,
+        email: document.getElementById("email").value,
+        cart: cartData,
+      };
+
+      await postNewOrder(orderData);
+    } catch (error) {
+      throw new Error('Unable to connect to payment server');
     }
-    const cartData = {
-      sats_cart_price: satsToUsd * cartPriceUsd,
-      usd_cart_price: cartPriceUsd,
-      items: cartItems,
-    };
-    const orderData = {
-      first_name: document.getElementById("first_name").value,
-      last_name: document.getElementById("last_name").value,
-      address1: document.getElementById("address-1").value,
-      address2: document.getElementById("address-2").value,
-      city: document.getElementById("city").value,
-      state: document.getElementById("state").value,
-      zip: document.getElementById("zip").value,
-      special_instructions: document.getElementById("special-instructions").value,
-      email: document.getElementById("email").value,
-      cart: cartData,
-    };
-    postNewOrder(orderData);
   };
 
   return (
@@ -113,6 +113,7 @@ export default function CheckoutLayout() {
               connectionStatus={connectionStatus}
               error={error}
               cartPriceUsd={cartPriceUsd}
+                submitError={submitError}
             />
           </div>
         )}

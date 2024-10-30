@@ -1,15 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ShippingCostCalculator from "./ShippingCostCalculator";
 
 const ShippingForm = ({ onSubmit, cartPriceUsd }) => {
+    const [submitError, setSubmitError] = useState(null);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitError(null);
+
+        try {
+            await onSubmit(e);
+        } catch (error) {
+            console.error("Form submission error:", error);
+            setSubmitError(error.message || 'Unable to connect to payment server');
+
+            // Clear error after 5 seconds
+            setTimeout(() => {
+                setSubmitError(null);
+            }, 5000);
+        }
+    };
+
     return (
         <>
             <ShippingCostCalculator />
             <div className="w-full h-1 bg-gray-600 my-8" />
+
+            {submitError && (
+                <div className="sticky top-0 z-50 w-full p-4 mb-8 bg-red-100 border-2 border-red-500 text-red-700 text-center rounded text-lg font-bold">
+                    {submitError} ❌
+                </div>
+            )}
+
             <h3 className="mb-2">{`Shipping Address`}</h3>
             <h6>{`We don't need to know you, we just need a place to send your coffee.`}</h6>
-            <form onSubmit={onSubmit}>
+
+            <form onSubmit={handleSubmit}>
                 <input
                     className="w-full p-2 mt-4"
                     type="text"
@@ -85,7 +112,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd }) => {
                 <button
                     type="submit"
                     disabled={cartPriceUsd <= 0.0}
-                    className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold"
+                    className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
                 >
                     {`>> Pay With Lightning <<`}
                 </button>

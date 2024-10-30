@@ -53,7 +53,7 @@
 
         @keyframes green-ping {
     0% {
-      border-color: lightgreen;
+      border-color: lime;
     }
     100% {
       border-color: var(--secondary-bg-color);
