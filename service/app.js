@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const basicAuth = require('express-basic-auth');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const http = require('http');
+
 dotenv.config({ path: './.env' });
 
 // Initialize services
@@ -10,8 +12,13 @@ require('./services/dbService');
 require('./services/shippingService');
 require('./services/orderService');
 
-// Initialize express
+// Initialize express and create HTTP server
 const app = express();
+const server = http.createServer(app);
+
+// Initialize WebSocket service
+const wsService = require('./services/wsService');
+wsService.initialize(server);
 
 app.use(cors());
 
@@ -56,8 +63,13 @@ app.use('/ticker', tickerRoutes);
 
 // Start the server
 const port = process.env.PORT || 3456;
-app.listen(port, '0.0.0.0', () => {
+server.listen(port, '0.0.0.0', () => {
   console.log(`API server running on port ${port}`);
 });
 
 console.log('Node ENV: ', process.env.APP_ENV);
+
+// Error handling
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled promise rejection:', error);
+});
