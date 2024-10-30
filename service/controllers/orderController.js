@@ -81,9 +81,8 @@ exports.createPointOfSaleOrder = async (req, res) => {
       description: 'Invoice for Point-of-Sale Order #' + createdOrder.id || '__________',
       amount: {
         currency: 'BTC',
-        amount: (cart.sats_cart_price) / 100000000
-        // amount: 0.00000001 << TESTING
-        // amount: (cart.sats_cart_price + satsShippingCost) / 100000000 << PROD with SHIPPING
+        // amount: 0.00000001 <<<<< TESTING
+        amount: (cart.sats_cart_price + satsShippingCost) / 100000000
       },
     });
 
