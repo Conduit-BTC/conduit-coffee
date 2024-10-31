@@ -85,6 +85,9 @@ exports.createOrder = async (req, res) => {
 
     const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === 1;
 
+    console.log("Use Test Payment:", useTestPayment);
+    console.log(process.env.USE_TEST_PAYMENT_AMOUNT);
+
     var body = JSON.stringify({
       correlationId: randomUUID(),
       description: 'Invoice for Order #' + (createdOrder.id || '__________'),
