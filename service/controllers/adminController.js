@@ -1,5 +1,7 @@
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
+const emailService = require('../services/emailService');
+const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
 
 exports.exportOrdersCsv = async (_, res) => {
   console.log('exportOrdersCsv');
@@ -47,4 +49,17 @@ function generateFilename(name) {
   const month = String(currentDate.getMonth() + 1).padStart(2, '0');
   const year = currentDate.getFullYear();
   return `${name}-${day}-${month}-${year}.csv`;
+}
+
+exports.sendReceiptTestEmail = async (req, res) => {
+  console.log('sendReceiptTestEmail');
+  try {
+    const { invoiceId } = req.params;
+    const details = await generateReceiptDetailsObject(invoiceId);
+    await emailService.handleReceiptCreated(details);
+    res.send('Email sent successfully.');
+  } catch (error) {
+    console.error('Error sending test receipt email:', error);
+    res.status(500).send('Internal Server Error');
+  }
 }

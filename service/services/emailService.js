@@ -1,9 +1,10 @@
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
-const { getStrikeInvoiceDetails } = require('../utils/invoiceUtils');
-const { getOrderByInvoiceId, getCartByOrderId } = require('../utils/orderUtils');
-const { ProtonMailProvider } = require('./emailProviders');
-const { invoiceTemplate, shippingTemplate } = require('./templates');
+const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
+const { ProtonMailProvider } = require('./email/emailProviders');
+const { invoiceTemplate, shippingTemplate } = require('./email/templates');
+const EmailTransport = require('./email/EmailTransport');
+const EmailClient = require('./email/EmailClient');
 
 class EmailService {
     constructor() {
@@ -32,58 +33,48 @@ class EmailService {
     loadEmailConfigs() {
         return {
             shipping: {
-                username: process.env.SHIPPING_EMAIL,
+                address: process.env.SHIPPING_EMAIL,
                 token: process.env.SHIPPING_TOKEN,
             },
             receipts: {
-                username: process.env.RECEIPTS_EMAIL,
+                address: process.env.RECEIPTS_EMAIL,
                 token: process.env.RECEIPTS_TOKEN,
             }
         };
     }
 
     setupEventListeners() {
-        eventBus.on(InvoiceEvents.INVOICE_CREATED, this.handleInvoiceCreated.bind(this));
+        eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.handleReceiptCreated.bind(this));
     }
 
-    async handleInvoiceCreated(invoiceId) {
+    async handleReceiptCreated(details) {
         try {
-            const details = await this.generateInvoicePaidEmailDetails(invoiceId);
-            await this.sendInvoicePaidEmail(details);
+            if (details.email) await this.sendInvoicePaidEmail(details);
         } catch (error) {
             console.error('Failed to process invoice emails:', error);
             throw error;
         }
     }
 
-    async generateInvoicePaidEmailDetails(invoiceId) {
-        const invoice = await getStrikeInvoiceDetails(invoiceId);
-        const order = await getOrderByInvoiceId(invoiceId);
-        const cart = await getCartByOrderId(order.id);
-
-        return {
-            orderId: order.id,
-            totalCost: invoice.amount.amount * 100000000, // Convert BTC to Sats
-            date: invoice.created,
-            items: cart.items
-        }
-    }
-
     async sendInvoicePaidEmail(details) {
-        const tasks = [];
+        console.log("---Receipt Email---")
+        console.log(invoiceTemplate.subject())
+        console.log(invoiceTemplate.body(details))
 
-        const receiptClient = this.clients.get('receipts');
-        if (receiptClient) {
-            const task = receiptClient.sendMail(
-                process.env.RECEIPTS_DESTINATION,
-                invoiceTemplate.subject(),
-                invoiceTemplate.body(details)
-            );
-            tasks.push(task);
-        }
+        // const tasks = [];
+
+        // const receiptClient = this.clients.get('receipts');
+        // if (receiptClient) {
+        //     const task = receiptClient.sendMail(
+        //         process.env.RECEIPTS_DESTINATION,
+        //         invoiceTemplate.subject(),
+        //         invoiceTemplate.body(details)
+        //     );
+        //     tasks.push(task);
+        // }
 
         // Wait for all emails to be sent
-        await Promise.all(tasks);
+        // await Promise.all(tasks);
     }
 
     async sendShipmentUpdateEmail(shipment) {
@@ -102,4 +93,4 @@ class EmailService {
 }
 
 const emailService = Object.freeze(new EmailService());
-module.exports = { emailService, EmailService };
+module.exports = emailService;

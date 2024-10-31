@@ -3,19 +3,27 @@ class EmailFormatters {
         return amount * 100000000
     }
 
-    static address(address) {
-        if (!address) return 'No address provided';
+    static address(order) {
+        const address = [
+            order.address1
+        ];
 
-        return `${address.street}
-${address.city}, ${address.state} ${address.zip}`.trim();
+        if (order.address2) {
+            address.push(order.address2);
+        }
+
+        address.push(order.zip);
+
+        return address.join('\n');
     }
 
     static lineItems(items) {
         if (!items?.length) return 'No items';
 
-        return items
-            .map(item => `- ${item.name}: ${this.currency(item.price)}`)
-            .join('\n');
+        return items.map(item => {
+            return `• ${item.quantity}x ${item.name} (${item.weight}g)
+      SKU: ${item.sku}`;
+        }).join('\n\n');
     }
 
     static shippingItems(items) {
@@ -31,21 +39,11 @@ ${address.city}, ${address.state} ${address.zip}`.trim();
         return new Date(date).toLocaleDateString(locale, {
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            timeZoneName: 'short',
         });
-    }
-
-    static phone(phone, country = 'US') {
-        // Basic phone formatting - could be enhanced with a proper phone formatting library
-        return phone?.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') || 'No phone provided';
-    }
-
-    static list(items, prefix = '-') {
-        if (!items?.length) return 'None';
-
-        return items
-            .map(item => `${prefix} ${item}`)
-            .join('\n');
     }
 }
 

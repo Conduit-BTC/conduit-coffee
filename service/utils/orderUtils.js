@@ -39,7 +39,6 @@ async function getOrderByInvoiceId(invoiceId) {
  */
 async function getCartByOrderId(orderId) {
     try {
-        // Basic input validation
         if (!orderId || typeof orderId !== 'string') {
             throw new Error('Invalid order ID: must be a non-empty string');
         }

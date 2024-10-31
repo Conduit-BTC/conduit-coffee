@@ -6,14 +6,16 @@ class EmailClient {
     }
 
     validateConfig() {
-        if (!this.config.username || !this.config.token) {
-            throw new Error(`Invalid email configuration for ${this.config.username}`);
+        if (!this.config.address || !this.config.token) {
+            console.log(this.config);
+
+            throw new Error(`Invalid email configuration for ${this.config.address}`);
         }
     }
 
     async sendMail(to, subject, text) {
         const mailOptions = {
-            from: this.config.username,
+            from: this.config.address,
             to,
             subject,
             text
@@ -22,3 +24,5 @@ class EmailClient {
         return this.transport.sendMail(mailOptions);
     }
 }
+
+module.exports = EmailClient;

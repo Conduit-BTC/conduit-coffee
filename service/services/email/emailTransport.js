@@ -27,3 +27,5 @@ class EmailTransport extends EventEmitter {
         return this.transporter.sendMail(options);
     }
 }
+
+module.exports = EmailTransport;
