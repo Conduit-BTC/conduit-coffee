@@ -83,10 +83,9 @@ exports.createOrder = async (req, res) => {
     const fullAmount = (cart.sats_cart_price + satsShippingCost) / 100000000;
     const testAmount = 0.00000001;
 
-    const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === 1;
+    const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === "true";
 
-    console.log("Use Test Payment:", useTestPayment);
-    console.log(process.env.USE_TEST_PAYMENT_AMOUNT);
+    if (useTestPayment) console.warn(`>>> DEV MODE: Using test payment amount of ${testAmount} Satoshi <<<`);
 
     var body = JSON.stringify({
       correlationId: randomUUID(),
