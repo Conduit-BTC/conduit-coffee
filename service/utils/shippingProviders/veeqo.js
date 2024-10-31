@@ -61,6 +61,14 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
             }
         })
 
+        console.log("Posting order to Veeqo:");
+        console.log("URL: ", `${process.env.VEEQO_API_BASE_URL}/orders`);
+        console.log("Body: ", body);
+        console.log("Headers: ", JSON.stringify({
+            'Content-Type': 'application/json',
+            'x-api-key': "REDACTED",
+        }));
+
         const vOrder = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
             method: 'POST',
             headers: {
@@ -71,8 +79,9 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
         });
 
         if (!vOrder.ok) {
+            const errorResponse = await vOrder.json();
             throw new Error(
-                `Error POSTing to ${process.env.VEEQO_API_BASE_URL}/orders - Veeqo Response: - ${vOrder.statusText} - ${vOrder.status} - ${await vOrder.json()}`,
+                `Error POSTing to ${process.env.VEEQO_API_BASE_URL}/orders - Veeqo Response: - ${vOrder.statusText} - ${vOrder.status} - ${JSON.stringify(errorResponse)}`,
             );
         }
 
