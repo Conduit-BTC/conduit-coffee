@@ -80,9 +80,10 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
 
         if (!vOrder.ok) {
             const errorResponse = await vOrder.json();
-            throw new Error(
+            console.error(
                 `Error POSTing to ${process.env.VEEQO_API_BASE_URL}/orders - Veeqo Response: - ${vOrder.statusText} - ${vOrder.status} - ${JSON.stringify(errorResponse)}`,
             );
+            return null;
         }
 
         const vOrderJson = await vOrder.json();

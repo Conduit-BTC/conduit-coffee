@@ -23,7 +23,7 @@ async function createShipment(invoiceId) {
     const vOrderId = await createVeeqoOrder(vCustomerId, order, invoiceId);
 
     if (!vOrderId) {
-      throw new Error('Error creating Veeqo order');
+      // Use NodeMailer to send an email to the admin
     }
 
     const orderShipmentUpdate = updateOrderWithShipmentInfo(order.id, vOrderId, "Veeqo");

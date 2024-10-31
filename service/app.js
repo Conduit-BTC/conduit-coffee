@@ -11,6 +11,7 @@ dotenv.config({ path: './.env' });
 require('./services/dbService');
 require('./services/shippingService');
 require('./services/orderService');
+require('./services/emailService');
 
 // Initialize express and create HTTP server
 const app = express();
