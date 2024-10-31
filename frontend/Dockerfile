@@ -14,6 +14,7 @@ COPY . ./
 
 # Specify any needed environment variables here
 ARG VITE_API_URL
+ARG VITE_WEBSOCKET_URL
 
 RUN npm run build
 
