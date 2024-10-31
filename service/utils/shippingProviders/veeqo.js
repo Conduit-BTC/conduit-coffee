@@ -61,7 +61,6 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
             }
         })
 
-
         const vOrder = await fetch(`${process.env.VEEQO_API_BASE_URL}/orders`, {
             method: 'POST',
             headers: {
@@ -71,13 +70,13 @@ async function createVeeqoOrder(customerId, order, invoiceId) {
             body
         });
 
-        const vOrderJson = await vOrder.json();
-
         if (!vOrder.ok) {
             throw new Error(
-                `Error POSTing to Veeqo - Veeqo Response: ${vOrder.body} - ${vOrder.statusText} - ${vOrder.status}`,
+                `Error POSTing to ${process.env.VEEQO_API_BASE_URL}/orders - Veeqo Response: - ${vOrder.statusText} - ${vOrder.status} - ${await vOrder.json()}`,
             );
         }
+
+        const vOrderJson = await vOrder.json();
 
         return vOrderJson.id;
     } catch (error) {

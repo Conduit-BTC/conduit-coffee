@@ -80,13 +80,17 @@ exports.createOrder = async (req, res) => {
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', `Bearer ${strikeKey}`);
 
+    const fullAmount = (cart.sats_cart_price + satsShippingCost) / 100000000;
+    const testAmount = 0.00000001;
+
+    const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === 1;
+
     var body = JSON.stringify({
       correlationId: randomUUID(),
-      description: 'Invoice for Order #' + createdOrder.id || '__________',
+      description: 'Invoice for Order #' + (createdOrder.id || '__________'),
       amount: {
         currency: 'BTC',
-        // amount: 0.00000001 //<<<<< TESTING
-        amount: (cart.sats_cart_price + satsShippingCost) / 100000000
+        amount: useTestPayment ? testAmount : fullAmount,
       },
     });
 
