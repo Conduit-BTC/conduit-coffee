@@ -3,7 +3,7 @@ const Formatters = require('./shared/formatters');
 
 const invoiceTemplate = {
     subject: () =>
-        `⚡️ Your Receipt from Coffee by Conduit ⚡️`,
+        `⚡️ Your Receipt | Coffee by Conduit ⚡️`,
 
     body: (details) => `
 ╭─────────────────────────────────────────────╮

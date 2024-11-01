@@ -10,8 +10,6 @@ async function generateReceiptDetailsObject(invoiceId) {
     const cart = await getCartByOrderId(order.id);
     const items = await formatCartForReceipt(cart.items);
 
-    console.log(cart)
-
     return {
         orderId: order.id,
         shippingInfo: {
