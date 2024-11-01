@@ -37,6 +37,7 @@ exports.createOrder = async (req, res) => {
       zip,
       special_instructions,
       email,
+      npub,
       cart,
     } = req.body;
 
@@ -62,6 +63,7 @@ exports.createOrder = async (req, res) => {
         zip,
         special_instructions,
         email,
+        npub,
         cart: {
           create: {
             sats_cart_price: cart.sats_cart_price,

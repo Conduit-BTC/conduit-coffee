@@ -21,7 +21,8 @@ model Order {
   address2            String?
   zip                 String
   special_instructions String?
-  email               String
+  email               String?
+  npub                String?
   cart                Cart?
   invoiceId           String? @unique
   invoiceStatus       String?

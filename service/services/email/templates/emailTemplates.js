@@ -17,8 +17,8 @@ Date: ${Formatters.date(details.date)}
 
 📋 Contact Information
 ═══════════════════
-Email: ${details.email || 'No email provided 😎'}
-Nub: ${details.npub || 'No Nub provided'}
+Email: ${details.email || '(not provided)'}
+Nub: ${details.npub || '(not provided)'}
 
 📦 Shipping Details
 ════════════════
