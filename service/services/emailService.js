@@ -3,8 +3,8 @@ const { InvoiceEvents } = require('../events/eventTypes');
 const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
 const { ProtonMailProvider } = require('./email/emailProviders');
 const { invoiceTemplate, shippingTemplate } = require('./email/templates');
-const EmailTransport = require('./email/EmailTransport');
-const EmailClient = require('./email/EmailClient');
+const EmailTransport = require('./email/emailTransport');
+const EmailClient = require('./email/emailClient');
 
 class EmailService {
     constructor() {
