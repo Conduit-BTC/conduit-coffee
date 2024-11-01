@@ -119,19 +119,6 @@ export default function ShippingCostCalculator({ onShippingCostCalculated }) {
           }
         </button>
       </div>
-
-      <div className={`mt-4 transition-opacity duration-300 ${usdCost > 0 ? 'opacity-100' : 'opacity-50'}`}>
-        <h4>Estimated Shipping Cost</h4>
-        <div className="flex items-center gap-2">
-          <h4 className="text-orange-500 flex items-center">
-            <SatsIcon color="orange" />
-            {`${Math.floor(satsCost)} Sats`}
-          </h4>
-          <h4 className="text-green-500">
-            {`($${usdCost} USD)`}
-          </h4>
-        </div>
-      </div>
     </section>
   );
 }
