@@ -10,7 +10,7 @@ export default function CheckoutLayout() {
   const [lightningInvoice, setLightningInvoice] = useState(null);
   const [invoiceId, setInvoiceId] = useState(null);
   const [submitError, setSubmitError] = useState(null);
-  const { paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
+  const { receipt, paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -108,6 +108,7 @@ export default function CheckoutLayout() {
         ) : (
           <div className="mt-8 flex justify-center">
             <PaymentStatus
+                receipt={receipt}
               lightningInvoice={lightningInvoice}
               paymentStatus={paymentStatus}
               connectionStatus={connectionStatus}

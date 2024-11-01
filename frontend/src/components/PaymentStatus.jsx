@@ -1,10 +1,12 @@
 import React from 'react';
 import { BitcoinQR } from "./BitcoinQR";
 import { ConfettiEffect } from "./ConfettiEffect";
+import ReceiptExport from "./ReceiptExport";
 
 const PaymentStatus = ({
     lightningInvoice,
     paymentStatus,
+    receipt,
     connectionStatus,
     error,
     cartPriceUsd,
@@ -13,11 +15,17 @@ const PaymentStatus = ({
     // Payment successful state
     if (paymentStatus === 'paid') {
         return (
-            <div>
+            <div className='space-y-8'>
                 <ConfettiEffect />
-                <div className="mt-4 text-green-500 font-bold text-xl">
-                    Payment Received! ⚡
+                <h2 className="mt-4 text-green-500 font-bold w-full text-center">
+                    ⚡ Zap Received! ⚡
+                </h2>
+                <div className="bg-gray-900 border-t border-gray-800 p-4">
+                    <ReceiptExport receiptContent={receipt} />
                 </div>
+                <pre className="font-mono whitespace-pre-wrap bg-gray-900 text-gray-100 p-4 rounded">
+                    {receipt}
+                </pre>
             </div>
         );
     }

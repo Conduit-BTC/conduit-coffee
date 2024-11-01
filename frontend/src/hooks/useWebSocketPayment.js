@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export function useWebSocketPayment(invoiceId) {
     const [paymentStatus, setPaymentStatus] = useState('pending');
+    const [receipt, setReceipt] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('disconnected');
     const [error, setError] = useState(null);
     const socketRef = useRef(null);
@@ -36,7 +37,6 @@ export function useWebSocketPayment(invoiceId) {
             socketRef.current.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
-                    console.log('WebSocket message received:', data);
 
                     switch (data.type) {
                         case 'CONNECTED':
@@ -49,6 +49,7 @@ export function useWebSocketPayment(invoiceId) {
                             if (data.invoiceId === invoiceId) {
                                 console.log('Payment received for invoice:', data.invoiceId);
                                 setPaymentStatus('paid');
+                                setReceipt(data.receipt);
                                 if (socketRef.current) {
                                     socketRef.current.close();
                                 }
@@ -90,7 +91,7 @@ export function useWebSocketPayment(invoiceId) {
             setConnectionStatus('error');
             setError(error.message);
         }
-    }, [invoiceId, paymentStatus]);
+    }, [invoiceId, paymentStatus, receipt]);
 
     useEffect(() => {
         if (!invoiceId) {
@@ -111,6 +112,7 @@ export function useWebSocketPayment(invoiceId) {
     }, [invoiceId, connectWebSocket]);
 
     return {
+        receipt,
         paymentStatus,
         connectionStatus,
         isConnected: connectionStatus === 'connected',
