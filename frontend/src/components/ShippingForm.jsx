@@ -38,7 +38,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
     const displayError = error || submitError;
 
     return (
-        <>
+        <div className='p-4 md:p-8'>
             <ShippingCostCalculator />
             <div className="w-full h-1 bg-gray-600 my-8" />
 
@@ -132,7 +132,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
                     {`>> Pay With Lightning <<`}
                 </button>
             </form>
-        </>
+        </div>
     );
 };
 

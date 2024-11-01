@@ -16,12 +16,12 @@ async function performCalculation(zip, cartItems) {
     body: JSON.stringify({ zip, cart: cartItems }),
   });
 
-  if (response.ok) {
-    const usdCost = await response.json();
-    return usdCost;
-  } else {
-    console.error("Failed to calculate shipping cost:", response.statusText);
+  if (!response.ok) {
+    throw new Error(`Shipping calculation failed: ${response.statusText}`);
   }
+
+  const usdCost = await response.json();
+  return usdCost;
 }
 
 export default function ShippingCostCalculator() {
@@ -30,9 +30,36 @@ export default function ShippingCostCalculator() {
   const [satsCost, setSatsCost] = useState(0);
   const [usdCost, setUsdCost] = useState(0.0);
   const [zip, setZip] = useState("");
+  const [error, setError] = useState(null);
+
+  const handleCalculation = async () => {
+    try {
+      setError(null);
+      const res = await performCalculation(zip, cartItems);
+      if (res) {
+        const baseCost = (res * SHIPPING_DISCOUNT).toFixed(2);
+        setUsdCost(baseCost);
+        setSatsCost(baseCost * satsToUsd);
+      }
+    } catch (err) {
+      console.error("Shipping calculation error:", err);
+      setError(err.message || "Unable to calculate shipping cost");
+
+      // Clear error after 5 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  };
 
   return (
-    <section className="flex flex-col">
+    <section className="flex flex-col pt-4">
+      {error && (
+        <div className="sticky top-0 z-50 w-full p-4 mb-8 bg-red-100 border-2 border-red-500 text-red-700 text-center rounded text-lg font-bold">
+          {error} ❌
+        </div>
+      )}
+
       <h3>Shipping Calculator</h3>
       <input
         className="p-2 bg-blue-300 text-black mt-4 placeholder:text-black"
@@ -47,16 +74,7 @@ export default function ShippingCostCalculator() {
         className={`p-4 flex my-4 ${
           zip && zip.length >= 5 ? "bg-blue-500" : "bg-blue-500/20"
         }`}
-        onClick={async () => {
-          const res = await performCalculation(zip, cartItems);
-          if (res) {
-            baseCost = (res * SHIPPING_DISCOUNT).toFixed(2);
-            setUsdCost(baseCost);
-            setSatsCost(baseCost * satsToUsd);
-          } else {
-            // TODO: Display error state
-          }
-        }}
+        onClick={handleCalculation}
       >
         {`>> Calculate Estimated Shipping Cost << `}
       </button>
