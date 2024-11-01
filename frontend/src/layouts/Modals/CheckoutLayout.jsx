@@ -1,3 +1,4 @@
+// CheckoutLayout.jsx
 import React, { useState, useEffect } from 'react';
 import CurrentHodlings from "../../components/CurrentHodlings";
 import { useCartContext } from "../../context/CartContext";
@@ -34,34 +35,29 @@ export default function CheckoutLayout() {
       throw new Error("Configuration error: API URL not found");
     }
 
-    try {
-      const response = await fetch(`${url}/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+    const response = await fetch(`${url}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
 
-      if (!response.ok) {
-        throw new Error('Unable to connect to payment server');
+    if (!response.ok) {
+      if (response.status === 400) {
+        throw new Error("Your address looks invalid. Be sure you've entered a proper address. Note: we are only accepting orders in the United States at this time.");
       }
-
-      const data = await response.json();
-      setLightningInvoice(data.lightningInvoice);
-      setInvoiceId(data.invoiceId);
-      setSubmitError(null);
-    } catch (error) {
-      console.error("Error creating order:", error);
-      throw error; // Re-throw to be caught by handleSubmit
+      throw new Error(`Server error: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data;
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitError(null);
-
+  const handleSubmit = async (formData) => {
     try {
+      setSubmitError(null);
+
       const cartData = {
         sats_cart_price: satsToUsd * cartPriceUsd,
         usd_cart_price: cartPriceUsd,
@@ -69,21 +65,16 @@ export default function CheckoutLayout() {
       };
 
       const orderData = {
-        first_name: document.getElementById("first_name").value,
-        last_name: document.getElementById("last_name").value,
-        address1: document.getElementById("address-1").value,
-        address2: document.getElementById("address-2").value,
-        city: document.getElementById("city").value,
-        state: document.getElementById("state").value,
-        zip: document.getElementById("zip").value,
-        special_instructions: document.getElementById("special-instructions").value,
-        email: document.getElementById("email").value,
+        ...formData,
         cart: cartData,
       };
 
-      await postNewOrder(orderData);
+      const responseData = await postNewOrder(orderData);
+      setLightningInvoice(responseData.lightningInvoice);
+      setInvoiceId(responseData.invoiceId);
     } catch (error) {
-      throw new Error('Unable to connect to payment server');
+      setSubmitError(error.message);
+      throw error; // Re-throw to let ShippingForm handle UI feedback
     }
   };
 
@@ -104,6 +95,7 @@ export default function CheckoutLayout() {
           <ShippingForm
             onSubmit={handleSubmit}
             cartPriceUsd={cartPriceUsd}
+            error={submitError}
           />
         ) : (
           <div className="mt-8 flex justify-center">
