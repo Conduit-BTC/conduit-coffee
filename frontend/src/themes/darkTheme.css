@@ -1,0 +1,13 @@
+:root {
+    --main-bg-color: #11111b;
+    --secondary-bg-color: #232330;
+    --main-text-color: #cdd6f4;
+    --secondary-text-color: #74c7ec;
+    --accent-text-color: #f38ba8;
+    --cart-bg-color: #11111b;
+    --cart-secondary-bg-color: #1e293b;
+    --cart-header-color: #74c7ec;
+    --cart-text-color: #cdd6f4;
+    --cart-button-color: #74c7ec;
+    --cart-button-tex-color: #1e293b;
+}

@@ -73,7 +73,7 @@ function App() {
 
   return (
     <main className="p-2 bg-[var(--secondary-bg-color)] min-h-screen">
-      <section className="relative bg-[var( bg-[var(--secondary-bg-color)])] flex flex-col justify-start w-full h-full border-4 border-[var(--main-text-color)] min-h-[97.5vh]">
+      <section className="relative bg-[var( bg-[var(--secondary-bg-color)])] flex flex-col justify-start w-full h-full border-4 border-gray-700 min-h-[97.5vh]">
         <AppModals />
         {/* <HeaderLayout /> */}
         <div className="flex flex-col lg:flex-row justify-between">
