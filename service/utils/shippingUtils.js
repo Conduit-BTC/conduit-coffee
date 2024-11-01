@@ -4,6 +4,8 @@ const { createVeeqoCustomer, createVeeqoOrder } = require('./shippingProviders/v
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
 
+const SHIPPING_DISCOUNT = 0.8;
+
 async function createShipment(invoiceId) {
   try {
     const order = await prisma.order.findFirst({
@@ -69,54 +71,101 @@ function createRatesPayload(zip, pkg) {
   };
 }
 
+/**
+ * Calculate shipping costs for a set of items to a zip code
+ * @param {string} zip - Destination zip code
+ * @param {Array} items - Cart items to be shipped
+ * @returns {Promise<{ success: boolean, cost?: number, error?: { message: string, status?: number }>}}
+ */
 async function calculateShippingCost(zip, items) {
-  const packages = calculatePackagesFromCart(items);
-  let totalCost = 0.0;
-  let error;
-  const token = await getOauthToken();
-  const bearer = token.access_token;
+  try {
+    const packages = calculatePackagesFromCart(items);
+    let totalCost = 0.0;
 
-  for (const pkg of packages) {
-    const payload = createRatesPayload(zip, pkg);
-    try {
-      const response = await fetch(
-        'https://api.usps.com/prices/v3/total-rates/search',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${bearer}`,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
+    // Get OAuth token
+    const token = await getOauthToken();
+    const bearer = token.access_token;
 
-      if (response.ok) {
-        const data = await response.json();
-        totalCost += data.rateOptions[0].totalBasePrice;
-      } else {
-        console.error(
-          'Issue requesting shipping cost estimation from USPS:',
-          response.status,
-        );
-        error = {
-          message: 'Issue requesting shipping cost estimation from USPS:',
-          status: response.status,
+    // Process each package
+    for (const pkg of packages) {
+      const rateResponse = await fetchPackageRate(zip, pkg, bearer);
+
+      if (!rateResponse.success) {
+        return {
+          success: false,
+          error: rateResponse.error
         };
       }
-    } catch (error) {
-      console.error('Error calculating shipping cost:', error);
-      error = {
+
+      totalCost += rateResponse.cost;
+    }
+
+    // Apply discount and return success result
+    return {
+      success: true,
+      cost: totalCost * SHIPPING_DISCOUNT
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      error: {
         message: 'Error calculating shipping cost',
-        status: response.status,
+        status: error.status || 500
+      }
+    };
+  }
+}
+
+/**
+ * Fetch shipping rate for a single package
+ * @param {string} zip - Destination zip code
+ * @param {Object} pkg - Package details
+ * @param {string} bearer - OAuth bearer token
+ * @returns {Promise<{ success: boolean, cost?: number, error?: { message: string, status: number }}>}
+ */
+async function fetchPackageRate(zip, pkg, bearer) {
+  const payload = createRatesPayload(zip, pkg);
+
+  try {
+    const response = await fetch(
+      'https://api.usps.com/prices/v3/total-rates/search',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${bearer}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: {
+          message: 'Issue requesting shipping cost estimation from USPS',
+          status: response.status
+        }
       };
     }
+
+    const data = await response.json();
+    return {
+      success: true,
+      cost: data.rateOptions[0].totalBasePrice
+    };
+
+  } catch (error) {
+    console.error('Error fetching package rate:', error);
+    return {
+      success: false,
+      error: {
+        message: 'Error fetching package rate',
+        status: error.status || 500
+      }
+    };
   }
-  if (error) {
-    throw error;
-  }
-  console.log('Total Cost: ', totalCost);
-  return totalCost * 0.8;
 }
 
 function calculatePackagesFromCart(_items) {

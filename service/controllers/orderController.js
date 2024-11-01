@@ -43,6 +43,11 @@ exports.createOrder = async (req, res) => {
 
     const currentSatsPrice = await getCurrentSatsPrice();
 
+    if (!currentSatsPrice) {
+      console.error('Error fetching current sats price');
+      return res.status(500).json({ error: 'Server Error' });
+    }
+
     const cartItems = cart.items.map((item) => {
       return {
         productId: item.id,
@@ -51,7 +56,13 @@ exports.createOrder = async (req, res) => {
       };
     });
 
-    const usdShippingCost = await calculateShippingCost(zip, cartItems);
+    const shipCostReq = await calculateShippingCost(zip, cartItems);
+    if (!shipCostReq.success) {
+      if (!shipCostReq.error) return res.status(500).json({ error: 'Error calculating shipping cost' });
+      return res.status((shipCostReq.error.status || 500)).json({ error: shipCostReq.error.message });
+    }
+
+    const usdShippingCost = shipCostReq.cost;
     const satsShippingCost = (usdShippingCost * currentSatsPrice);
 
     const createdOrder = await prisma.order.create({

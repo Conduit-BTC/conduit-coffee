@@ -31,6 +31,7 @@ const getCurrentSatsPrice = async () => {
       'There was a problem with the fetch operation: getCurrentSatsPrice()',
       error,
     );
+    return null;
   }
 };
 
