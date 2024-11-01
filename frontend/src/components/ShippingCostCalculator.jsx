@@ -3,8 +3,6 @@ import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
 import SatsIcon from "./SatsIcon";
 
-const SHIPPING_DISCOUNT = 0.8;
-
 async function performCalculation(zip, cartItems) {
   const url = `${import.meta.env.VITE_API_URL}/shipping/rate`;
 
@@ -48,7 +46,7 @@ export default function ShippingCostCalculator({ onShippingCostCalculated }) {
       setError(null);
       const res = await performCalculation(zip, cartItems);
       if (res) {
-        const baseCost = (res * SHIPPING_DISCOUNT).toFixed(2);
+        const baseCost = (res).toFixed(2);
         setUsdCost(baseCost);
         setSatsCost(baseCost * satsToUsd);
 
