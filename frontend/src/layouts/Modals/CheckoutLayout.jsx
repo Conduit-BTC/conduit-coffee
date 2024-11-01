@@ -69,9 +69,9 @@ export default function CheckoutLayout() {
         sats_cart_price: satsToUsd * cartPriceUsd,
         usd_cart_price: cartPriceUsd,
         items: cartItems,
-        shipping_cost_usd: estimatedShippingCost,  // Include shipping cost
-        shipping_cost_sats: Math.floor(estimatedShippingCost * satsToUsd)  // Calculate sats explicitly
-      };
+          shipping_cost_usd: estimatedShippingCost,
+          shipping_cost_sats: Math.floor(estimatedShippingCost * satsToUsd)
+        };
 
       const orderData = {
         ...formData,
@@ -79,10 +79,9 @@ export default function CheckoutLayout() {
       };
 
       const responseData = await postNewOrder(orderData);
+      setEstimatedShippingCost(responseData.usdShippingCost);
       setLightningInvoice(responseData.lightningInvoice);
       setInvoiceId(responseData.invoiceId);
-
-      // Lock in all the rates, including shipping
       setLockedOrderDetails({
         satsCost: responseData.satsCost,
         usdCost: responseData.usdCost,

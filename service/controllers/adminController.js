@@ -55,8 +55,7 @@ exports.sendReceiptTestEmail = async (req, res) => {
   console.log('sendReceiptTestEmail');
   try {
     const { invoiceId } = req.params;
-    const details = await generateReceiptDetailsObject(invoiceId);
-    await emailService.handleReceiptCreated(details);
+    await emailService.handleReceiptCreated(invoiceId);
     res.send('Email sent successfully.');
   } catch (error) {
     console.error('Error sending test receipt email:', error);

@@ -63,6 +63,10 @@ export const BitcoinQR = ({
                         </button>
                     </div>
                 </div>
+
+            </div>
+            <div className="text-green-500 w-full text-center mt-8 animate-pulse">
+                ⚡ Waiting for payment...⚡
             </div>
         </div>
     );

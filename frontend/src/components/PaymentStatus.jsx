@@ -47,9 +47,6 @@ const PaymentStatus = ({
                     dotsType="classy-rounded"
                     dotsColor="#ff5000"
                 />
-                <div className="mt-2 text-green-500">
-                    Watching for payment... ⚡
-                </div>
             </div>
         );
     }

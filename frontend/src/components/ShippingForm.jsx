@@ -10,11 +10,6 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
         e.preventDefault();
         setSubmitError(null);
 
-        if (!calculatedShippingCost) {
-            setSubmitError("Please calculate shipping cost before proceeding");
-            return;
-        }
-
         try {
             const formData = {
                 first_name: e.target['checkout-first_name'].value,
@@ -146,10 +141,9 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                 />
                 <button
                     type="submit"
-                    disabled={cartPriceUsd <= 0.0 || !calculatedShippingCost}
                     className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
                 >
-                    {!calculatedShippingCost ? "Calculate Shipping First" : `>> Pay With Lightning <<`}
+                    {`>> Pay With Lightning <<`}
                 </button>
             </form>
         </div>

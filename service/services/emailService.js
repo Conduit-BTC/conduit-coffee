@@ -95,10 +95,7 @@ class EmailService {
     }
 
     async handleReceiptCreated(details) {
-        if (!details || !details.email) {
-            console.warn('Received invalid receipt details:', details);
-            return;
-        }
+        if (!details || !details.email) return;
 
         try {
             await this.sendInvoicePaidEmail(details);

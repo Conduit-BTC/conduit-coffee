@@ -73,8 +73,8 @@ const OrderSummary = ({
     const shippingUsd = isLocked ? lockedDetails.usdShippingCost : shippingCost;
 
     // Calculate total
-    const totalSats = lineSats + (shippingCost > 0 ? shippingSats : 0);
-    const totalUsd = lineUsd + (shippingCost > 0 ? shippingUsd : 0);
+    const totalSats = lineSats + (shippingCost ? shippingSats : 0);
+    const totalUsd = lineUsd + (shippingCost ? shippingUsd : 0);
 
     return (
         <div className={`text-left bg-[var(--cart-bg-color)] flex w-full flex-col gap-4
@@ -95,7 +95,7 @@ const OrderSummary = ({
                 label="Shipping"
                 satsAmount={shippingSats}
                 usdAmount={shippingUsd}
-                isPlaceholder={shippingCost === 0}
+                isPlaceholder={!shippingCost}
             />
 
             {/* Total */}
@@ -105,7 +105,7 @@ const OrderSummary = ({
                     satsAmount={totalSats}
                     usdAmount={totalUsd}
                     emphasis={true}
-                    isPlaceholder={shippingCost === 0}
+                    isPlaceholder={!shippingCost}
                 />
             </div>
         </div>

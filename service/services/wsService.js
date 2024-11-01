@@ -90,6 +90,8 @@ class WebSocketService {
             try {
                 const details = await generateReceiptDetailsObject(invoiceId);
 
+                eventBus.emit(InvoiceEvents.RECEIPT_CREATED, details);
+
                 const message = JSON.stringify({
                     type: 'PAYMENT_RECEIVED',
                     invoiceId: invoiceId,
