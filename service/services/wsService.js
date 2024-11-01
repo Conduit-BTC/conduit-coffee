@@ -2,6 +2,8 @@
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
 const WebSocket = require('ws');
+const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
+const { invoiceTemplate } = require('./email/templates');
 
 class WebSocketService {
     constructor() {
@@ -81,14 +83,17 @@ class WebSocketService {
         console.error('WebSocket error:', error);
     }
 
-    notifyPaymentReceived(invoiceId) {
+    async notifyPaymentReceived(invoiceId) {
         const ws = this.connections.get(invoiceId);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
             try {
+                const details = await generateReceiptDetailsObject(invoiceId);
+
                 const message = JSON.stringify({
                     type: 'PAYMENT_RECEIVED',
                     invoiceId: invoiceId,
+                    receipt: invoiceTemplate.body(details),
                     timestamp: new Date().toISOString()
                 });
 

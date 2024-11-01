@@ -6,31 +6,41 @@ const invoiceTemplate = {
         `⚡️ Your Receipt from Coffee by Conduit ⚡️`,
 
     body: (details) => `
-Thank you for your purchase from Coffee by Conduit! 🎉 Here's your receipt:
+╭─────────────────────────────────────────────╮
+│          Coffee by Conduit Receipt          │
+╰─────────────────────────────────────────────╯
 
+✨ Order Summary
+══════════════
 Order ID: ${details.orderId}
 Date: ${Formatters.date(details.date)}
 
->> Contact Info
-Email: ${details.email || 'No email address provided (off the radar, eh? nice 😎)'}
+📋 Contact Information
+═══════════════════
+Email: ${details.email || 'No email provided 😎'}
 Nub: ${details.npub || 'No Nub provided'}
 
->> Shipping Info
+📦 Shipping Details
+════════════════
 ${details.shippingInfo.name}
 ${details.shippingInfo.address}
 ${details.shippingInfo.instructions ? `\nSpecial Instructions: ${details.shippingInfo.instructions}` : ''}
 
->> Payment Details
-Subtotal: ${Math.round(details.subtotal).toLocaleString('en-US')} Sats
-Shipping Cost: ${Math.round(details.shippingCost).toLocaleString('en-US')} Sats
-Grand Total: ${Math.round(details.totalCost).toLocaleString('en-US')} Sats
+💸 Payment Information
+═══════════════════
+Subtotal:      ${Math.round(details.subtotal).toLocaleString('en-US')} Sats
+Shipping:      ${Math.round(details.shippingCost).toLocaleString('en-US')} Sats
+════════════════════════════════════════════════
+Grand Total:   ${Math.round(details.totalCost).toLocaleString('en-US')} Sats
 
-Lightning Invoice: (coming soon...)
+⚡ Lightning Invoice: (coming soon...)
 
+📝 Order Details
+════════════
+${Formatters.lineItems(details.items)}
 
-
->> Inventory:
-${Formatters.lineItems(details.items)}`.trim()
+Thank you for your purchase! ⚡️🎉
+`.trim()
 };
 
 const shippingTemplate = {
