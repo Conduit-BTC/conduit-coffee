@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import ShippingCostCalculator from "./ShippingCostCalculator";
+import ShippingCostCalculator from './ShippingCostCalculator';
 
-const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
+const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) => {
     const [submitError, setSubmitError] = useState(null);
+    const [calculatedShippingCost, setCalculatedShippingCost] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitError(null);
+
+        if (!calculatedShippingCost) {
+            setSubmitError("Please calculate shipping cost before proceeding");
+            return;
+        }
 
         try {
             const formData = {
@@ -35,11 +41,16 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
         }
     };
 
+    const handleShippingCalculated = (cost) => {
+        setCalculatedShippingCost(cost);
+        onShippingCostUpdate(cost);
+    };
+
     const displayError = error || submitError;
 
     return (
         <div className='p-4 md:p-8'>
-            <ShippingCostCalculator />
+            <ShippingCostCalculator onShippingCostCalculated={handleShippingCalculated} />
             <div className="w-full h-1 bg-gray-600 my-8" />
 
             {displayError && (
@@ -65,26 +76,30 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
                     type="text"
                     placeholder="Last Name"
                     id="checkout-last_name"
+                    name="checkout-last_name"
                     required
                 />
                 <input
                     className="w-full p-2 mt-4"
-                    type="address"
+                    type="text"
                     placeholder="Street Address"
                     id="checkout-address-1"
+                    name="checkout-address-1"
                     required
                 />
                 <input
                     className="w-full p-2 mt-4"
-                    type="address"
+                    type="text"
                     placeholder="Street Address (line 2)"
                     id="checkout-address-2"
+                    name="checkout-address-2"
                 />
                 <input
                     className="w-full p-2 mt-4"
                     type="text"
                     placeholder="City"
                     id="checkout-city"
+                    name="checkout-city"
                     required
                 />
                 <input
@@ -92,6 +107,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
                     type="text"
                     placeholder="State"
                     id="checkout-state"
+                    name="checkout-state"
                     required
                 />
                 <input
@@ -99,6 +115,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
                     type="text"
                     placeholder="Zip Code"
                     id="checkout-zip"
+                    name="checkout-zip"
                     required
                 />
                 <input
@@ -106,6 +123,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
                     type="text"
                     placeholder="Special Instructions?"
                     id="checkout-special-instructions"
+                    name="checkout-special-instructions"
                 />
                 <h3 className="mt-8 mb-2">
                     {`Contact Info`}
@@ -117,19 +135,21 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
                     type="email"
                     placeholder="Email (optional)"
                     id="checkout-email"
+                    name="checkout-email"
                 />
                 <input
                     className="w-full p-2 mt-4"
                     type="text"
                     placeholder="Nostr npub key (optional)"
                     id="checkout-npub"
+                    name="checkout-npub"
                 />
                 <button
                     type="submit"
-                    disabled={cartPriceUsd <= 0.0}
+                    disabled={cartPriceUsd <= 0.0 || !calculatedShippingCost}
                     className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
                 >
-                    {`>> Pay With Lightning <<`}
+                    {!calculatedShippingCost ? "Calculate Shipping First" : `>> Pay With Lightning <<`}
                 </button>
             </form>
         </div>
@@ -139,7 +159,8 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error }) => {
 ShippingForm.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     cartPriceUsd: PropTypes.number.isRequired,
-    error: PropTypes.string
+    error: PropTypes.string,
+    onShippingCostUpdate: PropTypes.func.isRequired
 };
 
 export default ShippingForm;

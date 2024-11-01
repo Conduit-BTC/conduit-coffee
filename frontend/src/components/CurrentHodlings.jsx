@@ -1,3 +1,4 @@
+// CurrentHodlings.jsx
 import { useState, useEffect } from "react";
 import { useCartContext } from "../context/CartContext";
 import { useCryptoContext } from "../context/CryptoContext";
@@ -36,15 +37,6 @@ export default function CurrentHodlings() {
       ))}
       <div className="mt-4 flex flex-col md:grid md:grid-cols-4 2xl:grid-cols-6 w-full gap-2">
         <h4 className="font-bold">{`Subtotal`}</h4>
-        {/* <h4
-          className={`font-bold ${
-            totalCartQty == 0
-              ? "text-red-500"
-              : "text-[var(--primary-text-color)]"
-          }`}
-        >
-          {`${totalCartQty} ${totalCartQty == 1 ? "Bag" : "Bags"}`}
-        </h4> */}
         <h4>
           <span className="text-orange-500 font-bold">
             <SatsIcon color="orange" />

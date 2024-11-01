@@ -10,7 +10,7 @@ export default function CheckoutButton({ text, onHandleClick = () => {} }) {
         onHandleClick();
         openCheckoutModal();
       }}
-      className={`p-4 text-[var(--main-text-color)] hover:font-bold w-full h-full bg-blue-500 ${
+      className={`p-4 text-[var(--main-text-color)] hover:font-bold w-full h-full bg-blue-500 neon-blue-border ${
         totalCartQty == 0 ? " opacity-50" : "opacity-100"
       }`}
       disabled={totalCartQty == 0}

@@ -1,20 +1,23 @@
 // CheckoutLayout.jsx
 import React, { useState, useEffect } from 'react';
-import CurrentHodlings from "../../components/CurrentHodlings";
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
 import { useWebSocketPayment } from '../../hooks/useWebSocketPayment';
 import PaymentStatus from '../../components/PaymentStatus';
 import ShippingForm from '../../components/ShippingForm';
+import OrderSummary from '../../components/OrderSummary';
 
 export default function CheckoutLayout() {
   const [lightningInvoice, setLightningInvoice] = useState(null);
   const [invoiceId, setInvoiceId] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [estimatedShippingCost, setEstimatedShippingCost] = useState(0);
+  const [lockedOrderDetails, setLockedOrderDetails] = useState(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   const { receipt, paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const shouldShowShippingForm = !lightningInvoice && paymentStatus !== 'paid';
 
@@ -54,6 +57,10 @@ export default function CheckoutLayout() {
     return data;
   }
 
+  const handleShippingCostUpdate = (cost) => {
+    setEstimatedShippingCost(cost);
+  };
+
   const handleSubmit = async (formData) => {
     try {
       setSubmitError(null);
@@ -62,6 +69,8 @@ export default function CheckoutLayout() {
         sats_cart_price: satsToUsd * cartPriceUsd,
         usd_cart_price: cartPriceUsd,
         items: cartItems,
+        shipping_cost_usd: estimatedShippingCost,  // Include shipping cost
+        shipping_cost_sats: Math.floor(estimatedShippingCost * satsToUsd)  // Calculate sats explicitly
       };
 
       const orderData = {
@@ -72,11 +81,21 @@ export default function CheckoutLayout() {
       const responseData = await postNewOrder(orderData);
       setLightningInvoice(responseData.lightningInvoice);
       setInvoiceId(responseData.invoiceId);
+
+      // Lock in all the rates, including shipping
+      setLockedOrderDetails({
+        satsCost: responseData.satsCost,
+        usdCost: responseData.usdCost,
+        satsShippingCost: responseData.satsShippingCost,
+        usdShippingCost: responseData.usdShippingCost,
+        timestamp: Date.now()
+      });
     } catch (error) {
       setSubmitError(error.message);
-      throw error; // Re-throw to let ShippingForm handle UI feedback
+      throw error;
     }
   };
+
 
   return (
     <>
@@ -85,7 +104,14 @@ export default function CheckoutLayout() {
         <h1 className="text-h2 pr-12 text-orange-700 mb-8">☕️ Get the Coffee</h1>
         <div className="mb-8">
           <h3 className="mb-8">Your Order:</h3>
-          <CurrentHodlings />
+          <OrderSummary
+            cartItems={cartItems}
+            satsToUsd={satsToUsd}
+            cartPriceUsd={cartPriceUsd}
+            isLocked={!!lightningInvoice}
+            shippingCost={estimatedShippingCost}
+            lockedDetails={lockedOrderDetails}
+          />
         </div>
         <div className="w-full h-1 bg-gray-600" />
       </div>
@@ -96,6 +122,7 @@ export default function CheckoutLayout() {
             onSubmit={handleSubmit}
             cartPriceUsd={cartPriceUsd}
             error={submitError}
+            onShippingCostUpdate={handleShippingCostUpdate}
           />
         ) : (
           <div className="mt-8 flex justify-center">

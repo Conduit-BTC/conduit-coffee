@@ -10,7 +10,7 @@
 
 .nav-item {
   border-radius: 0px;
-    border: 1px solid transparent;
+  border: 1px solid transparent;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
@@ -44,6 +44,10 @@
   animation: green-ping 1s forwards;
 }
 
+.neon-blue-border {
+  border-color: lightblue;
+  box-shadow: 0 0 2px lightblue, 0 0 5px lightblue, 0 0 10px rgba(0, 0, 255, 0.5);
+}
 @keyframes red-ping {
   0% {
     border-color: red;
@@ -58,7 +62,7 @@
 
 @keyframes green-ping {
   0% {
-      border-color: lime;
+    border-color: lime;
       box-shadow: 0 0 2px lime, 0 0 5px lime, 0 0 10px rgba(0, 255, 0, 0.5);
     }
 
