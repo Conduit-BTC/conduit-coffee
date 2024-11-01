@@ -4,8 +4,6 @@ const { createVeeqoCustomer, createVeeqoOrder } = require('./shippingProviders/v
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
 
-const SHIPPING_DISCOUNT = 0.8;
-
 async function createShipment(invoiceId) {
   try {
     const order = await prisma.order.findFirst({
@@ -78,6 +76,7 @@ function createRatesPayload(zip, pkg) {
  * @returns {Promise<{ success: boolean, cost?: number, error?: { message: string, status?: number }>}}
  */
 async function calculateShippingCost(zip, items) {
+  const SHIPPING_DISCOUNT = 0.8;
   try {
     const packages = calculatePackagesFromCart(items);
     let totalCost = 0.0;

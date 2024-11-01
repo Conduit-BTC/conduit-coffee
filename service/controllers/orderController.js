@@ -1,3 +1,4 @@
+// orderController.js
 const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
 const { addInvoiceToOrder } = require('../utils/invoiceUtils');
 const { calculateShippingCost } = require('../utils/shippingUtils');
@@ -125,7 +126,10 @@ exports.createOrder = async (req, res) => {
         const lightningInvoice = await generateLightningInvoice(data.invoiceId);
         addInvoiceToOrder(data.invoiceId, createdOrder.id).then((result) => {
           if (result) console.log('Invoice added to order:' + createdOrder.id);
-          if (result) res.json({ lightningInvoice, invoiceId: data.invoiceId }, 200);
+          if (result) res.json({
+            lightningInvoice, invoiceId: data.invoiceId, usdShippingCost: usdShippingCost,
+            satsShippingCost: satsShippingCost, usdCost: cart.usd_cart_price, satsCost: cart.sats_cart_price,
+          }, 200);
           else return res.status(500);
         });
       })
