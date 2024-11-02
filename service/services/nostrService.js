@@ -1,11 +1,13 @@
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
-const { generatePrivateKey, getPublicKey, finalizeEvent, getEventHash, nip19 } = require('nostr-tools');
+const { generatePrivateKey, getPublicKey, finalizeEvent, getEventHash, nip19, getSharedSecret, encrypt } = require('nostr-tools');
 const { RelayPool } = require('nostr-tools/relay');
+const { dbService } = require('./dbService');
+const prisma = dbService.getPrismaClient();
 
 class NostrService {
     constructor() {
-        this.relayPool = null;
+        this.relayPools = new Map(); // npub -> RelayPool instance
         this.privateKey = null;
         this.publicKey = null;
         this.initialize();
@@ -16,20 +18,17 @@ class NostrService {
         try {
             this.validateConfig();
             this.initializeKeys();
-            this.initializeRelayPool();
+            console.log('NostrService initialized successfully');
         } catch (error) {
             console.error('Failed to initialize NostrService:', error);
-            throw new Error('NostrService initialization failed');
+            throw new Error('NostrService initialization failed: ' + error.message);
         }
     }
 
     validateConfig() {
-        const requiredEnvVars = [
-            'NOSTR_PRIVATE_KEY',
-            'NOSTR_RELAYS'
-        ];
-
+        const requiredEnvVars = ['NOSTR_RECEIPTS_PRIVATE_KEY'];
         const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
         if (missingVars.length > 0) {
             throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
         }
@@ -37,30 +36,60 @@ class NostrService {
 
     initializeKeys() {
         try {
-            this.privateKey = process.env.NOSTR_RECEIPTS_NSEC;
+            this.privateKey = process.env.NOSTR_RECEIPTS_PRIVATE_KEY;
             this.publicKey = getPublicKey(this.privateKey);
+            console.log('Nostr keys initialized successfully');
         } catch (error) {
             console.error('Failed to initialize Nostr keys:', error);
             throw error;
         }
     }
 
-    initializeRelayPool() {
+    async getOrCreateRelayPool(npub) {
+        const existingPool = this.relayPools.get(npub);
+        if (existingPool) {
+            console.log(`Using existing relay pool for npub: ${npub}`);
+            return existingPool;
+        }
+
         try {
-            const relays = process.env.NOSTR_RELAYS.split(',');
-            this.relayPool = new RelayPool(relays);
-
-            this.relayPool.on('connect', (relay) => {
-                console.log(`Connected to relay: ${relay.url}`);
+            const relayPoolData = await prisma.relayPool.findUnique({
+                where: { npub }
             });
 
-            this.relayPool.on('error', (relay, error) => {
-                console.error(`Error with relay ${relay.url}:`, error);
+            if (!relayPoolData) {
+                console.error(`No relay pool found for npub: ${npub}`);
+                throw new Error('No relay pool found for npub');
+            }
+
+            const pool = new RelayPool(relayPoolData.relays);
+
+            pool.on('connect', (relay) => {
+                console.log(`Connected to relay: ${relay.url} for npub: ${npub}`);
             });
+
+            pool.on('error', (relay, error) => {
+                console.error(`Error with relay ${relay.url} for npub: ${npub}:`, error);
+                this.handleRelayError(npub, relay, error);
+            });
+
+            // Store for reuse
+            this.relayPools.set(npub, pool);
+            console.log(`Created new relay pool for npub: ${npub}`);
+
+            return pool;
         } catch (error) {
-            console.error('Failed to initialize relay pool:', error);
+            console.error('Error getting/creating relay pool:', error);
             throw error;
         }
+    }
+
+    handleRelayError(npub, relay, error) {
+        // TODO: Implement relay error handling strategy
+        // - Remove failed relay from pool?
+        // - Try reconnecting?
+        // - Notify monitoring system?
+        console.error(`Relay error for ${npub} at ${relay.url}:`, error);
     }
 
     setupEventListeners() {
@@ -68,7 +97,10 @@ class NostrService {
     }
 
     async handleReceiptCreated(details) {
-        if (!details || !details.npub) return;
+        if (!details || !details.npub) {
+            console.log('No npub provided in receipt details, skipping Nostr notification');
+            return;
+        }
 
         try {
             await this.publishReceiptEvent(details);
@@ -80,27 +112,29 @@ class NostrService {
     }
 
     createReceiptEvent(details) {
+        const recipientPubkey = nip19.decode(details.npub).data;
+        const sharedSecret = getSharedSecret(this.privateKey, recipientPubkey);
+        const content = JSON.stringify({
+            type: 'receipt',
+            merchantName: process.env.MERCHANT_NAME,
+            timestamp: new Date().toISOString(),
+            details: {
+                amount: details.amount,
+                currency: details.currency,
+                items: details.items,
+                invoiceId: details.invoiceId,
+                orderId: details.orderId
+            }
+        });
+
         const event = {
-            kind: 1, // Regular text note
+            kind: 24, // NIP-17 Replaceable Private Direct Message
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-                ['p', nip19.decode(details.npub).data], // Tag the recipient's pubkey
-                ['t', 'receipt'], // Tag for receipt type
-                ['amount', details.amount.toString()],
-                ['currency', details.currency],
-                ['invoice_id', details.invoiceId]
+                ['p', recipientPubkey],
+                ['d', 'receipt'], // d tag for making it replaceable
             ],
-            content: JSON.stringify({
-                type: 'receipt',
-                merchantName: process.env.MERCHANT_NAME,
-                timestamp: new Date().toISOString(),
-                details: {
-                    amount: details.amount,
-                    currency: details.currency,
-                    items: details.items,
-                    invoiceId: details.invoiceId
-                }
-            }),
+            content: encrypt(content, sharedSecret),
             pubkey: this.publicKey
         };
 
@@ -112,17 +146,16 @@ class NostrService {
     }
 
     async publishReceiptEvent(details) {
-        if (!this.relayPool) {
-            throw new Error('Relay pool not initialized');
-        }
-
-        const event = this.createReceiptEvent(details);
-
         try {
-            const published = await this.relayPool.publish(event);
+            const pool = await this.getOrCreateRelayPool(details.npub);
+            const event = this.createReceiptEvent(details);
+
+            const published = await pool.publish(event);
+
             if (!published) {
                 throw new Error('Failed to publish event to any relay');
             }
+
             console.log('Receipt published to Nostr network:', event.id);
             return event.id;
         } catch (error) {
@@ -131,10 +164,35 @@ class NostrService {
         }
     }
 
-    cleanup() {
-        if (this.relayPool) {
-            this.relayPool.close();
+    async cleanup() {
+        console.log('Cleaning up NostrService...');
+
+        for (const [npub, pool] of this.relayPools.entries()) {
+            try {
+                await pool.close();
+                console.log(`Closed relay pool for npub: ${npub}`);
+            } catch (error) {
+                console.error(`Error closing relay pool for npub: ${npub}:`, error);
+            }
         }
+
+        this.relayPools.clear();
+        console.log('NostrService cleanup completed');
+    }
+
+    async getPoolStatus(npub) {
+        const pool = this.relayPools.get(npub);
+        if (!pool) {
+            return { status: 'not_found' };
+        }
+
+        const connectedRelays = pool.getConnectedRelays();
+        return {
+            status: 'active',
+            connectedRelayCount: connectedRelays.length,
+            totalRelayCount: pool.getRelayUrls().length,
+            connectedRelays: connectedRelays.map(relay => relay.url)
+        };
     }
 }
 

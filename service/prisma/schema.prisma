@@ -56,3 +56,10 @@ model Product {
   size_height  Float
   image_url    String?
 }
+
+model RelayPool {
+  npub       String   @id
+  relays     String[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
