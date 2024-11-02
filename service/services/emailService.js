@@ -1,6 +1,5 @@
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
-const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
 const { ProtonMailProvider } = require('./email/emailProviders');
 const { invoiceTemplate, shippingTemplate } = require('./email/templates');
 const EmailTransport = require('./email/emailTransport');
