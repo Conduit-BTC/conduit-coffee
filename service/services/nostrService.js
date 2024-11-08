@@ -26,7 +26,7 @@ class NostrService {
     }
 
     validateConfig() {
-        const requiredEnvVars = ['NOSTR_RECEIPTS_PRIVATE_KEY'];
+        const requiredEnvVars = ['NOSTR_NOTIFICATION_BOT_PRIVATE_KEY'];
         const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
         if (missingVars.length > 0) {
@@ -36,7 +36,7 @@ class NostrService {
 
     initializeKeys() {
         try {
-            this.privateKey = process.env.NOSTR_RECEIPTS_PRIVATE_KEY;
+            this.privateKey = process.env.NOSTR_NOTIFICATION_BOT_PRIVATE_KEY;
             this.publicKey = getPublicKey(this.privateKey);
             console.log('Nostr keys initialized successfully');
         } catch (error) {
