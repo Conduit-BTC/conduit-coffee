@@ -12,6 +12,7 @@ require('./services/dbService');
 require('./services/shippingService');
 require('./services/orderService');
 require('./services/emailService');
+require('./services/receiptService');
 
 // Initialize express and create HTTP server
 const app = express();

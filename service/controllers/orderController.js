@@ -20,14 +20,14 @@ exports.getAllOrders = async (_, res) => {
 };
 
 exports.createOrder = async (req, res) => {
-  // See https://docs.strike.me/walkthrough/receiving-payments
-  console.log('Creating Order...');
   const strikeKey = process.env.STRIKE_API_KEY;
 
   if (!strikeKey) {
     console.error('Environment Variable missing: STRIKE_API_KEY');
     return;
   }
+
+  console.log('Creating Order...');
 
   try {
     const {
@@ -88,6 +88,8 @@ exports.createOrder = async (req, res) => {
       },
       include: { cart: true },
     });
+
+    // See https://docs.strike.me/walkthrough/receiving-payments
 
     // Generate Strike Invoice
     var headers = new Headers();

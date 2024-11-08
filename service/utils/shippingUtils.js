@@ -1,5 +1,5 @@
 const { getOauthToken } = require('./oauthUtils');
-const { createVeeqoCustomer, createVeeqoOrder } = require('./shippingProviders/veeqo');
+const { createVeeqoCustomer, createVeeqoOrder, performVeeqoShipment } = require('./shippingProviders/veeqo');
 
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
@@ -14,25 +14,11 @@ async function createShipment(invoiceId) {
     if (!order) {
       throw new Error(`Order with Invoice ID ${invoiceId} not found`);
     }
-    const vCustomerId = await createVeeqoCustomer(order.id);
 
-    if (!vCustomerId) {
-      throw new Error('Error creating Veeqo customer');
-    }
+    console.log("----- Shipping Pipeline START -----");
 
-    const vOrderId = await createVeeqoOrder(vCustomerId, order, invoiceId);
 
-    if (!vOrderId) {
-      // Use NodeMailer to send an email to the admin
-    }
-
-    const orderShipmentUpdate = updateOrderWithShipmentInfo(order.id, vOrderId, "Veeqo");
-
-    if (!orderShipmentUpdate) {
-      throw new Error('Error updating order with shipment ID');
-    }
-
-    console.log("----- Payment Processing Pipeline COMPLETE -----");
+    console.log("----- Shipping Pipeline COMPLETE -----");
   } catch (error) {
     console.error('Error creating shipment:', error);
     throw error;

@@ -1,6 +1,5 @@
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
-const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
 const { ProtonMailProvider } = require('./email/emailProviders');
 const { invoiceTemplate, shippingTemplate } = require('./email/templates');
 const EmailTransport = require('./email/emailTransport');
@@ -94,11 +93,11 @@ class EmailService {
         eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.handleReceiptCreated.bind(this));
     }
 
-    async handleReceiptCreated(details) {
+    async handleReceiptCreated(invoiceId, details) {
         if (!details || !details.email) return;
 
         try {
-            await this.sendInvoicePaidEmail(details);
+            await this.sendInvoicePaidEmail(invoiceId, details);
         } catch (error) {
             console.error('Failed to process invoice emails:', error);
             // Consider implementing retry logic here?
@@ -106,7 +105,7 @@ class EmailService {
         }
     }
 
-    async sendInvoicePaidEmail(details) {
+    async sendInvoicePaidEmail(invoiceId, details) {
         const receiptClient = this.clients.get('receipts');
         if (!receiptClient) {
             throw new Error('Receipt email client not configured');
@@ -116,6 +115,13 @@ class EmailService {
             await receiptClient.sendMail(
                 details.email,
                 invoiceTemplate.subject(),
+                invoiceTemplate.body(details)
+            );
+
+            // Send a copy to the shipping department
+            await receiptClient.sendMail(
+                process.env.SHIPPING_EMAIL,
+                `ORDER RECEIVED - conduit.coffee - ${invoiceId}`,
                 invoiceTemplate.body(details)
             );
         } catch (error) {
