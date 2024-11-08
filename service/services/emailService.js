@@ -106,6 +106,8 @@ class EmailService {
     }
 
     async sendInvoicePaidEmail(invoiceId, details) {
+        if (process.env.USE_TEST_PAYMENT_AMOUNT === 'true') return;
+
         const receiptClient = this.clients.get('receipts');
         if (!receiptClient) {
             throw new Error('Receipt email client not configured');

@@ -1,5 +1,5 @@
 const { getOauthToken } = require('./oauthUtils');
-const { createVeeqoCustomer, createVeeqoOrder, performVeeqoShipment } = require('./shippingProviders/veeqo');
+const { createShipStationOrder } = require('./shippingProviders/shipStation');
 
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
@@ -17,7 +17,12 @@ async function createShipment(invoiceId) {
 
     console.log("----- Shipping Pipeline START -----");
 
-    console.log("Shipping is handled through email. No further action is required.");
+    const shippingId = await createShipStationOrder(order);
+    const success = await updateOrderWithShipmentInfo(order.id, shippingId, 'SHIPSTATION');
+
+    if (!success) {
+      throw new Error(`Error updating order with shipment ID: ${order.id}`);
+    }
 
     console.log("----- Shipping Pipeline COMPLETE -----");
   } catch (error) {
