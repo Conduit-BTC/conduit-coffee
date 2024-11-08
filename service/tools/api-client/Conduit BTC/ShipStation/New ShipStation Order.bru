@@ -1,0 +1,78 @@
+meta {
+  name: New ShipStation Order
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://ssapi.shipstation.com/orders/createorder
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{SHIPSTATION_API_KEY}}
+  password: {{SHIPSTATION_API_SECRET}}
+}
+
+body:json {
+  {
+    "orderNumber": "123456",
+    "orderDate": "2023-06-08T12:00:00Z",
+    "orderStatus": "awaiting_shipment",
+    "billTo": {
+      "name": "John Doe",
+      "company": null,
+      "street1": "123 Main St",
+      "street2": null,
+      "city": "New York",
+      "state": "NY",
+      "postalCode": "10001",
+      "country": "US",
+      "phone": null,
+      "residential": true
+    },
+    "shipTo": {
+      "name": "John Doe",
+      "company": null,
+      "street1": "123 Main St",
+      "street2": null,
+      "city": "New York",
+      "state": "NY",
+      "postalCode": "10001",
+      "country": "US",
+      "phone": null,
+      "residential": true
+    },
+    "items": [
+      {
+        "lineItemKey": "light_roast",
+        "sku": "LIGHT_ROAST",
+        "name": "Light Roast Coffee",
+        "imageUrl": null,
+        "weight": {
+          "value": 12,
+          "units": "ounces"
+        },
+        "quantity": 2,
+        "unitPrice": 20.0,
+        "taxAmount": 0,
+        "shippingAmount": 5.0
+      },
+      {
+        "lineItemKey": "dark_roast",
+        "sku": "DARK_ROAST",
+        "name": "Dark Roast Coffee",
+        "imageUrl": null,
+        "weight": {
+          "value": 12,
+          "units": "ounces"
+        },
+        "quantity": 1,
+        "unitPrice": 20.0,
+        "taxAmount": 0,
+        "shippingAmount": 5.0
+      }
+    ]
+  }
+}

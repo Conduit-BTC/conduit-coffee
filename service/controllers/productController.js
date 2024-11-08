@@ -29,40 +29,28 @@ exports.createSampleProducts = async (_, res) => {
   try {
     const products = [
       {
-        sku: 'LGHT001',
-        name: 'Light.ing',
-        description:
-          'A bright and lively blend of Central and South American beans...',
-        price: 21.0,
-        weight: 12,
-        size_width: 4,
-        size_length: 4,
-        size_height: 7,
-        image_url: 'https://example.com/images/lighting.jpg',
+        "sku": "RSST001",
+        "name": "Resist.nce",
+        "description": "// dark roast // sumatra // dates, brown butter, cashew & vanilla int weight; // 12oz / 340.2g",
+        "price": 21,
+        "weight": 12,
+        "size_width": 4,
+        "size_length": 4,
+        "size_height": 7,
+        "image_url": "https://conduit.coffee/images/coffee-bags/demo-coffee-resistance-front.png",
+        "veeqoProductId": "133098074"
       },
       {
-        sku: 'RSST001',
-        name: 'Resist.nce',
-        description:
-          'A bold and robust blend of Indonesian and African beans...',
-        price: 21.0,
-        weight: 12,
-        size_width: 4,
-        size_length: 4,
-        size_height: 7,
-        image_url: 'https://example.com/images/resistance.jpg',
-      },
-      {
-        sku: 'STTC001',
-        name: 'Stat.c',
-        description:
-          'A harmonious blend of South American and African beans...',
-        price: 21.0,
-        weight: 12,
-        size_width: 4,
-        size_length: 4,
-        size_height: 7,
-        image_url: 'https://example.com/images/static.jpg',
+        "sku": "LGHT001",
+        "name": "Light.ing",
+        "description": "// light roast // el salvador // golden raisin, brown spice & nougat int weight; // 12oz / float 340.2g",
+        "price": 21,
+        "weight": 12,
+        "size_width": 4,
+        "size_length": 4,
+        "size_height": 7,
+        "image_url": "https://conduit.coffee/images/coffee-bags/demo-coffee-lightning -front.png",
+        "veeqoProductId": "133095535"
       },
     ];
 
@@ -71,11 +59,28 @@ exports.createSampleProducts = async (_, res) => {
     });
 
     res.json({ message: 'Products created successfully' });
-
-    // res.json({ message: 'ENDPOINT DISABLED' });
   } catch (error) {
     console.error('Error creating products:', error);
+    res.status(500).json({ error: 'Internal server error' });
   } finally {
     await prisma.$disconnect();
   }
 };
+
+exports.deleteProductById = async (req, res) => {
+  try {
+    const { id: productId } = req.params;
+    console.log('Deleting product with ID:', productId);
+    await prisma.product.delete({
+      where: {
+        id: productId,
+      },
+    });
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
