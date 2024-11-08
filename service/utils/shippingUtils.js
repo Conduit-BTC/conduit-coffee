@@ -17,6 +17,7 @@ async function createShipment(invoiceId) {
 
     console.log("----- Shipping Pipeline START -----");
 
+    console.log("Shipping is handled through email. No further action is required.");
 
     console.log("----- Shipping Pipeline COMPLETE -----");
   } catch (error) {

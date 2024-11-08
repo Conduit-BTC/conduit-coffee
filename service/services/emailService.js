@@ -94,7 +94,7 @@ class EmailService {
     }
 
     async handleReceiptCreated(invoiceId, details) {
-        if (!details || !details.email) return;
+        if (!details) throw new Error('Receipt details are missing');
 
         try {
             await this.sendInvoicePaidEmail(invoiceId, details);
@@ -112,17 +112,22 @@ class EmailService {
         }
 
         try {
-            await receiptClient.sendMail(
-                details.email,
-                invoiceTemplate.subject(),
-                invoiceTemplate.body(details)
-            );
+            if (details.email) {
+                // Send a copy to the customer
+                console.log(`Sending receipt to ${details.email}`);
+                await receiptClient.sendMail(
+                    details.email,
+                    invoiceTemplate.subject(),
+                    invoiceTemplate.body(details)
+                );
+            }
 
             // Send a copy to the shipping department
+            console.log(`Sending receipt to ${process.env.SHIPPING_EMAIL}`);
             await receiptClient.sendMail(
                 process.env.SHIPPING_EMAIL,
                 `ORDER RECEIVED - conduit.coffee - ${invoiceId}`,
-                invoiceTemplate.body(details)
+                invoiceTemplate.ship(details)
             );
         } catch (error) {
             console.error('Failed to send invoice email:', error);

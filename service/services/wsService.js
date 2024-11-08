@@ -88,6 +88,7 @@ class WebSocketService {
 
         if (ws && ws.readyState === WebSocket.OPEN) {
             try {
+                console.log(`Sending payment notification to frontend for invoice ${invoiceId} - ${details}`);
                 const message = JSON.stringify({
                     type: 'PAYMENT_RECEIVED',
                     invoiceId: invoiceId,
