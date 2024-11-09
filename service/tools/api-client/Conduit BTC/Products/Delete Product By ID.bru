@@ -1,0 +1,15 @@
+meta {
+  name: Delete Product By ID
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/admin/products/delete/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 935cbf99-a32b-4f2e-876b-bc12abe482af
+}

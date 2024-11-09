@@ -13,6 +13,7 @@ require('./services/shippingService');
 require('./services/orderService');
 require('./services/emailService');
 require('./services/nostrService');
+require('./services/receiptService');
 
 // Initialize express and create HTTP server
 const app = express();
@@ -38,7 +39,7 @@ if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
 }
 
 app.use(
-  ['/admin/*', '/products/sample'],
+  ['/admin/*', '/products/samples'],
   basicAuth({
     users: {
       [process.env.ADMIN_USERNAME]: process.env.ADMIN_PASSWORD,

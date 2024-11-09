@@ -1,0 +1,16 @@
+meta {
+  name: Export Orders as CSV
+  type: http
+  seq: 2
+}
+
+get {
+  url: localhost:3456/admin/export/orders
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{ADMIN_USERNAME}}
+  password: {{ADMIN_PASSWORD}}
+}

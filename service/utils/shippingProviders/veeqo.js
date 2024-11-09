@@ -7,6 +7,26 @@ const { getLocationFromZipCode } = require('../getLocationFromZipCode');
 const { dbService } = require('../../services/dbService');
 const prisma = dbService.getPrismaClient();
 
+async function performVeeqoShipment(order, invoiceId) {
+    const vCustomerId = await createVeeqoCustomer(order.id);
+
+    if (!vCustomerId) {
+        throw new Error('Error creating Veeqo customer');
+    }
+
+    const vOrderId = await createVeeqoOrder(vCustomerId, order, invoiceId);
+
+    if (!vOrderId) {
+        // Use NodeMailer to send an email to the admin
+    }
+
+    const orderShipmentUpdate = updateOrderWithShipmentInfo(order.id, vOrderId, "Veeqo");
+
+    if (!orderShipmentUpdate) {
+        throw new Error('Error updating order with shipment ID');
+    }
+}
+
 async function createVeeqoCustomer(orderId, email = null) {
     try {
         const customer = await fetch(`${process.env.VEEQO_API_BASE_URL}/customers`, {
@@ -160,6 +180,7 @@ async function createLineItems(cart) {
 }
 
 module.exports = {
+    performVeeqoShipment,
     createVeeqoCustomer,
     createVeeqoOrder,
     createVeeqoShipment

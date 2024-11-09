@@ -93,11 +93,11 @@ class EmailService {
         eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.handleReceiptCreated.bind(this));
     }
 
-    async handleReceiptCreated(details) {
-        if (!details || !details.email) return;
+    async handleReceiptCreated(invoiceId, details) {
+        if (!details) throw new Error('Receipt details are missing');
 
         try {
-            await this.sendInvoicePaidEmail(details);
+            await this.sendInvoicePaidEmail(invoiceId, details);
         } catch (error) {
             console.error('Failed to process invoice emails:', error);
             // Consider implementing retry logic here?
@@ -105,17 +105,31 @@ class EmailService {
         }
     }
 
-    async sendInvoicePaidEmail(details) {
+    async sendInvoicePaidEmail(invoiceId, details) {
+        if (process.env.USE_TEST_PAYMENT_AMOUNT === 'true') return;
+
         const receiptClient = this.clients.get('receipts');
         if (!receiptClient) {
             throw new Error('Receipt email client not configured');
         }
 
         try {
+            if (details.email) {
+                // Send a copy to the customer
+                console.log(`Sending receipt to ${details.email}`);
+                await receiptClient.sendMail(
+                    details.email,
+                    invoiceTemplate.subject(),
+                    invoiceTemplate.body(details)
+                );
+            }
+
+            // Send a copy to the shipping department
+            console.log(`Sending receipt to ${process.env.SHIPPING_EMAIL}`);
             await receiptClient.sendMail(
-                details.email,
-                invoiceTemplate.subject(),
-                invoiceTemplate.body(details)
+                process.env.SHIPPING_EMAIL,
+                `ORDER RECEIVED - conduit.coffee - ${invoiceId}`,
+                invoiceTemplate.ship(details)
             );
         } catch (error) {
             console.error('Failed to send invoice email:', error);

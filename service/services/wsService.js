@@ -16,7 +16,7 @@ class WebSocketService {
         this.handleError = this.handleError.bind(this);
         this.notifyPaymentReceived = this.notifyPaymentReceived.bind(this);
 
-        eventBus.subscribe(InvoiceEvents.INVOICE_PAID, this.notifyPaymentReceived);
+        eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.notifyPaymentReceived);
     }
 
     initialize(server) {
@@ -83,15 +83,12 @@ class WebSocketService {
         console.error('WebSocket error:', error);
     }
 
-    async notifyPaymentReceived(invoiceId) {
+    async notifyPaymentReceived(invoiceId, details) {
         const ws = this.connections.get(invoiceId);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
             try {
-                const details = await generateReceiptDetailsObject(invoiceId);
-
-                eventBus.emit(InvoiceEvents.RECEIPT_CREATED, details);
-
+                console.log(`Sending payment notification to frontend for invoice ${invoiceId} - ${details}`);
                 const message = JSON.stringify({
                     type: 'PAYMENT_RECEIVED',
                     invoiceId: invoiceId,

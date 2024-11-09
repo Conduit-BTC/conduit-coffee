@@ -8,11 +8,10 @@ class EmailFormatters {
             order.address1
         ];
 
-        if (order.address2) {
-            address.push(order.address2);
-        }
-
-        address.push(order.zip);
+        if (order.address2) address.push(order.address2);
+        if (order.city) address.push(order.city);
+        if (order.state) address.push(order.state);
+        if (order.zip) address.push(order.zip);
 
         return address.join('\n');
     }

@@ -21,7 +21,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                 zip: e.target['checkout-zip'].value,
                 special_instructions: e.target['checkout-special-instructions'].value,
                 email: e.target['checkout-email'].value,
-                npub: e.target['checkout-npub'].value,
+                npub: ""
             };
 
             await onSubmit(formData);
@@ -131,13 +131,6 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                     placeholder="Email (optional)"
                     id="checkout-email"
                     name="checkout-email"
-                />
-                <input
-                    className="w-full p-2 mt-4"
-                    type="text"
-                    placeholder="Nostr npub key (optional)"
-                    id="checkout-npub"
-                    name="checkout-npub"
                 />
                 <button
                     type="submit"

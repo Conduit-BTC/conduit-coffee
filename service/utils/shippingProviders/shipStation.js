@@ -1,3 +1,8 @@
+const { Buffer } = require('buffer');
+const { dbService } = require('../../services/dbService');
+const prisma = dbService.getPrismaClient();
+const { getLocationFromZipCode } = require('../getLocationFromZipCode')
+
 async function createShipStationOrder(order) {
     try {
         const { city, state, country } = await getLocationFromZipCode(order.zip);
@@ -98,16 +103,6 @@ async function createShipStationItems(cart) {
     return items;
 }
 
-async function updateOrderShipstationId(orderId, shipstationId) {
-    try {
-        // Update the Order's shipstationId field using Prisma
-        const updatedOrder = await prisma.order.update({
-            where: { id: orderId },
-            data: { shipstationId: shipstationId },
-        });
-        return updatedOrder;
-    } catch (error) {
-        console.error('Error updating Order with ShipStation ID:', error);
-        throw error;
-    }
+module.exports = {
+    createShipStationOrder
 }
