@@ -1,0 +1,37 @@
+meta {
+  name: Send Receipt DM
+  type: http
+  seq: 1
+}
+
+get {
+  url: 
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "orderId": "d6555548-dc05-45b9-8691-2f76d2190f27",
+    "shippingInfo": {
+      "name": "Acea Spades Black",
+      "address": "3710 N Ferdinand Street\n98407",
+      "instructions": null
+    },
+    "email": "aceaspades@protonmail.com",
+    "npub": null,
+    "totalCost": 1,
+    "subtotal": 27640.40142129,
+    "shippingCost": 5793.02896194,
+    "date": "2024-11-08T07:00:59.959935+00:00",
+    "items": [
+      {
+        "quantity": 1,
+        "weight": 12,
+        "name": "Resist.nce",
+        "price": 21,
+        "sku": "RSST001"
+      }
+    ]
+  }
+}

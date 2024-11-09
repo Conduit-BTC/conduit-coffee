@@ -1,10 +1,36 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ShippingCostCalculator from './ShippingCostCalculator';
+import { useUiContext } from '../context/UiContext';
+import { useNostrContext } from '../context/NostrContext';
 
 const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) => {
     const [submitError, setSubmitError] = useState(null);
-    const [calculatedShippingCost, setCalculatedShippingCost] = useState(null);
+    const [_, setCalculatedShippingCost] = useState(null);
+    const { openRelayEditor } = useUiContext();
+    const { relayList } = useNostrContext();
+
+    const saveRelayPool = async (npub) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/nostr/npub/relaypool`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    npub,
+                    relays: relayList
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save relay pool');
+            }
+        } catch (error) {
+            console.error('Error saving relay pool:', error);
+            setSubmitError('Failed to save relay configuration');
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,6 +49,10 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                 email: e.target['checkout-email'].value,
                 npub: ""
             };
+
+            if (formData.npub) {
+                await saveRelayPool(formData.npub);
+            }
 
             await onSubmit(formData);
         } catch (error) {
@@ -132,6 +162,22 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                     id="checkout-email"
                     name="checkout-email"
                 />
+                <div className="relative">
+                    <input
+                        className="w-full p-2 mt-4"
+                        type="text"
+                        placeholder="Nostr npub key (optional)"
+                        id="checkout-npub"
+                        name="checkout-npub"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => openRelayEditor()}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 bg-blue-500 text-sm hover:font-bold text-[var(--main-text-color)]"
+                    >
+                        Edit Relays
+                    </button>
+                </div>
                 <button
                     type="submit"
                     className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"

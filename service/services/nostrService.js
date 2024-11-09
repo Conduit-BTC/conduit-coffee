@@ -1,6 +1,6 @@
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
-const { generatePrivateKey, getPublicKey, finalizeEvent, getEventHash, nip19, getSharedSecret, encrypt } = require('nostr-tools');
+const { getPublicKey, finalizeEvent, getEventHash, nip19, getSharedSecret, encrypt } = require('nostr-tools');
 const { RelayPool } = require('nostr-tools/relay');
 const { dbService } = require('./dbService');
 const prisma = dbService.getPrismaClient();
@@ -38,7 +38,6 @@ class NostrService {
         try {
             this.privateKey = process.env.NOSTR_NOTIFICATION_BOT_PRIVATE_KEY;
             this.publicKey = getPublicKey(this.privateKey);
-            console.log('Nostr keys initialized successfully');
         } catch (error) {
             console.error('Failed to initialize Nostr keys:', error);
             throw error;

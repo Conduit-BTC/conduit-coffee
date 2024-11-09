@@ -1,3 +1,4 @@
+// context/UiContext.js
 import { create } from "zustand";
 
 export const useUiContext = create((set) => ({
@@ -11,4 +12,8 @@ export const useUiContext = create((set) => ({
     set({ isProductDetailsModalOpen: true, currentProductDetails: product }),
   closeProductDetailsModal: () =>
     set({ isProductDetailsModalOpen: false, currentProductDetails: null }),
+
+  isRelayEditorOpen: false,
+  openRelayEditor: () => set({ isRelayEditorOpen: true }),
+  closeRelayEditor: () => set({ isRelayEditorOpen: false }),
 }));

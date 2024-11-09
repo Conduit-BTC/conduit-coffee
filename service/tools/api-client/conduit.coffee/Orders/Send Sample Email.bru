@@ -1,11 +1,11 @@
 meta {
   name: Send Sample Email
   type: http
-  seq: 1
+  seq: 3
 }
 
 post {
-  url: http://localhost:3456/admin/test/email/receipts/c4d629f1-40af-4dfd-a09e-29aff38e9e87
+  url: {{PROTOCOL}}{{SERVICE_URL}}/admin/test/email/receipts/c4d629f1-40af-4dfd-a09e-29aff38e9e87
   body: none
   auth: basic
 }

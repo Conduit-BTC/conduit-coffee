@@ -1,6 +1,8 @@
+// AppModals.jsx
 import ModalWindowLayout from "./ModalWindowLayout";
 import CheckoutLayout from "./CheckoutLayout";
 import ProductDetailsLayout from "./ProductDetailsLayout";
+import RelayPoolEditorLayout from "./RelayPoolEditorLayout";
 import { useUiContext } from "../../context/UiContext";
 
 export default function AppModals() {
@@ -9,6 +11,8 @@ export default function AppModals() {
     closeCheckoutModal,
     isProductDetailsModalOpen,
     closeProductDetailsModal,
+    isRelayEditorOpen,
+    closeRelayEditor,
   } = useUiContext();
 
   return (
@@ -21,6 +25,11 @@ export default function AppModals() {
       {isProductDetailsModalOpen && (
         <ModalWindowLayout onCloseModal={closeProductDetailsModal}>
           <ProductDetailsLayout />
+        </ModalWindowLayout>
+      )}
+      {isRelayEditorOpen && (
+        <ModalWindowLayout onCloseModal={closeRelayEditor}>
+          <RelayPoolEditorLayout />
         </ModalWindowLayout>
       )}
     </>
