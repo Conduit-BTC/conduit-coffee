@@ -21,6 +21,7 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                 zip: e.target['checkout-zip'].value,
                 special_instructions: e.target['checkout-special-instructions'].value,
                 email: e.target['checkout-email'].value,
+                npub: ""
             };
 
             await onSubmit(formData);
