@@ -5,6 +5,7 @@ import { useUiContext } from '../context/UiContext';
 import { useNostrContext } from '../context/NostrContext';
 
 const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) => {
+    const [npub, setNpub] = useState('');
     const [submitError, setSubmitError] = useState(null);
     const [_, setCalculatedShippingCost] = useState(null);
     const { openRelayEditor } = useUiContext();
@@ -169,14 +170,18 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                         placeholder="Nostr npub key (optional)"
                         id="checkout-npub"
                         name="checkout-npub"
+                        value={npub}
+                        onChange={(e) => setNpub(e.target.value)}
                     />
-                    <button
-                        type="button"
-                        onClick={() => openRelayEditor()}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 bg-blue-500 text-sm hover:font-bold text-[var(--main-text-color)]"
-                    >
-                        Edit Relays
-                    </button>
+                    {npub.length >= 60 && (
+                        <button
+                            type="button"
+                            onClick={() => openRelayEditor(npub)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 bg-blue-500 text-sm hover:font-bold text-[var(--main-text-color)]"
+                        >
+                            Edit Relays
+                        </button>
+                    )}
                 </div>
                 <button
                     type="submit"

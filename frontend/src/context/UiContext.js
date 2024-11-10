@@ -14,6 +14,7 @@ export const useUiContext = create((set) => ({
     set({ isProductDetailsModalOpen: false, currentProductDetails: null }),
 
   isRelayEditorOpen: false,
-  openRelayEditor: () => set({ isRelayEditorOpen: true }),
-  closeRelayEditor: () => set({ isRelayEditorOpen: false }),
+  currentNpub: null,
+  openRelayEditor: (npub) => set({ isRelayEditorOpen: true, currentNpub: npub }),
+  closeRelayEditor: () => set({ isRelayEditorOpen: false, currentNpub: null }),
 }));

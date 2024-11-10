@@ -60,6 +60,7 @@ model Product {
 model RelayPool {
   npub       String   @id
   relays     String[]
+  protocols Json     @default("{}")
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }

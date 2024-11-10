@@ -5,9 +5,8 @@ const { nostrService } = require('../services/nostrService');
 const prisma = dbService.getPrismaClient();
 
 exports.createRelayPool = async (req, res) => {
-    const { npub, relays } = req.body;
+    const { npub, relays, protocols } = req.body;
 
-    // Input validation
     if (!npub || !Array.isArray(relays) || relays.length === 0) {
         return res.status(400).json({
             error: 'Invalid request body. Required: npub and non-empty relays array'
@@ -16,15 +15,15 @@ exports.createRelayPool = async (req, res) => {
 
     try {
         const relayPool = await prisma.relayPool.upsert({
-            where: {
-                npub: npub
-            },
+            where: { npub },
             update: {
-                relays: relays
+                relays,
+                protocols
             },
             create: {
-                npub: npub,
-                relays: relays
+                npub,
+                relays,
+                protocols
             }
         });
 
