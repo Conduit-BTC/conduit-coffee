@@ -4,10 +4,14 @@ meta {
   seq: 1
 }
 
-get {
-  url: 
+post {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/nostr/receipts/send/:invoiceId
   body: json
   auth: none
+}
+
+params:path {
+  invoiceId: 8c57f74b-1b88-487e-b4c3-94908cda749a
 }
 
 body:json {
@@ -19,7 +23,7 @@ body:json {
       "instructions": null
     },
     "email": "aceaspades@protonmail.com",
-    "npub": null,
+    "npub": "npub1xzrkzsrnr83vn7h0udq6tnapwpswy5equlrtkn3nu0e0anlmzynqne0qap",
     "totalCost": 1,
     "subtotal": 27640.40142129,
     "shippingCost": 5793.02896194,

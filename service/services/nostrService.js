@@ -1,15 +1,124 @@
+const WebSocket = require('ws');
+const nip19 = require('nostr-tools/nip19');
+const { SimplePool } = require('nostr-tools/pool');
 const { eventBus } = require('../events/eventBus');
 const { InvoiceEvents } = require('../events/eventTypes');
-const { getPublicKey, finalizeEvent, getEventHash, nip19, getSharedSecret, encrypt } = require('nostr-tools');
-const { RelayPool } = require('nostr-tools/relay');
+const { useWebSocketImplementation } = require('nostr-tools/pool');
+const {
+    getPublicKey,
+    generateSecretKey,
+    finalizeEvent,
+    nip04
+} = require('nostr-tools');
 const { dbService } = require('./dbService');
 const prisma = dbService.getPrismaClient();
 
+const DEFAULT_RELAYS = [
+    // 'ws://localhost:8008',
+    // 'wss://relay.primal.net'
+    'wss://relay.damus.io'
+];
+
+useWebSocketImplementation(WebSocket);
+
+class NostrDMService {
+    constructor(senderPrivateKey) {
+        this.senderPrivateKey = senderPrivateKey;
+        this.senderPublicKey = getPublicKey(senderPrivateKey);
+    }
+
+    createRumor(receiverPubkey, content, subject = null) {
+        const rumor = {
+            kind: 1,
+            created_at: Math.floor(Date.now() / 1000),
+            tags: [],
+            content: content,
+            pubkey: this.senderPublicKey
+        };
+
+        if (subject) {
+            kind14.tags.push(["subject", subject]);
+        }
+
+        return rumor;
+    }
+
+    async createSeal(kind14, receiverPubkey) {
+        const twoDaysAgo = Math.floor(Date.now() / 1000) - (2 * 24 * 60 * 60);
+        const randomPastTime = twoDaysAgo + Math.floor(Math.random() * (2 * 24 * 60 * 60));
+
+        // Encrypt the content using nip04
+        const encryptedContent = await nip04.encrypt(
+            this.senderPrivateKey,
+            receiverPubkey,
+            JSON.stringify(kind14)
+        );
+
+        const unsignedSeal = {
+            kind: 13,
+            created_at: randomPastTime,
+            tags: [],
+            content: encryptedContent,
+            pubkey: this.senderPublicKey
+        };
+
+        // Sign the seal using finalizeEvent
+        return finalizeEvent(unsignedSeal, this.senderPrivateKey);
+    }
+
+    async createGiftWrap(seal, receiverPubkey) {
+        const wrapperPrivateKey = generateSecretKey();
+        const wrapperPublicKey = getPublicKey(wrapperPrivateKey);
+
+        const twoDaysAgo = Math.floor(Date.now() / 1000) - (2 * 24 * 60 * 60);
+        const randomPastTime = twoDaysAgo + Math.floor(Math.random() * (2 * 24 * 60 * 60));
+
+        // Encrypt the seal using nip04
+        const encryptedSeal = await nip04.encrypt(
+            wrapperPrivateKey,
+            receiverPubkey,
+            JSON.stringify(seal)
+        );
+
+        const unsignedGiftWrap = {
+            kind: 1059,
+            created_at: randomPastTime,
+            tags: [
+                ["p", receiverPubkey]
+            ],
+            content: encryptedSeal,
+            pubkey: wrapperPublicKey
+        };
+
+        // Sign the gift wrap using finalizeEvent
+        return finalizeEvent(unsignedGiftWrap, wrapperPrivateKey);
+    }
+
+    async createEncryptedDM(receiverPubkey, content, subject = null) {
+        try {
+            const kind14 = this.createRumor(receiverPubkey, content, subject);
+            const seal = await this.createSeal(kind14, receiverPubkey);
+
+            const receiverGiftWrap = await this.createGiftWrap(seal, receiverPubkey);
+            const senderGiftWrap = await this.createGiftWrap(seal, this.senderPublicKey);
+
+            return {
+                receiverGiftWrap,
+                senderGiftWrap
+            };
+        } catch (error) {
+            console.error('Error creating encrypted DM:', error);
+            throw error;
+        }
+    }
+}
+
 class NostrService {
     constructor() {
-        this.relayPools = new Map(); // npub -> RelayPool instance
+        this.relayPool = new SimplePool();
         this.privateKey = null;
         this.publicKey = null;
+        this.dmService = null;
         this.initialize();
         this.setupEventListeners();
     }
@@ -18,6 +127,7 @@ class NostrService {
         try {
             this.validateConfig();
             this.initializeKeys();
+            this.dmService = new NostrDMService(this.privateKey);
             console.log('NostrService initialized successfully');
         } catch (error) {
             console.error('Failed to initialize NostrService:', error);
@@ -44,75 +154,37 @@ class NostrService {
         }
     }
 
-    async getOrCreateRelayPool(npub) {
-        const existingPool = this.relayPools.get(npub);
-        if (existingPool) {
-            console.log(`Using existing relay pool for npub: ${npub}`);
-            return existingPool;
-        }
-
-        try {
-            const relayPoolData = await prisma.relayPool.findUnique({
-                where: { npub }
-            });
-
-            if (!relayPoolData) {
-                console.error(`No relay pool found for npub: ${npub}`);
-                throw new Error('No relay pool found for npub');
-            }
-
-            const pool = new RelayPool(relayPoolData.relays);
-
-            pool.on('connect', (relay) => {
-                console.log(`Connected to relay: ${relay.url} for npub: ${npub}`);
-            });
-
-            pool.on('error', (relay, error) => {
-                console.error(`Error with relay ${relay.url} for npub: ${npub}:`, error);
-                this.handleRelayError(npub, relay, error);
-            });
-
-            // Store for reuse
-            this.relayPools.set(npub, pool);
-            console.log(`Created new relay pool for npub: ${npub}`);
-
-            return pool;
-        } catch (error) {
-            console.error('Error getting/creating relay pool:', error);
-            throw error;
-        }
-    }
-
-    handleRelayError(npub, relay, error) {
-        // TODO: Implement relay error handling strategy
-        // - Remove failed relay from pool?
-        // - Try reconnecting?
-        // - Notify monitoring system?
-        console.error(`Relay error for ${npub} at ${relay.url}:`, error);
-    }
-
     setupEventListeners() {
         eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.handleReceiptCreated.bind(this));
     }
 
-    async handleReceiptCreated(details) {
+    async handleReceiptCreated(invoiceId, details) {
         if (!details || !details.npub) {
             console.log('No npub provided in receipt details, skipping Nostr notification');
             return;
         }
 
         try {
-            await this.publishReceiptEvent(details);
+            await this.publishReceiptEvent({
+                ...details,
+                invoiceId
+            });
         } catch (error) {
             console.error('Failed to publish Nostr receipt:', error);
-            // Consider implementing retry logic here
-            throw new Error('Failed to publish Nostr receipt: ' + error.message);
         }
     }
 
-    createReceiptEvent(details) {
+    async getRelaysForNpub(npub) {
+        try {
+            return DEFAULT_RELAYS;
+        } catch (error) {
+            console.error('Error fetching relays:', error);
+            return DEFAULT_RELAYS;
+        }
+    }
+
+    async createReceiptEvent(details) {
         const recipientPubkey = nip19.decode(details.npub).data;
-        const sharedSecret = getSharedSecret(this.privateKey, recipientPubkey);
         const content = JSON.stringify({
             type: 'receipt',
             merchantName: process.env.MERCHANT_NAME,
@@ -126,37 +198,42 @@ class NostrService {
             }
         });
 
-        const event = {
-            kind: 24, // NIP-17 Replaceable Private Direct Message
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [
-                ['p', recipientPubkey],
-                ['d', 'receipt'], // d tag for making it replaceable
-            ],
-            content: encrypt(content, sharedSecret),
-            pubkey: this.publicKey
-        };
-
-        // Sign the event
-        event.id = getEventHash(event);
-        event.sig = finalizeEvent(event, this.privateKey);
-
-        return event;
+        return await this.dmService.createEncryptedDM(recipientPubkey, content);
     }
 
     async publishReceiptEvent(details) {
         try {
-            const pool = await this.getOrCreateRelayPool(details.npub);
-            const event = this.createReceiptEvent(details);
+            const relays = await this.getRelaysForNpub(details.npub);
+            const { receiverGiftWrap, senderGiftWrap } = await this.createReceiptEvent(details);
 
-            const published = await pool.publish(event);
+            // Publish to receiver's relays
+            const receiverPublishPromise = this.relayPool.publish(relays, receiverGiftWrap);
 
-            if (!published) {
-                throw new Error('Failed to publish event to any relay');
+            // Publish to sender's relays
+            const senderPublishPromise = this.relayPool.publish(relays, senderGiftWrap);
+
+            // Wait for at least one successful publish for each recipient
+            await Promise.any([receiverPublishPromise, senderPublishPromise]);
+
+            console.log('Receipt published to Nostr network:', {
+                receiverId: receiverGiftWrap.id,
+                receiverHex: receiverGiftWrap.tags[0][1],
+                senderId: senderGiftWrap.id
+            });
+
+            // Verify the events were published
+            const events = await this.relayPool.querySync(relays, {
+                ids: [receiverGiftWrap.id, senderGiftWrap.id]
+            });
+
+            if (events.length > 0) {
+                console.log('Receipt events verified on network');
             }
 
-            console.log('Receipt published to Nostr network:', event.id);
-            return event.id;
+            return {
+                receiverId: receiverGiftWrap.id,
+                senderId: senderGiftWrap.id
+            };
         } catch (error) {
             console.error('Error publishing to relays:', error);
             throw error;
@@ -164,36 +241,19 @@ class NostrService {
     }
 
     async cleanup() {
-        console.log('Cleaning up NostrService...');
-
-        for (const [npub, pool] of this.relayPools.entries()) {
-            try {
-                await pool.close();
-                console.log(`Closed relay pool for npub: ${npub}`);
-            } catch (error) {
-                console.error(`Error closing relay pool for npub: ${npub}:`, error);
-            }
+        if (this.relayPool) {
+            await this.relayPool.close();
         }
-
-        this.relayPools.clear();
-        console.log('NostrService cleanup completed');
     }
 
-    async getPoolStatus(npub) {
-        const pool = this.relayPools.get(npub);
-        if (!pool) {
-            return { status: 'not_found' };
-        }
-
-        const connectedRelays = pool.getConnectedRelays();
+    async getStatus() {
         return {
-            status: 'active',
-            connectedRelayCount: connectedRelays.length,
-            totalRelayCount: pool.getRelayUrls().length,
-            connectedRelays: connectedRelays.map(relay => relay.url)
+            initialized: Boolean(this.relayPool && this.publicKey && this.dmService),
+            publicKey: this.publicKey,
+            defaultRelays: DEFAULT_RELAYS
         };
     }
 }
 
 const nostrService = Object.freeze(new NostrService());
-module.exports = nostrService;
+module.exports = { nostrService };

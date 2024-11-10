@@ -19,7 +19,8 @@ export default function RelayPoolEditorLayout() {
         <div className="p-4 md:p-8">
             <div className="flex flex-col items-start mb-6 gap-2">
                 <h2 className="text-xl text-blue-500">Nostr Relay Pool Editor</h2>
-                <p>If you provide an npub, youur receipt will be sent as a <a href="https://nips.nostr.com/17" target="_blank">NIP-17 Private Direct Message</a> to the provided npub, signed by our Nostr Receipt Generator, and posted to the following relays: </p>
+                <p>If you provide an npub, your receipt will be sent as a DM to the relays provided below.</p>
+                <p>Note: We have chosen <a href="https://nips.nostr.com/17" target="_blank">NIP-04 Encrypted Direct Messages</a> as the current default, because most relays and clients, unfortunately, aren't yet supporting <a href="https://nips.nostr.com/17" target="_blank">NIP-17 Private Direct Messages</a>. We will be using NIP-17 as the default in the very near future.</p>
             </div>
 
             <form onSubmit={handleAddRelay} className="mb-6 flex gap-2">

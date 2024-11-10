@@ -1,5 +1,7 @@
 // controllers/nostrController.js
 const { dbService } = require('../services/dbService');
+const { invoiceTemplate } = require('../services/email/templates/emailTemplates');
+const { nostrService } = require('../services/nostrService');
 const prisma = dbService.getPrismaClient();
 
 exports.createRelayPool = async (req, res) => {
@@ -86,3 +88,12 @@ exports.deleteRelayPool = async (req, res) => {
         });
     }
 };
+
+exports.sendReceiptViaDm = async (req, res) => {
+    const { invoiceId } = req.params;
+    await nostrService.handleReceiptCreated(invoiceId, req.body);
+    res.status(200).json({
+        status: 'success',
+        message: 'Receipt sent successfully'
+    });
+}

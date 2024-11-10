@@ -1,0 +1,15 @@
+meta {
+  name: Delete RelayPool
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/nostr/npub/:npub/relaypool
+  body: none
+  auth: none
+}
+
+params:path {
+  npub: 
+}

@@ -3,8 +3,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const DEFAULT_RELAYS = [
-    "wss://relay.conduit.coffee",
     "wss://relay.primal.net",
+    // "wss://relay.conduit.coffee",
     // "wss://relay.damus.io",
     // "wss://strfry.iris.to"
 ];

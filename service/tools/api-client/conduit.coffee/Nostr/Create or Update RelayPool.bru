@@ -4,8 +4,15 @@ meta {
   seq: 2
 }
 
-get {
-  url: 
-  body: none
+post {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/nostr/npub/relaypool
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "npub": "",
+    "relays": []
+  }
 }
