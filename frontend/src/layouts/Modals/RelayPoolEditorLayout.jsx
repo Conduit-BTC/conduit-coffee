@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, RotateCcw } from 'lucide-react';
+import { X, Plus, RotateCcw, Loader2 } from 'lucide-react';
 import { useNostrContext } from '../../context/NostrContext';
+import RelayItem from '../../components/RelayItem';
 
-export default function RelayPoolEditorLayout({ npub }) {  // Add npub prop
+export default function RelayPoolEditorLayout({ npub }) {
     const {
         relayList,
         relayProtocols,
@@ -20,20 +21,17 @@ export default function RelayPoolEditorLayout({ npub }) {  // Add npub prop
 
     useEffect(() => {
         const fetchRelayPool = async () => {
-            if (!npub || npub.length < 60) return; // Don't fetch if npub is invalid
-
+            if (!npub || npub.length < 60) return;
             setLoading(true);
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/nostr/npub/${npub}/relaypool`);
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        // If no relay pool exists yet, that's okay
-                        return;
-                    }
+                if (!response.ok && response.status !== 404) {
                     throw new Error('Failed to fetch relay pool');
                 }
-                const data = await response.json();
-                setRelayPool(data.data);
+                if (response.ok) {
+                    const data = await response.json();
+                    setRelayPool(data.data);
+                }
             } catch (err) {
                 console.error('Error fetching relay pool:', err);
                 setError(err.message);
@@ -55,107 +53,92 @@ export default function RelayPoolEditorLayout({ npub }) {  // Add npub prop
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
-                <span className="ml-2">Fetching RelayPool...</span>
+            <div className="min-h-[400px] flex flex-col items-center justify-center p-8 bg-[#1a1b26]/80 rounded-lg">
+                <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-3" />
+                <span className="text-blue-400 font-mono tracking-wider animate-pulse">
+                    INITIALIZING RELAY POOL...
+                </span>
             </div>
         );
     }
 
     return (
-        <div className="p-4 md:p-8">
-            <div className="flex flex-col items-start mb-6 gap-2">
-                <h2 className="text-xl text-blue-500">Nostr Relay Pool Editor</h2>
-                <p>If you provide an npub, your receipt will be sent as a DM to the relays provided below.</p>
-                <p className="text-sm text-gray-500">Toggle the switch to use more secure NIP-17 messaging when supported. If you aren't sure whether the relay supports NIP-17, use NIP-04.</p>
+        <div className="relative flex flex-col min-h-[400px] mt-16 bg-[#1a1b26]/80 rounded-lg p-4">
+            {/* Info Section */}
+            <div className="space-y-2 mb-6">
+                <div className="flex items-start gap-2 text-sm text-gray-400">
+                    <div className="text-blue-400 mt-1">○</div>
+                    <span>Provide an npub to receive your receipt as a DM via the configured relays.</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-400">
+                    <div className="text-yellow-400 mt-1">○</div>
+                    <span>Enable NIP-17 for enhanced security, when supported by the relay.</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-400">
+                    <div className="text-red-400 mt-1">○</div>
+                    <span>Not sure if your client + relay supports NIP-17? Use NIP-04</span>
+                </div>
             </div>
 
-            {error && (
-                <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                    {error}
-                </div>
-            )}
-
-            <form onSubmit={handleAddRelay} className="mb-6 flex gap-2">
+            {/* Add Relay Form */}
+            <div className="flex flex-col gap-3 mb-6">
                 <input
                     type="text"
                     value={newRelay}
                     onChange={(e) => setNewRelay(e.target.value)}
                     placeholder="wss://relay.example.com"
-                    className="flex-1 p-2 bg-[var(--secondary-bg-color)] border border-gray-700 text-[var(--main-text-color)]"
+                    className="w-full px-4 py-2 bg-black/30 border border-gray-700/50 rounded-lg
+                   text-gray-300 font-mono placeholder:text-gray-600 text-sm
+                   focus:outline-none focus:border-blue-500/50"
                 />
                 <button
-                    type="submit"
-                    className="bg-blue-500 px-4 py-2 hover:font-bold text-[var(--main-text-color)] flex items-center gap-2"
+                    onClick={handleAddRelay}
+                    className="w-full bg-blue-600 hover:bg-blue-500 rounded-lg py-3
+                   font-mono text-white text-sm flex items-center justify-center gap-2
+                   transition-colors duration-200"
                 >
-                    <Plus size={20} />
-                    Add
+                    <Plus size={18} />
+                    Add Relay
                 </button>
-            </form>
-
-            <div className="space-y-2">
-                {relayList.map((relay) => (
-                    <div
-                        key={relay}
-                        className="flex justify-between items-center p-2 bg-[var(--secondary-bg-color)] border border-gray-700"
-                    >
-                        <div className="flex items-center gap-4">
-                            <ProtocolToggle
-                                isNip17={relayProtocols[relay] === 'nip17'}
-                                onToggle={() => toggleProtocol(relay)}
-                            />
-                            <span className="font-mono text-sm">{relay}</span>
-                        </div>
-                        <button
-                            onClick={() => removeRelay(relay)}
-                            className="text-red-500 hover:text-red-600"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ))}
             </div>
 
-            <button
-                onClick={resetRelays}
-                className="flex items-center mt-6 ml-auto gap-2 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-sm"
-                title="Reset to default relays"
-            >
-                <RotateCcw size={16} />
-                Reset to Defaults
-            </button>
+            {/* Relay List */}
+            <div className="flex-1 space-y-3 mb-6">
+                {relayList.map((relay, i) => (
+                    <RelayItem
+                        key={'relay-' + i}
+                        relay={relay}
+                        isNip17={relayProtocols[relay] === 'nip17' ? true : false}
+                        onToggle={() => toggleProtocol(relay)}
+                        onRemove={() => removeRelay(relay)}
+                    />
+                ))}
+
+                {relayList.length === 0 && (
+                    <div className="py-8 text-center text-gray-500 font-mono text-sm">
+                        No relays configured. Add one to get started.
+                    </div>
+                )}
+            </div>
+
+            {/* Reset Button - Fixed at Bottom */}
+            <div className="flex justify-end mt-auto pt-4 border-t border-gray-800/30">
+                <button
+                    onClick={resetRelays}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 hover:bg-gray-700/50
+                   rounded border border-gray-600/30 transition-colors duration-200"
+                >
+                    <RotateCcw size={16} className="text-gray-400" />
+                    <span className="font-mono text-sm text-gray-400">Reset</span>
+                </button>
+            </div>
+
+            {/* Error Alert */}
+            {error && (
+                <div className="absolute bottom-16 left-4 right-4 p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
+                    <p className="text-red-400 font-mono text-sm">{error}</p>
+                </div>
+            )}
         </div>
     );
 }
-
-const ProtocolToggle = ({ isNip17, onToggle }) => {
-    return (
-        <div className="flex items-center gap-2">
-            <button
-                onClick={onToggle}
-                className={`
-                    relative w-12 h-6 rounded-full transition-colors duration-300
-                    ${isNip17 ? 'bg-green-500' : 'bg-blue-500'}
-                `}
-            >
-                <div
-                    className={`
-                        absolute top-1 left-1 w-4 h-4 rounded-full bg-white
-                        transform transition-transform duration-300
-                        ${isNip17 ? 'translate-x-6' : 'translate-x-0'}
-                    `}
-                >
-                    {/* Security animation */}
-                    {isNip17 && (
-                        <div className="absolute inset-0 animate-ping">
-                            <div className="absolute inset-0 rounded-full border-2 border-white opacity-75" />
-                        </div>
-                    )}
-                </div>
-            </button>
-            <span className="text-sm">
-                {isNip17 ? 'NIP-17 (More Secure)' : 'NIP-04'}
-            </span>
-        </div>
-    );
-};
