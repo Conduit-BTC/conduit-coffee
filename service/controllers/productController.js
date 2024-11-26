@@ -15,9 +15,9 @@ exports.getAllProducts = async (_, res) => {
         size_length: true,
         size_height: true,
         image_url: true,
-        veeqoProductId: true,
       },
     });
+    console.log('Products:', products);
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -26,31 +26,30 @@ exports.getAllProducts = async (_, res) => {
 };
 
 exports.createSampleProducts = async (_, res) => {
+  console.log('Creating sample products...');
   try {
     const products = [
       {
         "sku": "RSST001",
         "name": "Resist.nce",
-        "description": "// dark roast // sumatra // dates, brown butter, cashew & vanilla int weight; // 12oz / 340.2g",
+        "description": "// dark roast // sumatra // dates, brown butter, cashew & vanilla // weight = 12oz / 340.2g",
         "price": 21,
         "weight": 12,
         "size_width": 4,
         "size_length": 4,
         "size_height": 7,
         "image_url": "https://conduit.coffee/images/coffee-bags/demo-coffee-resistance-front.png",
-        "veeqoProductId": "133098074"
       },
       {
         "sku": "LGHT001",
         "name": "Light.ing",
-        "description": "// light roast // el salvador // golden raisin, brown spice & nougat int weight; // 12oz / float 340.2g",
+        "description": "// light roast // el salvador // golden raisin, brown spice & nougat // weight = 12oz / float 340.2g",
         "price": 21,
         "weight": 12,
         "size_width": 4,
         "size_length": 4,
         "size_height": 7,
         "image_url": "https://conduit.coffee/images/coffee-bags/demo-coffee-lightning -front.png",
-        "veeqoProductId": "133095535"
       },
     ];
 

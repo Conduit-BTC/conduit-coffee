@@ -45,7 +45,6 @@ model Cart {
 
 model Product {
   id           String        @id @default(uuid())
-  veeqoProductId  String?    @unique
   sku          String
   name         String
   description  String
@@ -57,10 +56,22 @@ model Product {
   image_url    String?
 }
 
+model Relay {
+  id         String   @id @default(uuid())
+  url        String   @unique
+  protocol   String   @default("NIP-04")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  relayPool  RelayPool @relation(fields: [npub], references: [npub])
+  npub       String
+
+  @@index([protocol])
+  @@index([npub])
+}
+
 model RelayPool {
   npub       String   @id
-  relays     String[]
-  protocols Json     @default("{}")
+  relays     Relay[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
