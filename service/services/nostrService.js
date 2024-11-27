@@ -7,6 +7,7 @@ const { useWebSocketImplementation } = require('nostr-tools/pool');
 const { getPublicKey } = require('nostr-tools');
 const { createNip04Dm, createNip17Dm } = require('../utils/nostrUtils');
 const { dbService } = require('./dbService');
+const { invoiceTemplate } = require('./email/templates');
 const prisma = dbService.getPrismaClient();
 
 const DEFAULT_RELAYS = [
@@ -33,14 +34,11 @@ class NostrDMService {
                     content
                 );
             } else {
-                const event = await createNip04Dm(
+                return await createNip04Dm(
                     this.senderPrivateKey,
                     recipientPubkey,
                     content
                 );
-                return {
-                    event: event,
-                };
             }
         } catch (error) {
             console.error('Error creating encrypted DM:', error);
@@ -96,7 +94,6 @@ class NostrService {
 
     async handleReceiptCreated(invoiceId, details) {
         if (!details || !details.npub) {
-            console.log('No npub provided in receipt details, skipping Nostr notification');
             return;
         }
 
@@ -128,20 +125,8 @@ class NostrService {
 
     async createReceiptEvent(details) {
         const recipientPubkey = nip19.decode(details.npub).data;
-        const content = JSON.stringify({
-            type: 'receipt',
-            merchantName: process.env.MERCHANT_NAME,
-            timestamp: new Date().toISOString(),
-            details: {
-                amount: details.amount,
-                currency: details.currency,
-                items: details.items,
-                invoiceId: details.invoiceId,
-                orderId: details.orderId
-            }
-        });
+        const content = invoiceTemplate.body(details);
 
-        // Get relays and their protocols
         const relays = await this.getRelaysForNpub(details.npub);
 
         // Group events by protocol
@@ -155,8 +140,6 @@ class NostrService {
                 );
             }
         }
-
-        console.log("Event(s) created:", events);
 
         return events;
     }
@@ -178,39 +161,38 @@ class NostrService {
             // Publish to each relay with appropriate message format
             for (const [protocol, urls] of Object.entries(relaysByProtocol)) {
                 if (protocol === 'NIP-17') {
-                publishPromises.push(
-                    this.relayPool.publish(urls, dmEvents[protocol].receiverGiftWrap),
-                    this.relayPool.publish(urls, dmEvents[protocol].senderGiftWrap)
-                );
+                    publishPromises.push(
+                        this.relayPool.publish(urls, dmEvents[protocol].receiverGiftWrap),
+                        this.relayPool.publish(urls, dmEvents[protocol].senderGiftWrap)
+                    );
                 } else {
-                publishPromises.push(
-                    this.relayPool.publish(urls, dmEvents[protocol].event),
-                );
+                    publishPromises.push(
+                        this.relayPool.publish(urls, dmEvents[protocol].event),
+                    );
                 }
+
+                // Wait for at least one successful publish
+                await Promise.any(publishPromises);
+
+                // Wait 5 seconds to allow for network propagation
+                await new Promise(resolve => setTimeout(resolve, 3000));
+
+                // Verify the events were published
+                let ids = [];
+
+                if (protocol === 'NIP-17') {
+                    ids = [dmEvents[protocol].receiverGiftWrap.id, dmEvents[protocol].senderGiftWrap.id];
+                }
+                else {
+                    ids = [dmEvents[protocol].event.id];
+                }
+
+               this.relayPool.querySync(
+                    relays.map(r => r.url),
+                    { ids }
+                );
             }
 
-            // Wait for at least one successful publish
-            await Promise.any(publishPromises);
-
-            console.log('Receipt published to Nostr network:');
-
-            // Wait 5 seconds to allow for network propagation
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            // Verify the events were published
-            const events = await this.relayPool.querySync(
-                relays.map(r => r.url),
-                { ids: [receiverGiftWrap.id, senderGiftWrap.id] }
-            );
-
-            if (events.length > 0) {
-                console.log('Receipt events verified on network');
-            }
-
-            return {
-                receiverId: receiverGiftWrap.id,
-                senderId: senderGiftWrap.id
-            };
         } catch (error) {
             console.error('Error publishing to relays:', error);
             throw error;

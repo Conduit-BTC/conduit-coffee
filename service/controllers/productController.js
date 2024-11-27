@@ -17,7 +17,6 @@ exports.getAllProducts = async (_, res) => {
         image_url: true,
       },
     });
-    console.log('Products:', products);
     res.json(products);
   } catch (error) {
     console.error(error);

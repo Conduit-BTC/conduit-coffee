@@ -2,10 +2,10 @@
 const Formatters = require('./shared/formatters');
 
 const invoiceTemplate = {
-    subject: () =>
-        `⚡️ Your Receipt | Coffee by Conduit ⚡️`,
+  subject: () => `⚡️ Your Receipt | Coffee by Conduit ⚡️`,
 
-    body: (details) => `
+  body: (details) =>
+    `
 Coffee by Conduit Receipt
 
 ✨ Order Summary
@@ -19,7 +19,11 @@ Nub: ${details.npub || '(not provided)'}
 📦 Shipping Details
 ${details.shippingInfo.name}
 ${details.shippingInfo.address}
-${details.shippingInfo.instructions ? `\nSpecial Instructions: ${details.shippingInfo.instructions}` : ''}
+${
+  details.shippingInfo.instructions
+    ? `\nSpecial Instructions: ${details.shippingInfo.instructions}`
+    : ''
+}
 
 💸 Payment Information
 Subtotal:      ${Math.round(details.subtotal).toLocaleString('en-US')} Sats
@@ -34,7 +38,8 @@ ${Formatters.lineItems(details.items)}
 Thank you for your purchase! ⚡️🎉
 `.trim(),
 
-    ship: (details) => `
+  ship: (details) =>
+    `
 
 ${Formatters.lineItems(details.items)}
 
@@ -42,7 +47,11 @@ ${Formatters.lineItems(details.items)}
 
 ${details.shippingInfo.name}
 ${details.shippingInfo.address}
-${details.shippingInfo.instructions ? `\nSpecial Instructions: ${details.shippingInfo.instructions}` : ''}
+${
+  details.shippingInfo.instructions
+    ? `\nSpecial Instructions: ${details.shippingInfo.instructions}`
+    : ''
+}
 
 =====
 
@@ -56,14 +65,14 @@ Nub: ${details.npub || '(not provided)'}
 Subtotal:      ${Math.round(details.subtotal).toLocaleString('en-US')} Sats
 Shipping:      ${Math.round(details.shippingCost).toLocaleString('en-US')} Sats
 Grand Total:   ${Math.round(details.totalCost).toLocaleString('en-US')} Sats
-`.trim()
+`.trim(),
 };
 
 const shippingTemplate = {
-    subject: (invoice) =>
-        `Shipping Required - Invoice #${invoice.id}`,
+  subject: (invoice) => `Shipping Required - Invoice #${invoice.id}`,
 
-    body: (invoice) => `
+  body: (invoice) =>
+    `
 Shipping Required for Invoice #${invoice.id}
 
 Company: ${invoice.companyName}
@@ -78,10 +87,10 @@ ${Formatters.shippingItems(invoice.items)}
 Special Instructions: ${invoice.shippingInstructions || 'None'}
 
 Additional Notes:
-${Formatters.list(invoice.shippingNotes)}`.trim()
+${Formatters.list(invoice.shippingNotes)}`.trim(),
 };
 
 module.exports = {
-    invoiceTemplate,
-    shippingTemplate
+  invoiceTemplate,
+  shippingTemplate,
 };
