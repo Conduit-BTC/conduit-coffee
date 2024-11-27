@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const DEFAULT_RELAYS = [
-    "ws://localhost:8008"
+    "ws://localhost:3355"
 ];
 
 export const useNostrContext = create(

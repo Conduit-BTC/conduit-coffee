@@ -1,4 +1,3 @@
-// context/UiContext.js
 import { create } from "zustand";
 
 export const useUiContext = create((set) => ({
@@ -13,8 +12,13 @@ export const useUiContext = create((set) => ({
   closeProductDetailsModal: () =>
     set({ isProductDetailsModalOpen: false, currentProductDetails: null }),
 
-  isRelayEditorOpen: false,
+
+  isEmailModalOpen: false,
+  openEmailModal: () => set({ isEmailModalOpen: true }),
+  closeEmailModal: () => set({ isEmailModalOpen: false }),
+
   currentNpub: null,
-  openRelayEditor: (npub) => set({ isRelayEditorOpen: true, currentNpub: npub }),
-  closeRelayEditor: () => set({ isRelayEditorOpen: false, currentNpub: null }),
+  isNostrModalOpen: false,
+  openNostrModal: () => set({ isNostrModalOpen: true }),
+  closeNostrModal: () => set({ isNostrModalOpen: false }),
 }));

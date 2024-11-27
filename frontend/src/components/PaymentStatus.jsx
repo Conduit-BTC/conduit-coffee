@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable */
+
 import { BitcoinQR } from "./BitcoinQR";
 import { ConfettiEffect } from "./ConfettiEffect";
 import ReceiptExport from "./ReceiptExport";

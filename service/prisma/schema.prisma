@@ -21,8 +21,6 @@ model Order {
   address2            String?
   zip                 String
   special_instructions String?
-  email               String?
-  npub                String?
   cart                Cart?
   invoiceId           String? @unique
   invoiceStatus       String?
@@ -54,24 +52,4 @@ model Product {
   size_length  Float
   size_height  Float
   image_url    String?
-}
-
-model Relay {
-  id         String   @id @default(uuid())
-  url        String   @unique
-  protocol   String   @default("NIP-04")
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  relayPool  RelayPool @relation(fields: [npub], references: [npub])
-  npub       String
-
-  @@index([protocol])
-  @@index([npub])
-}
-
-model RelayPool {
-  npub       String   @id
-  relays     Relay[]
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
 }

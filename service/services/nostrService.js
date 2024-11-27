@@ -92,21 +92,6 @@ class NostrService {
         eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.handleReceiptCreated.bind(this));
     }
 
-    async handleReceiptCreated(invoiceId, details) {
-        if (!details || !details.npub) {
-            return;
-        }
-
-        try {
-            await this.publishReceiptEvent({
-                ...details,
-                invoiceId
-            });
-        } catch (error) {
-            console.error('Failed to publish Nostr receipt:', error);
-        }
-    }
-
     async getRelaysForNpub(npub) {
         try {
             const relayPool = await prisma.relayPool.findUnique({
@@ -123,25 +108,19 @@ class NostrService {
         }
     }
 
-    async createReceiptEvent(details) {
-        const recipientPubkey = nip19.decode(details.npub).data;
-        const content = invoiceTemplate.body(details);
-
-        const relays = await this.getRelaysForNpub(details.npub);
-
-        // Group events by protocol
-        const events = {};
-        for (const relay of relays) {
-            if (!events[relay.protocol]) {
-                events[relay.protocol] = await this.dmService.createEncryptedDM(
-                    recipientPubkey,
-                    content,
-                    relay.protocol
-                );
-            }
+    async handleReceiptCreated(invoiceId, details) {
+        if (!details || !details.npub) {
+            return;
         }
 
-        return events;
+        try {
+            await this.publishReceiptEvent({
+                ...details,
+                invoiceId
+            });
+        } catch (error) {
+            console.error('Failed to publish Nostr receipt:', error);
+        }
     }
 
     async publishReceiptEvent(details) {
@@ -197,6 +176,27 @@ class NostrService {
             console.error('Error publishing to relays:', error);
             throw error;
         }
+    }
+
+    async createReceiptEvent(details) {
+        const recipientPubkey = nip19.decode(details.npub).data;
+        const content = invoiceTemplate.body(details);
+
+        const relays = await this.getRelaysForNpub(details.npub);
+
+        // Group events by protocol
+        const events = {};
+        for (const relay of relays) {
+            if (!events[relay.protocol]) {
+                events[relay.protocol] = await this.dmService.createEncryptedDM(
+                    recipientPubkey,
+                    content,
+                    relay.protocol
+                );
+            }
+        }
+
+        return events;
     }
 
     async cleanup() {

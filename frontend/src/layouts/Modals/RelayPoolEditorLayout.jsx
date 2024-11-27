@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Plus, RotateCcw, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, RotateCcw, Loader2 } from 'lucide-react';
 import { useNostrContext } from '../../context/NostrContext';
 import RelayItem from '../../components/RelayItem';
 
@@ -63,23 +63,7 @@ export default function RelayPoolEditorLayout({ npub }) {
     }
 
     return (
-        <div className="relative flex flex-col min-h-[400px] mt-16 bg-[#1a1b26]/80 rounded-lg p-4">
-            {/* Info Section */}
-            <div className="space-y-2 mb-6">
-                <div className="flex items-start gap-2 text-sm text-gray-400">
-                    <div className="text-blue-400 mt-1">○</div>
-                    <span>Provide an npub to receive your receipt as a DM via the configured relays.</span>
-                </div>
-                <div className="flex items-start gap-2 text-sm text-gray-400">
-                    <div className="text-yellow-400 mt-1">○</div>
-                    <span>Enable NIP-17 for enhanced security, when supported by the relay.</span>
-                </div>
-                <div className="flex items-start gap-2 text-sm text-gray-400">
-                    <div className="text-red-400 mt-1">○</div>
-                    <span>Not sure if your client + relay supports NIP-17? Use NIP-04</span>
-                </div>
-            </div>
-
+        <div className="relative flex flex-col bg-[#1a1b26]/80 rounded-lg p-4">
             {/* Add Relay Form */}
             <div className="flex flex-col gap-3 mb-6">
                 <input
