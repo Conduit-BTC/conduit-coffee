@@ -68,7 +68,7 @@ function createRatesPayload(zip, pkg) {
  * @returns {Promise<{ success: boolean, cost?: number, error?: { message: string, status?: number }>}}
  */
 async function calculateShippingCost(zip, items) {
-  const SHIPPING_DISCOUNT = 0.8;
+  const SHIPPING_DISCOUNT = 0.9;
   try {
     const packages = calculatePackagesFromCart(items);
     let totalCost = 0.0;
@@ -159,58 +159,35 @@ async function fetchPackageRate(zip, pkg, bearer) {
   }
 }
 
-function calculatePackagesFromCart(_items) {
-  // Determine package dimensions based on the number of bags
-  let packages = [];
-  let items = [];
-
-  for (item of _items) {
-    for (let i = 0; i < item.quantity; i++) {
-      items.push({ weight: item.weight });
-    }
+function calculatePackagesFromCart(_items = []) {
+  // Early return for empty cart
+  if (!Array.isArray(_items) || _items.length === 0) {
+    return [];
   }
 
-  let index = items.length - 1;
-
-  const small = {
+  const packageDetails = {
     units: 'inches',
     length: 10.5,
     width: 8,
     height: 1,
   };
 
-  const large = {
-    units: 'inches',
-    length: 12,
-    width: 8,
-    height: 6,
-  };
+  // Flatten items array based on quantity
+  const flattenedItems = _items.flatMap(item =>
+    Array(item.quantity || 0).fill({ weight: item.weight || 0 })
+  );
 
-  if (index % 4 === 0) {
-    const p = { ...small, weight: items[index].weight };
-    packages.push(p);
-    index -= 1;
-  }
+  // Group items into packages of 2
+  const packages = [];
+  for (let i = 0; i < flattenedItems.length; i += 2) {
+    const itemsInPackage = flattenedItems.slice(i, i + 2);
+    const totalWeight = itemsInPackage.reduce((sum, item) => sum + item.weight, 0);
 
-  if (index === 0) return packages;
-
-  let pkgQty = 0;
-  let weight = 0;
-
-  for (let i = index; i >= 0; i--) {
-    if (i === 0) {
-      weight += items[i].weight;
-      pkgQty++;
-    }
-    if (i === 0 || pkgQty === 4) {
-      const p = { ...large, weight };
-      packages.push(p);
-      pkgQty = 0;
-      weight = 0;
-    }
-
-    weight += items[i].weight;
-    pkgQty++;
+    packages.push({
+      ...packageDetails,
+      weight: totalWeight,
+      itemCount: itemsInPackage.length
+    });
   }
 
   return packages;

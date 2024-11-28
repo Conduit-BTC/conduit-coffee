@@ -1,30 +1,134 @@
-const cartFixtures = require('../_fixtures/cartFixtures');
-const { __test__ } = require('../../utils/shippingUtils');
+const { __test__: { calculatePackagesFromCart } } = require('../../utils/shippingUtils');
 
-const { calculatePackagesFromCart, calculateShippingCost } = __test__;
-test('calculatePackagesFromCart', () => {
-  const { cart1, cart3, cart5, cart7, cart8, cart9 } = cartFixtures;
-  expect(calculatePackagesFromCart(cart1)).toEqual([
-    { units: 'inches', length: 10.5, width: 8, height: 1, weight: 12 },
-  ]);
-  expect(calculatePackagesFromCart(cart3)).toEqual([
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 36 },
-  ]);
-  expect(calculatePackagesFromCart(cart5)).toEqual([
-    { units: 'inches', length: 10.5, width: 8, height: 1, weight: 12 },
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 48 },
-  ]);
-  expect(calculatePackagesFromCart(cart7)).toEqual([
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 48 },
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 36 },
-  ]);
-  expect(calculatePackagesFromCart(cart8)).toEqual([
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 48 },
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 48 },
-  ]);
-  expect(calculatePackagesFromCart(cart9)).toEqual([
-    { units: 'inches', length: 10.5, width: 8, height: 1, weight: 12 },
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 48 },
-    { units: 'inches', length: 12, width: 8, height: 6, weight: 48 },
-  ]);
+describe('calculatePackagesFromCart', () => {
+  const defaultPackageDetails = {
+    units: 'inches',
+    length: 10.5,
+    width: 8,
+    height: 1,
+  };
+
+  test('handles empty input array', () => {
+    expect(calculatePackagesFromCart([])).toEqual([]);
+  });
+
+  test('handles undefined input', () => {
+    expect(calculatePackagesFromCart()).toEqual([]);
+  });
+
+  test('handles non-array input', () => {
+    expect(calculatePackagesFromCart(null)).toEqual([]);
+    expect(calculatePackagesFromCart({})).toEqual([]);
+  });
+
+  test('creates one package for a single item', () => {
+    const input = [{ weight: 1.5, quantity: 1 }];
+    const expected = [{
+      ...defaultPackageDetails,
+      weight: 1.5,
+      itemCount: 1
+    }];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
+
+  test('creates one package for two items', () => {
+    const input = [
+      { weight: 1.5, quantity: 1 },
+      { weight: 2.0, quantity: 1 }
+    ];
+    const expected = [{
+      ...defaultPackageDetails,
+      weight: 3.5,
+      itemCount: 2
+    }];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
+
+  test('creates multiple packages for more than two items', () => {
+    const input = [{ weight: 1.0, quantity: 3 }];
+    const expected = [
+      {
+        ...defaultPackageDetails,
+        weight: 2.0,
+        itemCount: 2
+      },
+      {
+        ...defaultPackageDetails,
+        weight: 1.0,
+        itemCount: 1
+      }
+    ];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
+
+  test('handles items with zero quantity', () => {
+    const input = [
+      { weight: 1.5, quantity: 0 },
+      { weight: 2.0, quantity: 1 }
+    ];
+    const expected = [{
+      ...defaultPackageDetails,
+      weight: 2.0,
+      itemCount: 1
+    }];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
+
+  test('handles items with missing quantity', () => {
+    const input = [
+      { weight: 1.5 },
+      { weight: 2.0, quantity: 1 }
+    ];
+    const expected = [{
+      ...defaultPackageDetails,
+      weight: 2.0,
+      itemCount: 1
+    }];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
+
+  test('handles items with missing weight', () => {
+    const input = [
+      { quantity: 2 },
+      { weight: 2.0, quantity: 1 }
+    ];
+    const expected = [
+      {
+        ...defaultPackageDetails,
+        weight: 0,
+        itemCount: 2
+      },
+      {
+        ...defaultPackageDetails,
+        weight: 2.0,
+        itemCount: 1
+      }
+    ];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
+
+  test('processes complex mixed quantities correctly', () => {
+    const input = [
+      { weight: 1.5, quantity: 3 },
+      { weight: 2.0, quantity: 2 }
+    ];
+    const expected = [
+      {
+        ...defaultPackageDetails,
+        weight: 3.0,
+        itemCount: 2
+      },
+      {
+        ...defaultPackageDetails,
+        weight: 3.5,
+        itemCount: 2
+      },
+      {
+        ...defaultPackageDetails,
+        weight: 2.0,
+        itemCount: 1
+      }
+    ];
+    expect(calculatePackagesFromCart(input)).toEqual(expected);
+  });
 });
