@@ -19,8 +19,8 @@ EXPOSE 3456
 # Copy the Prisma schema
 COPY prisma ./prisma/
 
-# Generate Prisma client
-RUN npx prisma generate
+# Generate Prisma client and migrate the database
+RUN npx prisma generate && npx prisma migrate dev --name init
 
 # Start the API server
 CMD ["npm", "start"]
