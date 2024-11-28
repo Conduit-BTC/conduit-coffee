@@ -1,15 +1,17 @@
 // hooks/useWebSocketPayment.js
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useReceiptContext } from '../context/ReceiptContext';
 
 export function useWebSocketPayment(invoiceId) {
     const [paymentStatus, setPaymentStatus] = useState('pending');
-    const [receipt, setReceipt] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('disconnected');
     const [error, setError] = useState(null);
     const socketRef = useRef(null);
     const reconnectTimeoutRef = useRef(null);
     const reconnectAttemptsRef = useRef(0);
     const MAX_RECONNECT_ATTEMPTS = 5;
+
+    const { receipt, setReceipt } = useReceiptContext();
 
     const connectWebSocket = useCallback(() => {
         try {
@@ -91,7 +93,7 @@ export function useWebSocketPayment(invoiceId) {
             setConnectionStatus('error');
             setError(error.message);
         }
-    }, [invoiceId, paymentStatus, receipt]);
+    }, [invoiceId, paymentStatus, setReceipt]);
 
     useEffect(() => {
         if (!invoiceId) {

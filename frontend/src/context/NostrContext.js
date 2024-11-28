@@ -1,69 +1,44 @@
-// NostrContext.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const DEFAULT_RELAYS = [
-    "ws://localhost:3355"
+    {
+        url: 'wss://relay.primal.net',
+        protocol: 'NIP-04'
+    }
 ];
 
 export const useNostrContext = create(
     persist(
         (set) => ({
             relayList: DEFAULT_RELAYS,
-            relayProtocols: DEFAULT_RELAYS.reduce((acc, relay) => ({
-                ...acc,
-                [relay]: 'nip04'
-            }), {}),
             isLoading: false,
             error: null,
             addRelay: (relay) =>
                 set((state) => ({
-                    relayList: [...new Set([...state.relayList, relay])],
-                    relayProtocols: {
-                        ...state.relayProtocols,
-                        [relay]: 'nip04' // Default to NIP-04
-                    }
+                    relayList: [...state.relayList, relay]
                 })),
             removeRelay: (relay) =>
-                set((state) => {
-                    const { [relay]: _, ...remainingProtocols } = state.relayProtocols;
-                    return {
-                        relayList: state.relayList.filter(r => r !== relay),
-                        relayProtocols: remainingProtocols
-                    };
-                }),
+                set((state) => ({
+                    relayList: state.relayList.filter(r => r.url !== relay.url)
+                })),
             toggleProtocol: (relay) =>
                 set((state) => ({
-                    relayProtocols: {
-                        ...state.relayProtocols,
-                        [relay]: state.relayProtocols[relay] === 'nip04' ? 'nip17' : 'nip04'
-                    }
+                    relayList: state.relayList.map(r =>
+                        r.url === relay.url
+                            ? { ...r, protocol: r.protocol === 'NIP-04' ? 'NIP-17' : 'NIP-04' }
+                            : r
+                    )
                 })),
             setLoading: (loading) => set({ isLoading: loading }),
             setError: (error) => set({ error }),
-            resetRelays: () =>
-                set({
-                    relayList: DEFAULT_RELAYS,
-                    relayProtocols: DEFAULT_RELAYS.reduce((acc, relay) => ({
-                        ...acc,
-                        [relay]: 'nip04'
-                    }), {})
-                }),
-            setRelayPool: (relayPool) =>
-                set({
-                    relayList: relayPool.relays,
-                    relayProtocols: relayPool.protocols ||
-                        relayPool.relays.reduce((acc, relay) => ({
-                            ...acc,
-                            [relay]: 'nip04'
-                        }), {})
-                })
+            resetRelays: () => set({ relayList: DEFAULT_RELAYS }),
+            setRelayPool: (relayPool) => set({ relayList: relayPool })
         }),
         {
             name: 'nostr-storage',
             partialize: (state) => ({
                 relayList: state.relayList,
-                relayProtocols: state.relayProtocols,
             }),
         }
     )

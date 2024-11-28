@@ -19,7 +19,6 @@ const ShippingForm = ({ onSubmit, error, onShippingCostUpdate }) => {
                 state: e.target['checkout-state'].value,
                 zip: e.target['checkout-zip'].value,
                 special_instructions: e.target['checkout-special-instructions'].value,
-                email: e.target['checkout-email'].value,
             };
 
             await onSubmit(formData);
@@ -116,13 +115,9 @@ const ShippingForm = ({ onSubmit, error, onShippingCostUpdate }) => {
                     id="checkout-special-instructions"
                     name="checkout-special-instructions"
                 />
-                <h3 className="mt-8 mb-2">
-                    {`Contact Info`}
-                    <span className="text-sm">{` (Optional)`}</span>
-                </h3>
                 <button
                     type="submit"
-                    className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
+                    className="w-full mt-8 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
                 >
                     {`>> Pay With Lightning <<`}
                 </button>

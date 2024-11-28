@@ -2,8 +2,8 @@ import ProtocolToggle from "./ProtocolToggle";
 import { X } from "lucide-react";
 
 const RelayItem = ({ relay, isNip17, onToggle, onRemove }) => {
-    // Split the relay URL into protocol and rest for styled display
-    const [protocol, ...rest] = relay.split('://');
+    const relayUrl = relay?.url || relay || '';
+    const [protocol, ...rest] = relayUrl.split('://');
     const restOfUrl = rest.join('://');
 
     return (
@@ -11,8 +11,8 @@ const RelayItem = ({ relay, isNip17, onToggle, onRemove }) => {
             <div className="flex items-center gap-3 p-4">
                 <ProtocolToggle
                     isNip17={isNip17}
-                    onToggle={onToggle} />
-
+                    onToggle={onToggle}
+                />
                 {/* URL Display with enhanced protocol visibility */}
                 <div className="flex-1 font-mono text-sm overflow-hidden">
                     <div className="flex flex-wrap items-center gap-x-1 p-2 px-4 bg-black/50 rounded-md">
@@ -27,7 +27,7 @@ const RelayItem = ({ relay, isNip17, onToggle, onRemove }) => {
 
                 {/* Remove button with hover effect */}
                 <button
-                    onClick={onRemove}
+                    onClick={() => onRemove(relay)}
                     className="flex items-center justify-center w-8 h-8 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors duration-200"
                     aria-label="Remove relay"
                 >

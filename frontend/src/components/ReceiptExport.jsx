@@ -1,5 +1,4 @@
 import { FileText, Download, Share2, Mail, Bird } from 'lucide-react';
-import { useState } from 'react';
 import { useUiContext } from '../context/UiContext';
 
 const downloadText = (content, filename) => {
@@ -77,7 +76,7 @@ const generatePDF = async (content) => {
 };
 
 const ReceiptExport = ({ receipt }) => {
-  const { openNostrModal, openEmailModal } = useUiContext();
+  const { openNostrModal } = useUiContext();
 
   const handleTextExport = () => {
     const filename = `coffee-by-conduit-receipt-${Date.now()}.txt`;
@@ -102,8 +101,8 @@ const ReceiptExport = ({ receipt }) => {
   };
 
   return (
-    <div className="mt-4 space-y-2">
-      <div className="text-gray-400 text-sm mb-2">Save Receipt As:</div>
+    <div className="space-y-2">
+      <h5 className="text-gray-400 w-full text-center mb-4">Save Receipt</h5>
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleTextExport}
@@ -121,13 +120,13 @@ const ReceiptExport = ({ receipt }) => {
           <span>PDF</span>
         </button>
 
-        <button
+        {/* <button
           onClick={() => openEmailModal()}
           className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
         >
           <Mail className="w-4 h-4" />
           <span>Email</span>
-        </button>
+        </button> */}
 
           <button
             onClick={() => openNostrModal()}
