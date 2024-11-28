@@ -3,6 +3,7 @@ const getCurrentSatsPrice = require('../utils/getCurrentSatsPrice');
 const { addInvoiceToOrder } = require('../utils/invoiceUtils');
 const { calculateShippingCost } = require('../utils/shippingUtils');
 const { randomUUID } = require('crypto');
+const { generateReceiptDetailsObject } = require('../utils/receiptUtils');
 
 const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
@@ -18,6 +19,25 @@ exports.getAllOrders = async (_, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.getOrderById = async (req, res) => {
+  try {
+    const { orderId } = req.query;
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { cart: true },
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 exports.createOrder = async (req, res) => {
   const strikeKey = process.env.STRIKE_API_KEY;
@@ -122,7 +142,7 @@ exports.createOrder = async (req, res) => {
           return res.status(500).json({ error: 'Error creating invoice' });
         }
         const lightningInvoice = await generateLightningInvoice(data.invoiceId);
-        addInvoiceToOrder(data.invoiceId, createdOrder.id).then((result) => {
+        addInvoiceToOrder(data.invoiceId, createdOrder.id, lightningInvoice).then((result) => {
           if (result) console.log('Invoice added to order:' + createdOrder.id);
           if (result) res.json({
             lightningInvoice, invoiceId: data.invoiceId, usdShippingCost: usdShippingCost,

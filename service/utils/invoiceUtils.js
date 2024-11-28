@@ -8,7 +8,7 @@ const InvoiceStatus = {
   EXPIRED: 'EXPIRED',
 }
 
-async function addInvoiceToOrder(invoiceId, orderId) {
+async function addInvoiceToOrder(invoiceId, orderId, lightningInvoice) {
   const updatedOrder = await prisma.order.update({
     where: {
       id: orderId,
@@ -16,6 +16,7 @@ async function addInvoiceToOrder(invoiceId, orderId) {
     data: {
       invoiceId: invoiceId,
       invoiceStatus: InvoiceStatus.PENDING,
+      lightningInvoice: lightningInvoice,
     },
   });
 

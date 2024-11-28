@@ -6,14 +6,12 @@ class EmailFormatters {
     static address(order) {
         const address = [];
 
-        console.log("Order: ", order);
-
-        order.name ? address.push(order.name) : address.push("---");
-        order.address1 ? address.push(order.address1) : address.push("---");
-        order.address2 ? address.push(order.address2) : address.push("---");
-        order.city ? address.push(order.city) : address.push("---");
-        order.state ? address.push(order.state) : address.push("---");
-        order.zip ? address.push(order.zip) : address.push("---");
+        order.name && address.push(order.name);
+        order.address1 && address.push(order.address1);
+        order.address2 && address.push(order.address2);
+        order.city && address.push(order.city);
+        order.state && address.push(order.state);
+        order.zip && address.push(order.zip);
 
         return address.join('\n');
     }

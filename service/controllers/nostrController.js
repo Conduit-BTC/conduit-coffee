@@ -1,98 +1,16 @@
-// controllers/nostrController.js
-const { dbService } = require('../services/dbService');
-const { invoiceTemplate } = require('../services/email/templates/emailTemplates');
 const { nostrService } = require('../services/nostrService');
-const prisma = dbService.getPrismaClient();
-
-exports.createRelayPool = async (req, res) => {
-    const { npub, relays, protocols } = req.body;
-
-    if (!npub || !Array.isArray(relays) || relays.length === 0) {
-        return res.status(400).json({
-            error: 'Invalid request body. Required: npub and non-empty relays array'
-        });
-    }
-
-    try {
-        const relayPool = await prisma.relayPool.upsert({
-            where: { npub },
-            update: {
-                relays,
-                protocols
-            },
-            create: {
-                npub,
-                relays,
-                protocols
-            }
-        });
-
-        res.json({
-            status: 'success',
-            data: relayPool
-        });
-    } catch (error) {
-        console.error('Error saving relay pool:', error);
-        res.status(500).json({
-            error: 'Failed to save relay pool',
-            details: error.message
-        });
-    }
-};
-
-exports.getRelayPool = async (req, res) => {
-    const { npub } = req.params;
-
-    try {
-        const relayPool = await prisma.relayPool.findUnique({
-            where: { npub }
-        });
-
-        if (!relayPool) {
-            return res.status(404).json({
-                error: 'No relay pool found for this npub'
-            });
-        }
-
-        res.json({
-            status: 'success',
-            data: relayPool
-        });
-    } catch (error) {
-        console.error('Error fetching relay pool:', error);
-        res.status(500).json({
-            error: 'Failed to fetch relay pool',
-            details: error.message
-        });
-    }
-};
-
-exports.deleteRelayPool = async (req, res) => {
-    const { npub } = req.params;
-
-    try {
-        await prisma.relayPool.delete({
-            where: { npub }
-        });
-
-        res.json({
-            status: 'success',
-            message: 'Relay pool deleted successfully'
-        });
-    } catch (error) {
-        console.error('Error deleting relay pool:', error);
-        res.status(500).json({
-            error: 'Failed to delete relay pool',
-            details: error.message
-        });
-    }
-};
 
 exports.sendReceiptViaDm = async (req, res) => {
-    const { invoiceId } = req.params;
-    await nostrService.handleReceiptCreated(invoiceId, req.body);
-    res.status(200).json({
-        status: 'success',
-        message: 'Receipt sent successfully'
-    });
+    const success = await nostrService.publishReceiptEvent(req.body);
+    if (success) {
+        return res.status(200).json({
+            status: 'success',
+            message: 'Receipt published successfully',
+        });
+    } else {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Error publishing to relay'
+        });
+    }
 }

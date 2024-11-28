@@ -5,13 +5,9 @@ meta {
 }
 
 post {
-  url: {{PROTOCOL}}{{SERVICE_URL}}/nostr/receipts/send/:invoiceId
+  url: {{PROTOCOL}}{{SERVICE_URL}}/nostr/receipts/send
   body: json
   auth: none
-}
-
-params:path {
-  invoiceId: 8c57f74b-1b88-487e-b4c3-94908cda749a
 }
 
 body:json {

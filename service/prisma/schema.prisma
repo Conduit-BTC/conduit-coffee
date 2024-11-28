@@ -24,6 +24,7 @@ model Order {
   cart                Cart?
   invoiceId           String? @unique
   invoiceStatus       String?
+  lightningInvoice    String? @unique
   shippingProvider    String?
   shippingOrderId     String?
   shippingStatus      String?

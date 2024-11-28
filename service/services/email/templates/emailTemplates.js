@@ -12,10 +12,6 @@ Coffee by Conduit Receipt
 Order ID: ${details.orderId}
 Date: ${Formatters.date(details.date)}
 
-📋 Contact Information
-Email: ${details.email || '(not provided)'}
-Nub: ${details.npub || '(not provided)'}
-
 📦 Shipping Details
 ${details.shippingInfo.name}
 ${details.shippingInfo.address}
@@ -57,8 +53,6 @@ ${
 
 Date: ${Formatters.date(details.date)}
 Order ID: ${details.orderId}
-Email: ${details.email || '(not provided)'}
-Nub: ${details.npub || '(not provided)'}
 
 =====
 
@@ -78,8 +72,6 @@ Shipping Required for Invoice #${invoice.id}
 Company: ${invoice.companyName}
 Shipping Address:
 ${Formatters.address(invoice.shippingAddress)}
-
-Contact Phone: ${Formatters.phone(invoice.shippingAddress.phone)}
 
 Items requiring shipping:
 ${Formatters.shippingItems(invoice.items)}

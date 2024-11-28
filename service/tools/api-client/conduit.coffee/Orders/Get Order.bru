@@ -1,0 +1,15 @@
+meta {
+  name: Get Order
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/admin/orders?orderId=ed410ae6-5ebc-455c-b6ea-29dc966c2f29
+  body: none
+  auth: inherit
+}
+
+params:query {
+  orderId: ed410ae6-5ebc-455c-b6ea-29dc966c2f29
+}

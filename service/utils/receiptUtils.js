@@ -19,7 +19,7 @@ async function generateReceiptDetailsObject(invoiceId) {
         },
         email: (order.email || null),
         npub: (order.npub || null),
-        totalCost: invoice.amount.amount * 100000000, // Convert BTC to Sats
+        totalCost: invoice.amount.amount * 100000000, // Convert Sats to USD
         subtotal: cart.sats_cart_price,
         shippingCost: cart.shipping_cost_sats,
         date: invoice.created,
