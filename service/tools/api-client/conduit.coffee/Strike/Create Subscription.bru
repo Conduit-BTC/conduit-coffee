@@ -1,0 +1,28 @@
+meta {
+  name: Create Subscription
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://api.strike.me/v1/subscriptions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: 
+}
+
+body:json {
+  {
+      "webhookUrl": "https://service-dev.up.railway.app/invoices",
+    "webhookVersion": "v1",
+    "secret": "***REMOVED***",
+    "enabled": true,
+    "eventTypes": [
+      "invoice.created",
+      "invoice.updated"
+    ]
+  }
+}

@@ -68,6 +68,9 @@ export const BitcoinQR = ({
             <div className="text-green-500 w-full text-center mt-8 animate-pulse">
                 ⚡ Waiting for payment...⚡
             </div>
+            <div className="text-center mt-6 w-full">
+            {`If your wallet has confirmed the payment, then your purchase was a success. Keep a copy of your Lightning invoice in case you need to contact us for order support.`}
+            </div>
         </div>
     );
 };
