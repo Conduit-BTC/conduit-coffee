@@ -13,14 +13,17 @@ RUN yarn install
 # Copy the rest of the application code
 COPY . .
 
-# Expose the API port
-EXPOSE 3456
-
 # Copy the Prisma schema
 COPY prisma ./prisma/
 
 # Generate Prisma client and migrate the database
-RUN npx prisma generate && npx prisma migrate dev --name init
+RUN npx prisma generate
 
-# Start the API server
-CMD ["npm", "start"]
+# Make startup script executable
+RUN chmod +x startup.sh
+
+# Expose the API port
+EXPOSE 3456
+
+# Use the startup script as the entry point
+CMD ["./startup.sh"]
