@@ -1,0 +1,18 @@
+meta {
+  name: Create or Update RelayPool
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/nostr/npub/relaypool
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "npub": "",
+    "relays": []
+  }
+}

@@ -21,11 +21,10 @@ model Order {
   address2            String?
   zip                 String
   special_instructions String?
-  email               String?
-  npub                String?
   cart                Cart?
   invoiceId           String? @unique
   invoiceStatus       String?
+  lightningInvoice    String? @unique
   shippingProvider    String?
   shippingOrderId     String?
   shippingStatus      String?
@@ -45,7 +44,6 @@ model Cart {
 
 model Product {
   id           String        @id @default(uuid())
-  veeqoProductId  String?    @unique
   sku          String
   name         String
   description  String

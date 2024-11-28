@@ -12,6 +12,7 @@ require('./services/dbService');
 require('./services/shippingService');
 require('./services/orderService');
 require('./services/emailService');
+require('./services/nostrService');
 require('./services/receiptService');
 
 // Initialize express and create HTTP server
@@ -55,6 +56,7 @@ const productRoutes = require('./routes/productRoutes');
 const shippingRoutes = require('./routes/shippingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const tickerRoutes = require('./routes/tickerRoutes');
+const nostrRoutes = require('./routes/nostrRoutes');
 
 app.use('/orders', orderRoutes);
 app.use('/invoices', invoiceRoutes);
@@ -62,6 +64,7 @@ app.use('/products', productRoutes);
 app.use('/shipping', shippingRoutes);
 app.use('/admin', adminRoutes);
 app.use('/ticker', tickerRoutes);
+app.use('/nostr', nostrRoutes);
 
 // Start the server
 const port = process.env.PORT || 3456;

@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable */
+
 import { BitcoinQR } from "./BitcoinQR";
 import { ConfettiEffect } from "./ConfettiEffect";
 import ReceiptExport from "./ReceiptExport";
@@ -21,7 +22,7 @@ const PaymentStatus = ({
                     ⚡ Zap Received! ⚡
                 </h2>
                 <div className="bg-gray-900 border-t border-gray-800 p-4">
-                    <ReceiptExport receiptContent={receipt} />
+                    <ReceiptExport receipt={receipt} />
                 </div>
                 <pre className="font-mono whitespace-pre-wrap bg-gray-900 text-gray-100 p-4 rounded">
                     {receipt}

@@ -1,21 +1,21 @@
-import React from 'react';
-import { FileText, Download, Share2 } from 'lucide-react';
+import { FileText, Download, Share2, Mail, Bird } from 'lucide-react';
+import { useUiContext } from '../context/UiContext';
 
 const downloadText = (content, filename) => {
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };
 
 const generatePDF = async (content) => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
     <html>
       <head>
         <title>Coffee by Conduit - Receipt</title>
@@ -71,65 +71,83 @@ const generatePDF = async (content) => {
       </body>
     </html>
   `);
-    printWindow.document.close();
-    printWindow.print();
+  printWindow.document.close();
+  printWindow.print();
 };
 
-const ReceiptExport = ({ receiptContent }) => {
-    const handleTextExport = () => {
-        const filename = `coffee-by-conduit-receipt-${Date.now()}.txt`;
-        downloadText(receiptContent, filename);
-    };
+const ReceiptExport = ({ receipt }) => {
+  const { openNostrModal } = useUiContext();
 
-    const handlePDFExport = () => {
-        generatePDF(receiptContent);
-    };
+  const handleTextExport = () => {
+    const filename = `coffee-by-conduit-receipt-${Date.now()}.txt`;
+    downloadText(receipt, filename);
+  };
 
-    const handleShare = async () => {
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: 'Coffee by Conduit Receipt',
-                    text: receiptContent,
-                });
-            } catch (error) {
-                console.error('Error sharing:', error);
-            }
-        }
-    };
+  const handlePDFExport = () => {
+    generatePDF(receipt);
+  };
 
-    return (
-        <div className="mt-4 space-y-2">
-            <div className="text-gray-400 text-sm mb-2">Save Receipt As:</div>
-            <div className="flex flex-wrap gap-2">
-                <button
-                    onClick={handleTextExport}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
-                >
-                    <FileText className="w-4 h-4" />
-                    <span>Plain Text</span>
-                </button>
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Coffee by Conduit Receipt',
+          text: receipt,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    }
+  };
 
-                <button
-                    onClick={handlePDFExport}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
-                >
-                    <Download className="w-4 h-4" />
-                    <span>PDF</span>
-                </button>
+  return (
+    <div className="space-y-2">
+      <h5 className="text-gray-400 w-full text-center mb-4">Save Receipt</h5>
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={handleTextExport}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
+        >
+          <FileText className="w-4 h-4" />
+          <span>Plain Text</span>
+        </button>
 
-                {navigator.share && (
-                    <button
-                        onClick={handleShare}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
-                    >
-                        <Share2 className="w-4 h-4" />
-                        <span>Share</span>
-                    </button>
-                )}
-            </div>
-        </div>
-    );
+        <button
+          onClick={handlePDFExport}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
+        >
+          <Download className="w-4 h-4" />
+          <span>PDF</span>
+        </button>
+
+        {/* <button
+          onClick={() => openEmailModal()}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
+        >
+          <Mail className="w-4 h-4" />
+          <span>Email</span>
+        </button> */}
+
+          <button
+            onClick={() => openNostrModal()}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
+            >
+            <Bird className="w-4 h-4" />
+            <span>Nostr</span>
+            </button>
+
+        {navigator.share && (
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default ReceiptExport;

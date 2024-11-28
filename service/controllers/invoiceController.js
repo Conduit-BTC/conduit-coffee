@@ -1,6 +1,7 @@
 const { checkInvoiceStatus, InvoiceStatus } = require('../utils/invoiceUtils');
 const { InvoiceEvents } = require('../events/eventTypes');
 const { eventBus } = require('../events/eventBus');
+const emailService = require('../services/emailService');
 
 exports.handleInvoiceWebhook = async (req, res) => {
   try {
@@ -31,4 +32,11 @@ exports.handleInvoiceWebhook = async (req, res) => {
     console.error(error.message);
     console.error('Stack trace:', error.stack);
   }
+};
+
+
+exports.emailReceipt = async (req, res) => {
+  console.log('emailReceipt');
+  console.log('req.body', req.body);
+  // emailService.sendInvoicePaidEmail(req.body.invoiceId, req.body.details);
 };

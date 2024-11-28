@@ -1,0 +1,15 @@
+meta {
+  name: Generate Receipt Details Object
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/admin/orders/details/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 8c57f74b-1b88-487e-b4c3-94908cda749a
+}

@@ -1,8 +1,9 @@
 // CheckoutLayout.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useCartContext } from "../../context/CartContext";
 import { useCryptoContext } from "../../context/CryptoContext";
 import { useWebSocketPayment } from '../../hooks/useWebSocketPayment';
+import { useReceiptContext } from '../../context/ReceiptContext';
 import PaymentStatus from '../../components/PaymentStatus';
 import ShippingForm from '../../components/ShippingForm';
 import OrderSummary from '../../components/OrderSummary';
@@ -18,6 +19,7 @@ export default function CheckoutLayout() {
   const { receipt, paymentStatus, connectionStatus, error } = useWebSocketPayment(invoiceId);
   const { satsToUsd } = useCryptoContext();
   const { cartItems, cartPriceUsd } = useCartContext();
+  const {setReceipt} = useReceiptContext();
 
   const shouldShowShippingForm = !lightningInvoice && paymentStatus !== 'paid';
 
@@ -31,6 +33,10 @@ export default function CheckoutLayout() {
       return () => clearTimeout(timer);
     }
   }, [shouldShowShippingForm]);
+
+  useEffect(() => {
+    if (receipt) setReceipt(receipt);
+  }, [receipt, setReceipt]);
 
   async function postNewOrder(orderData) {
     const url = import.meta.env.VITE_API_URL;
@@ -126,7 +132,7 @@ export default function CheckoutLayout() {
         ) : (
           <div className="mt-8 flex justify-center">
             <PaymentStatus
-                receipt={receipt}
+              receipt={receipt}
               lightningInvoice={lightningInvoice}
               paymentStatus={paymentStatus}
               connectionStatus={connectionStatus}

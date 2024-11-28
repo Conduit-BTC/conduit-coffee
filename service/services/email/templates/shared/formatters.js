@@ -4,14 +4,14 @@ class EmailFormatters {
     }
 
     static address(order) {
-        const address = [
-            order.address1
-        ];
+        const address = [];
 
-        if (order.address2) address.push(order.address2);
-        if (order.city) address.push(order.city);
-        if (order.state) address.push(order.state);
-        if (order.zip) address.push(order.zip);
+        order.name && address.push(order.name);
+        order.address1 && address.push(order.address1);
+        order.address2 && address.push(order.address2);
+        order.city && address.push(order.city);
+        order.state && address.push(order.state);
+        order.zip && address.push(order.zip);
 
         return address.join('\n');
     }

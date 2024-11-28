@@ -55,10 +55,22 @@ exports.sendReceiptTestEmail = async (req, res) => {
   console.log('sendReceiptTestEmail');
   try {
     const { invoiceId } = req.params;
-    await emailService.handleReceiptCreated(invoiceId);
+    await emailService.sendInvoicePaidEmail(invoiceId, {});
     res.send('Email sent successfully.');
   } catch (error) {
     console.error('Error sending test receipt email:', error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+exports.generateReceiptDetails = async (req, res) => {
+  console.log('generateReceiptDetails');
+  try {
+    const { id } = req.params;
+    const details = await generateReceiptDetailsObject(id);
+    res.json(details);
+  } catch (error) {
+    console.error('Error generating receipt details:', error);
     res.status(500).send('Internal Server Error');
   }
 }

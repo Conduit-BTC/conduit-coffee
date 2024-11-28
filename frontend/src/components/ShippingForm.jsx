@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import ShippingCostCalculator from './ShippingCostCalculator';
 
-const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) => {
+const ShippingForm = ({ onSubmit, error, onShippingCostUpdate }) => {
     const [submitError, setSubmitError] = useState(null);
-    const [calculatedShippingCost, setCalculatedShippingCost] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,8 +19,6 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                 state: e.target['checkout-state'].value,
                 zip: e.target['checkout-zip'].value,
                 special_instructions: e.target['checkout-special-instructions'].value,
-                email: e.target['checkout-email'].value,
-                npub: ""
             };
 
             await onSubmit(formData);
@@ -29,7 +26,6 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
             console.error("Form submission error:", error);
             setSubmitError(error.message || 'Unable to connect to payment server');
 
-            // Clear error after 5 seconds
             setTimeout(() => {
                 setSubmitError(null);
             }, 5000);
@@ -37,7 +33,6 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
     };
 
     const handleShippingCalculated = (cost) => {
-        setCalculatedShippingCost(cost);
         onShippingCostUpdate(cost);
     };
 
@@ -120,21 +115,9 @@ const ShippingForm = ({ onSubmit, cartPriceUsd, error, onShippingCostUpdate }) =
                     id="checkout-special-instructions"
                     name="checkout-special-instructions"
                 />
-                <h3 className="mt-8 mb-2">
-                    {`Contact Info`}
-                    <span className="text-sm">{` (Optional)`}</span>
-                </h3>
-                <h6>{`We'll send you a tracking number and receipt, nothing else. Skip it if you're off-the-radar `}</h6>
-                <input
-                    className="w-full p-2 mt-4"
-                    type="email"
-                    placeholder="Email (optional)"
-                    id="checkout-email"
-                    name="checkout-email"
-                />
                 <button
                     type="submit"
-                    className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
+                    className="w-full mt-8 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
                 >
                     {`>> Pay With Lightning <<`}
                 </button>

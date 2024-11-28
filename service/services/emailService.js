@@ -1,5 +1,3 @@
-const { eventBus } = require('../events/eventBus');
-const { InvoiceEvents } = require('../events/eventTypes');
 const { ProtonMailProvider } = require('./email/emailProviders');
 const { invoiceTemplate, shippingTemplate } = require('./email/templates');
 const EmailTransport = require('./email/emailTransport');
@@ -9,7 +7,6 @@ class EmailService {
     constructor() {
         this.clients = new Map();
         this.initialize();
-        this.setupEventListeners();
     }
 
     initialize() {
@@ -89,24 +86,8 @@ class EmailService {
         };
     }
 
-    setupEventListeners() {
-        eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.handleReceiptCreated.bind(this));
-    }
-
-    async handleReceiptCreated(invoiceId, details) {
-        if (!details) throw new Error('Receipt details are missing');
-
-        try {
-            await this.sendInvoicePaidEmail(invoiceId, details);
-        } catch (error) {
-            console.error('Failed to process invoice emails:', error);
-            // Consider implementing retry logic here?
-            throw new Error('Failed to send invoice email: ' + error.message);
-        }
-    }
-
     async sendInvoicePaidEmail(invoiceId, details) {
-        if (process.env.USE_TEST_PAYMENT_AMOUNT === 'true') return;
+        if (!invoiceId || !details) throw new Error('Receipt details are missing; cannot send email receipt.');
 
         const receiptClient = this.clients.get('receipts');
         if (!receiptClient) {

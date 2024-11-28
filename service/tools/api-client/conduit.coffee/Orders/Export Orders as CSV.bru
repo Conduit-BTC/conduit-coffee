@@ -1,11 +1,11 @@
 meta {
   name: Export Orders as CSV
   type: http
-  seq: 2
+  seq: 1
 }
 
 get {
-  url: localhost:3456/admin/export/orders
+  url: {{PROTOCOL}}{{SERVICE_URL}}/admin/export/orders
   body: none
   auth: basic
 }
