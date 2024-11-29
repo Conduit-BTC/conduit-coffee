@@ -13,7 +13,7 @@ exports.getAllOrders = async (_, res) => {
     const orders = await prisma.order.findMany({
       include: { cart: true },
     });
-    res.json(orders);
+    res.status(200).json(orders);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -32,7 +32,7 @@ exports.getOrderById = async (req, res) => {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    res.json(order);
+    res.status(200).json(order);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -144,10 +144,10 @@ exports.createOrder = async (req, res) => {
         const lightningInvoice = await generateLightningInvoice(data.invoiceId);
         addInvoiceToOrder(data.invoiceId, createdOrder.id, lightningInvoice).then((result) => {
           if (result) console.log('Invoice added to order:' + createdOrder.id);
-          if (result) res.json({
+          if (result) res.status(200).json({
             lightningInvoice, invoiceId: data.invoiceId, usdShippingCost: usdShippingCost,
             satsShippingCost: satsShippingCost, usdCost: cart.usd_cart_price, satsCost: cart.sats_cart_price,
-          }, 200);
+          });
           else return res.status(500);
         });
       })

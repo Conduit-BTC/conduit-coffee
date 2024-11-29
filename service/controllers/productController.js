@@ -17,7 +17,7 @@ exports.getAllProducts = async (_, res) => {
         image_url: true,
       },
     });
-    res.json(products);
+    res.status(200).json(products);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -56,7 +56,7 @@ exports.createSampleProducts = async (_, res) => {
       data: products,
     });
 
-    res.json({ message: 'Products created successfully' });
+    res.status(200).json({ message: 'Products created successfully' });
   } catch (error) {
     console.error('Error creating products:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -74,7 +74,7 @@ exports.deleteProductById = async (req, res) => {
         id: productId,
       },
     });
-    res.json({ message: 'Product deleted successfully' });
+    res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     console.error('Error deleting product:', error);
     res.status(500).json({ error: 'Internal server error' });

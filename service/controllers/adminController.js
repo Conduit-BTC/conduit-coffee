@@ -68,7 +68,7 @@ exports.generateReceiptDetails = async (req, res) => {
   try {
     const { id } = req.params;
     const details = await generateReceiptDetailsObject(id);
-    res.json(details);
+    res.status(200).json(details);
   } catch (error) {
     console.error('Error generating receipt details:', error);
     res.status(500).send('Internal Server Error');
