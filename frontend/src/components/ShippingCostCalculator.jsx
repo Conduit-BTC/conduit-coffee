@@ -107,8 +107,8 @@ export default function ShippingCostCalculator({ onShippingCostCalculated }) {
         />
         <button
           disabled={!zip || zip.length < 5 || isCalculating}
-          className={`p-4 flex justify-center items-center ${zip && zip.length >= 5 && !isCalculating
-              ? "bg-blue-500 hover:bg-blue-600"
+          className={`p-6 font-bold flex justify-center items-center ${zip && zip.length >= 5 && !isCalculating
+              ? "bg-orange-600 hover:bg-orange-700"
               : "bg-blue-500/20"
             }`}
           onClick={handleCalculation}

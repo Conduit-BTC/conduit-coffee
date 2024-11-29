@@ -117,7 +117,7 @@ const ShippingForm = ({ onSubmit, error, onShippingCostUpdate }) => {
                 />
                 <button
                     type="submit"
-                    className="w-full mt-8 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
+                    className="w-full mt-8 bg-orange-600 hover:bg-orange-700 p-6 text-xl text-[var(--main-text-color)] font-bold disabled:opacity-50"
                 >
                     {`>> Pay With Lightning <<`}
                 </button>

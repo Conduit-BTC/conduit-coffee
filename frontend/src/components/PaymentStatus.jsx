@@ -81,7 +81,7 @@ const PaymentStatus = ({
             <button
                 type="submit"
                 disabled={cartPriceUsd <= 0.0}
-                className="w-full mt-4 bg-blue-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
+                className="w-full mt-4 bg-orange-500 p-8 text-xl text-[var(--main-text-color)] hover:font-bold disabled:opacity-50"
                 onClick={onSubmitPayment}
             >
                 {`>> Pay With Lightning <<`}
