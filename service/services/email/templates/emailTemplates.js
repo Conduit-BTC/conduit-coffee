@@ -1,4 +1,5 @@
-// services/email/templates/invoiceTemplates.js
+/* eslint-disable prettier/prettier */
+
 const Formatters = require('./shared/formatters');
 
 const invoiceTemplate = {
@@ -6,7 +7,9 @@ const invoiceTemplate = {
 
   body: (details) =>
     `
-Coffee by Conduit Receipt
+☕️ Coffee by Conduit Receipt ☕️
+
+🚀 THANK YOU EARLY ADOPTER! 🚀
 
 ✨ Order Summary
 Order ID: ${details.orderId}
@@ -20,11 +23,11 @@ ${
     ? `\nSpecial Instructions: ${details.shippingInfo.instructions}`
     : ''
 }
-
 💸 Payment Information
 Subtotal:      ${Math.round(details.subtotal).toLocaleString('en-US')} Sats
 Shipping:      ${Math.round(details.shippingCost).toLocaleString('en-US')} Sats
 Grand Total:   ${Math.round(details.totalCost).toLocaleString('en-US')} Sats
+OpenSats Donation: ${Math.round(details.totalCost * 0.21).toLocaleString('en-US')} Sats
 
 ⚡ Lightning Invoice: (coming soon...)
 
