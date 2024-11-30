@@ -81,7 +81,6 @@ function App() {
           <TerminalLayout />
           <CartLayout />
         </div>
-        <ReceiptExport />
         <FooterLayout />
       </section>
     </main>
