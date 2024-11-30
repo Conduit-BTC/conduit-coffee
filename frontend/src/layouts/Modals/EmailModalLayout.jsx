@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useReceiptContext } from '../../context/ReceiptContext';
+import { ConfettiEffect } from '../../components/ConfettiEffect';
 
 const EmailModalLayout = () => {
     const [email, setEmail] = useState('');
@@ -9,7 +10,7 @@ const EmailModalLayout = () => {
     if (!email) {
       return;
     }
-    await fetch('/invoices/email-receipt', {
+    await fetch(`${import.meta.env.VITE_API_URL}/invoices/email-receipt`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +21,8 @@ const EmailModalLayout = () => {
 
     return (
     <div className="relative flex flex-col mt-16 bg-[#1a1b26]/80 rounded-lg p-4">
-        <h2 className="text-xl font-bold">Email Receipt</h2>
+        <h2 className='mb-2'>Send an Email Receipt</h2>
+        <h6 className='mb-8'>Enter an email address where you would like to receive your receipt</h6>
         <input
           className="w-full p-2 mt-4"
           type="email"

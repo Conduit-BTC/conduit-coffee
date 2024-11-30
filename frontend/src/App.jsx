@@ -14,6 +14,7 @@ import {
 import { useCartContext } from "./context/CartContext";
 import { SATS_REFRESH_RATE } from "./constants";
 import AppModals from "./layouts/Modals/AppModals";
+import ReceiptExport from "./components/ReceiptExport";
 
 // Sets the global price via context, with the help of the app's useEffect()
 async function updateCryptoContext(
@@ -80,6 +81,7 @@ function App() {
           <TerminalLayout />
           <CartLayout />
         </div>
+        <ReceiptExport />
         <FooterLayout />
       </section>
     </main>

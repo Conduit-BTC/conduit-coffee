@@ -36,7 +36,16 @@ exports.handleInvoiceWebhook = async (req, res) => {
 
 
 exports.emailReceipt = async (req, res) => {
-  console.log('emailReceipt');
-  console.log('req.body', req.body);
-  // emailService.sendInvoicePaidEmail(req.body.invoiceId, req.body.details);
+  const success = await emailService.sendInvoicePaidEmail(req.body);
+  if (success) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Receipt sent successfully',
+    });
+  } else {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Error sending receipt'
+    });
+  }
 };

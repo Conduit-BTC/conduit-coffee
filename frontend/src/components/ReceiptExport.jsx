@@ -76,7 +76,7 @@ const generatePDF = async (content) => {
 };
 
 const ReceiptExport = ({ receipt }) => {
-  const { openNostrModal } = useUiContext();
+  const { openNostrModal, openEmailModal } = useUiContext();
 
   const handleTextExport = () => {
     const filename = `coffee-by-conduit-receipt-${Date.now()}.txt`;
@@ -120,13 +120,13 @@ const ReceiptExport = ({ receipt }) => {
           <span>PDF</span>
         </button>
 
-        {/* <button
+        <button
           onClick={() => openEmailModal()}
           className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
         >
           <Mail className="w-4 h-4" />
           <span>Email</span>
-        </button> */}
+        </button>
 
           <button
             onClick={() => openNostrModal()}

@@ -2,6 +2,7 @@ const { ProtonMailProvider } = require('./email/emailProviders');
 const { invoiceTemplate, shippingTemplate } = require('./email/templates');
 const EmailTransport = require('./email/emailTransport');
 const EmailClient = require('./email/emailClient');
+const { randomInt } = require('crypto');
 
 class EmailService {
     constructor() {
@@ -86,32 +87,22 @@ class EmailService {
         };
     }
 
-    async sendInvoicePaidEmail(invoiceId, details) {
-        if (!invoiceId || !details) throw new Error('Receipt details are missing; cannot send email receipt.');
-
+    async sendInvoicePaidEmail(details) {
         const receiptClient = this.clients.get('receipts');
         if (!receiptClient) {
             throw new Error('Receipt email client not configured');
         }
 
         try {
-            if (details.email) {
-                // Send a copy to the customer
-                console.log(`Sending receipt to ${details.email}`);
-                await receiptClient.sendMail(
-                    details.email,
-                    invoiceTemplate.subject(),
-                    invoiceTemplate.body(details)
-                );
-            }
-
-            // Send a copy to the shipping department
-            console.log(`Sending receipt to ${process.env.SHIPPING_EMAIL}`);
-            await receiptClient.sendMail(
-                process.env.SHIPPING_EMAIL,
-                `ORDER RECEIVED - conduit.coffee - ${invoiceId}`,
-                invoiceTemplate.ship(details)
+            const { email, receipt } = details;
+            console.log("receipt: ", receipt)
+            const success = await receiptClient.sendMail(
+                email,
+                `Your Receipt - Coffee by Conduit`,
+                receipt
             );
+
+            return success.accepted.length > 0;
         } catch (error) {
             console.error('Failed to send invoice email:', error);
             throw error;
@@ -130,7 +121,7 @@ class EmailService {
 
         try {
             await shippingClient.sendMail(
-                process.env.SHIPPING_DESTINATION,
+                shipment.email,
                 shippingTemplate.subject(shipment),
                 shippingTemplate.body(shipment)
             );
