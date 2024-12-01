@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Your app description",
   "main": "app.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
@@ -24,7 +25,9 @@
     "express-basic-auth": "^1.2.1",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.16",
-    "nostr-tools": "^2.10.0"
+    "nostr-tools": "^2.10.0",
+    "pdfkit": "^0.15.1",
+    "puppeteer": "^23.9.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",

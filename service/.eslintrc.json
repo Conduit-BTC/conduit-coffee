@@ -1,0 +1,9 @@
+{
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "env": {
+    "node": true,
+    "es2022": true
+  }
+}

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 4in;
+      height: 6in;
+      margin: 0;
+      background: white;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      padding: 15px;
+      position: relative;
+    }
+
+    .border {
+      position: relative;
+      height: 100%;
+      border: 2px solid black;
+      padding: 15px;
+    }
+
+    /* Corner design */
+    .corner {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      border: 2px solid black;
+    }
+
+    .top-left {
+      top: -2px;
+      left: -2px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .top-right {
+      top: -2px;
+      right: -2px;
+      border-left: none;
+      border-bottom: none;
+    }
+
+    .bottom-left {
+      bottom: -2px;
+      left: -2px;
+      border-right: none;
+      border-top: none;
+    }
+
+    .bottom-right {
+      bottom: -2px;
+      right: -2px;
+      border-left: none;
+      border-top: none;
+    }
+
+    .content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 15px;
+      position: relative;
+    }
+
+    .header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .company-name {
+      font-size: 16px;
+      letter-spacing: 3px;
+    }
+
+    .brand {
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 5px;
+      padding: 5px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .brand::before,
+    .brand::after {
+      content: '';
+      width: 150px;
+      height: 2px;
+      background: black;
+    }
+
+    .order-details {
+      border-left: 2px solid black;
+      padding-left: 15px;
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .order-id,
+    .timestamp {
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .payment-box {
+      border: 2px solid black;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .payment-title {
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .payment-details {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .inventory {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .inventory-title {
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .inventory-grid {
+      border-left: 2px solid black;
+      padding: 10px 10px 6px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .inventory-item {
+      font-size: 12px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .inventory-item::before {
+      content: '>';
+      position: absolute;
+      left: 0;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .footer::before,
+    .footer::after {
+      content: '';
+      width: 80px;
+      height: 2px;
+      background: black;
+    }
+
+    .rarity {
+      position: absolute;
+      top: 155px;
+      right: 0px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      transform: rotate(90deg);
+      transform-origin: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="border">
+      <div class="corner top-left"></div>
+      <div class="corner top-right"></div>
+      <div class="corner bottom-left"></div>
+      <div class="corner bottom-right"></div>
+
+      <div class="content">
+        <div class="rarity">BTC_BLOCK_HEIGHT//1234546</div>
+
+        <div class="header">
+          <div class="company-name">COFFEE BY</div>
+          <div class="brand">CONDUIT</div>
+        </div>
+
+        <div class="order-details">
+          <div class="order-id">
+            <span>ORDER_ID:</span>
+            <span>ad9d73bc-5c7f-41de-850c-12ee21ff0e64</span>
+          </div>
+          <div class="timestamp">
+            <span>TIMESTAMP:</span>
+            <span>November 29, 2024 at 10:40 PM PST</span>
+          </div>
+        </div>
+
+        <div class="payment-box">
+          <div class="payment-title">PAYMENT_DETAILS</div>
+          <div class="payment-details">
+            <div>GRAND_TOTAL: 150000 SATS</div>
+            <div class="donation-highlight">
+              OPENSATS_DONATION: 15000 SATS
+            </div>
+          </div>
+        </div>
+
+        <div class="inventory">
+          <div class="inventory-title">INVENTORY_MANIFEST</div>
+          <div class="inventory-grid">
+            <div class="inventory-item">2x Quantum Processor</div>
+            <div class="inventory-item">1x Neural Interface</div>
+          </div>
+        </div>
+
+        <div class="footer">
+          conduitbtc.com
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
