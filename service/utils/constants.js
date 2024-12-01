@@ -1,0 +1,7 @@
+const SHIPPING_DISCOUNT = 0.9;
+const OPENSATS_DONATION = 0.21;
+
+module.exports = {
+    SHIPPING_DISCOUNT,
+    OPENSATS_DONATION
+};

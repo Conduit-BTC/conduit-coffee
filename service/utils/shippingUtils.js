@@ -1,7 +1,8 @@
 const { getOauthToken } = require('./oauthUtils');
+const { SHIPPING_DISCOUNT } = require('./constants');
+const { dbService } = require('../services/dbService');
 const { createShipStationOrder } = require('./shippingProviders/shipStation');
 
-const { dbService } = require('../services/dbService');
 const prisma = dbService.getPrismaClient();
 
 async function createShipment(invoiceId) {
@@ -68,8 +69,7 @@ function createRatesPayload(zip, pkg) {
  * @returns {Promise<{ success: boolean, cost?: number, error?: { message: string, status?: number }>}}
  */
 async function calculateShippingCost(zip, items) {
-  const SHIPPING_DISCOUNT = 0.9;
-  try {
+   try {
     const packages = calculatePackagesFromCart(items);
     let totalCost = 0.0;
 

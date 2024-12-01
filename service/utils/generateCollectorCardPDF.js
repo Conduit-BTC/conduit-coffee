@@ -2,14 +2,39 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
+/**
+ *
+ * orderData = {
+    orderId: "123456",
+    date: "2024-03-21",
+    payment: {
+      grandTotal: 150000,
+      donation: 5000
+    },
+    blockHeight: 1234567,
+    inventory: [
+      { name: "Quantum Processor", qty: 2 },
+      { name: "Neural Interface", qty: 1 },
+      { name: "Quantum Memory Module", qty: 3 }
+    ]
+  };
+*/
+
 async function generateCollectorCardPDF(orderData) {
   // Create HTML content with the order data
   const htmlPath = path.join(__dirname, 'template.html');
+
+  const inventoryHTML = orderData.inventory
+    .map(item => `<div class="inventory-item">${item.qty}x ${item.name}</div>`)
+    .join('\n            ');
+
   const htmlContent = fs.readFileSync(htmlPath, 'utf8')
-    .replace('ad9d73bc-5c7f-41de-850c-12ee21ff0e64', orderData.orderId)
-    .replace('November 29, 2024 at 10:40 PM PST', orderData.date)
-    .replace('150000', orderData.payment.grandTotal)
-    .replace('15000', orderData.payment.donation);
+    .replace('DATA:ORDER_ID', orderData.orderId)
+    .replace('DATA:TIMESTAMP', orderData.date)
+    .replace('DATA:GRAND_TOTAL', orderData.payment.grandTotal)
+    .replace('DATA:DONATION_TOTAL', orderData.payment.donation)
+    .replace('DATA:BLOCK_HEIGHT', orderData.blockHeight)
+    .replace('DATA:INVENTORY', inventoryHTML);
 
   // Start browser
   const browser = await puppeteer.launch();
@@ -42,4 +67,4 @@ async function generateCollectorCardPDF(orderData) {
   return pdf;
 }
 
-module.exports = generateCollectorCardPDF;
+module.exports = { generateCollectorCardPDF };

@@ -23,6 +23,18 @@ class EmailClient {
 
         return this.transport.sendMail(mailOptions);
     }
+
+    async sendMailWithAttachment(to, subject, text, attachmentsArray) {
+        const mailOptions = {
+            from: this.config.address,
+            to,
+            subject,
+            text,
+            attachments: attachmentsArray
+        };
+
+        return this.transport.sendMail(mailOptions);
+    }
 }
 
 module.exports = EmailClient;

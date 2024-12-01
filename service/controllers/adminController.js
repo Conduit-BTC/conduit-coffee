@@ -63,11 +63,27 @@ exports.sendReceiptTestEmail = async (req, res) => {
   }
 }
 
+exports.sendCollectorCardTestEmail = async (req, res) => {
+  console.log('sendCollectorCardTestEmail');
+  try {
+    const { invoiceId } = req.query;
+    const details = await generateReceiptDetailsObject(invoiceId);
+    const success = await emailService.sendCollectorCardEmailToAdminAccount(invoiceId, details);
+    if (success) {
+      return res.status(200).send('Email sent successfully.');
+    }
+    res.status(500).send('Internal Server Error');
+  } catch (error) {
+    console.error('Error sending test receipt email:', error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 exports.generateReceiptDetails = async (req, res) => {
   console.log('generateReceiptDetails');
   try {
-    const { id } = req.params;
-    const details = await generateReceiptDetailsObject(id);
+    const { invoiceId } = req.query;
+    const details = await generateReceiptDetailsObject(invoiceId);
     res.status(200).json(details);
   } catch (error) {
     console.error('Error generating receipt details:', error);

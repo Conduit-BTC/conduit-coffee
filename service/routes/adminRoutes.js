@@ -10,6 +10,7 @@ router.get('/orders/all', orderController.getAllOrders);
 router.get('/export/orders', adminController.exportOrdersCsv);
 router.get('/export/products', adminController.exportProductsCsv);
 router.get('/orders/details/:id', adminController.generateReceiptDetails);
+router.post('/test/email/receipts/collector-card', adminController.sendCollectorCardTestEmail);
 router.post('/products/samples', productController.createSampleProducts);
 router.delete('/products/delete/:id', productController.deleteProductById);
 // router.get('/test/email/shipping', adminController.sendShippingTestEmail)

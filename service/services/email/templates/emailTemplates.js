@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 const Formatters = require('./shared/formatters');
+const { OPENSATS_DONATION } = require('../../../utils/constants');
 
 const invoiceTemplate = {
   subject: () => `⚡️ Your Receipt | Coffee by Conduit ⚡️`,
@@ -27,7 +28,7 @@ ${
 Subtotal:      ${Math.round(details.subtotal).toLocaleString('en-US')} Sats
 Shipping:      ${Math.round(details.shippingCost).toLocaleString('en-US')} Sats
 Grand Total:   ${Math.round(details.totalCost).toLocaleString('en-US')} Sats
-OpenSats Donation: ${Math.round(details.totalCost * 0.21).toLocaleString('en-US')} Sats
+OpenSats Donation: ${Math.round(details.totalCost * OPENSATS_DONATION).toLocaleString('en-US')} Sats
 
 ⚡ Lightning Invoice: (coming soon...)
 

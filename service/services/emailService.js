@@ -1,13 +1,18 @@
 const { ProtonMailProvider } = require('./email/emailProviders');
-const { invoiceTemplate, shippingTemplate } = require('./email/templates');
+const { shippingTemplate } = require('./email/templates');
 const EmailTransport = require('./email/emailTransport');
 const EmailClient = require('./email/emailClient');
-const { randomInt } = require('crypto');
+const { eventBus } = require('../events/eventBus');
+const { InvoiceEvents } = require('../events/eventTypes');
+const { OPENSATS_DONATION } = require('../utils/constants');
+const { generateCollectorCardPDF } = require('../utils/generateCollectorCardPDF');
+const { getBtcBlockHeight } = require('../utils/btcUtils');
 
 class EmailService {
     constructor() {
         this.clients = new Map();
         this.initialize();
+        this.setupEventListeners();
     }
 
     initialize() {
@@ -23,6 +28,10 @@ class EmailService {
             // Consider implementing a retry mechanism or fallback here
             throw new Error('EmailService initialization failed');
         }
+    }
+
+    setupEventListeners() {
+        eventBus.subscribe(InvoiceEvents.RECEIPT_CREATED, this.sendCollectorCardEmailToAdminAccount.bind(this));
     }
 
     validateConfigs(configs) {
@@ -128,6 +137,51 @@ class EmailService {
         } catch (error) {
             console.error('Failed to send shipment update email:', error);
             throw error;
+        }
+    }
+
+    async sendCollectorCardEmailToAdminAccount(invoiceId, details) {
+        try {
+            const client = this.clients.get('receipts');
+            if (!client) {
+                throw new Error('Receipt email client not configured');
+            }
+
+            const blockHeight = await getBtcBlockHeight();
+
+            const pdfData = {
+                orderId: details.orderId,
+                date: details.date,
+                payment: {
+                    grandTotal: details.totalCost,
+                    donation: details.totalCost * OPENSATS_DONATION,
+                },
+                blockHeight,
+                inventory: details.items.map(item => ({
+                    name: item.name,
+                    qty: item.quantity
+                }))
+            };
+
+            const pdf = await generateCollectorCardPDF(pdfData);
+
+            const success = await client.sendMailWithAttachment(
+                client.config.address,
+                "Collector Card for Order " + details.orderId,
+                "Collector card PDF attached\n\n Order ID: " + details.orderId,
+                [
+                    {
+                        filename: `collector-card_${details.orderId}.pdf`,
+                        content: pdf,
+                        contentType: 'application/pdf'
+                    }
+                ]
+            );
+
+            return success.accepted.length > 0;
+        } catch (error) {
+            console.error('Failed to send collector card email:', error);
+            return false;
         }
     }
 }

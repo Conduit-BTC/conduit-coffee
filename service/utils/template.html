@@ -115,16 +115,20 @@
       border-left: 2px solid black;
       padding-left: 15px;
       padding-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 5px 15px;
     }
 
     .order-id,
-    .timestamp {
+    .timestamp,
+    .blockheight {
       font-size: 12px;
-      display: flex;
-      justify-content: space-between;
+      display: contents;
+    }
+
+    .order-details span:nth-child(2) {
+      text-align: right;
     }
 
     .payment-box {
@@ -200,16 +204,6 @@
       height: 2px;
       background: black;
     }
-
-    .rarity {
-      position: absolute;
-      top: 155px;
-      right: 0px;
-      font-size: 10px;
-      letter-spacing: 1px;
-      transform: rotate(90deg);
-      transform-origin: right;
-    }
   </style>
 </head>
 <body>
@@ -221,8 +215,6 @@
       <div class="corner bottom-right"></div>
 
       <div class="content">
-        <div class="rarity">BTC_BLOCK_HEIGHT//1234546</div>
-
         <div class="header">
           <div class="company-name">COFFEE BY</div>
           <div class="brand">CONDUIT</div>
@@ -231,20 +223,24 @@
         <div class="order-details">
           <div class="order-id">
             <span>ORDER_ID:</span>
-            <span>ad9d73bc-5c7f-41de-850c-12ee21ff0e64</span>
+            <span>DATA:ORDER_ID</span>
           </div>
           <div class="timestamp">
             <span>TIMESTAMP:</span>
-            <span>November 29, 2024 at 10:40 PM PST</span>
+            <span>DATA:TIMESTAMP</span>
+          </div>
+          <div class="blockheight">
+            <span>BTC_BLOCKHEIGHT:</span>
+            <span>DATA:BLOCK_HEIGHT</span>
           </div>
         </div>
 
         <div class="payment-box">
           <div class="payment-title">PAYMENT_DETAILS</div>
           <div class="payment-details">
-            <div>GRAND_TOTAL: 150000 SATS</div>
+            <div>GRAND_TOTAL: DATA:GRAND_TOTAL SATS</div>
             <div class="donation-highlight">
-              OPENSATS_DONATION: 15000 SATS
+              OPENSATS_DONATION: DATA:DONATION_TOTAL SATS
             </div>
           </div>
         </div>
@@ -252,8 +248,7 @@
         <div class="inventory">
           <div class="inventory-title">INVENTORY_MANIFEST</div>
           <div class="inventory-grid">
-            <div class="inventory-item">2x Quantum Processor</div>
-            <div class="inventory-item">1x Neural Interface</div>
+            DATA:INVENTORY
           </div>
         </div>
 

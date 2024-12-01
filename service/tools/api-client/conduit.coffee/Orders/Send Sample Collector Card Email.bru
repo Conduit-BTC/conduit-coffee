@@ -1,0 +1,15 @@
+meta {
+  name: Send Sample Collector Card Email
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{PROTOCOL}}{{SERVICE_URL}}/admin/test/email/receipts/collector-card?invoiceId=6ac16ac0-629a-46a0-8c63-aae192a1814e
+  body: none
+  auth: inherit
+}
+
+params:query {
+  invoiceId: 6ac16ac0-629a-46a0-8c63-aae192a1814e
+}

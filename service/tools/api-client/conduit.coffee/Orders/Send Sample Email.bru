@@ -1,16 +1,11 @@
 meta {
   name: Send Sample Email
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
   url: {{PROTOCOL}}{{SERVICE_URL}}/admin/test/email/receipts/c4d629f1-40af-4dfd-a09e-29aff38e9e87
   body: none
-  auth: basic
-}
-
-auth:basic {
-  username: cbtc_admin
-  password: upKj+zc7NxvT3a%+Uwsz&^K
+  auth: inherit
 }

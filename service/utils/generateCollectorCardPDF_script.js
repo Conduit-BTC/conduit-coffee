@@ -1,5 +1,5 @@
 const fs = require('fs');
-const generateCollectorCardPDF = require('./generateCollectorCardPDF');
+const { generateCollectorCardPDF } = require('./generateCollectorCardPDF');
 
 const orderData = {
   orderId: 'ad9d73bc-5c7f-41de-850c-12ee21ff0e64',
@@ -8,9 +8,10 @@ const orderData = {
     grandTotal: 150000,
     donation: 15000,
   },
+  blockHeight: 1234567,
   inventory: [
-    { quantity: 2, name: 'Quantum Processor' },
-    { quantity: 1, name: 'Neural Interface' },
+    { qty: 2, name: 'Lightn.ng Roast' },
+    { qty: 1, name: 'Resist.nce Roast' },
   ],
 };
 
