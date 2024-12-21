@@ -153,8 +153,8 @@ class EmailService {
                 orderId: details.orderId,
                 date: details.date,
                 payment: {
-                    grandTotal: details.subtotal,
-                    donation: details.subtotal * OPENSATS_DONATION,
+                    grandTotal: Math.round(details.subtotal),
+                    donation: Math.round(details.subtotal * OPENSATS_DONATION),
                 },
                 blockHeight,
                 inventory: details.items.map(item => ({
