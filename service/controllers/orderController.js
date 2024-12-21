@@ -113,7 +113,7 @@ exports.createOrder = async (req, res) => {
     headers.append('Authorization', `Bearer ${strikeKey}`);
 
     const fullAmount = (cart.sats_cart_price + satsShippingCost) / 100000000;
-    const testAmount = 0.00000001;
+    const testAmount = 0.000000011234;
 
     const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === "true";
 
