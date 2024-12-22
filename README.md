@@ -1,3 +1,5 @@
+![conduit-coffee-banner](https://github.com/user-attachments/assets/6a08030d-c821-44de-846f-cc61607618f0)
+
 # $ conduit_coffee -> coffee/for/the_people
 
 A proof-of-concept website to showcase Conduit BTC's developments for Nostr
