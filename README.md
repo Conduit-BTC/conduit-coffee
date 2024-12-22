@@ -18,12 +18,28 @@ A monorepo with two applications
   dev cycle)
 - Nostr - Our receipt system includes a "Publish Receipt to Relay as DM" feature
 
+### Additional Tech
+
+#### frontend/
+
+- Zustand - Best dang React state manager out there
+- Tailwind - CSS Utility Classes
+
+#### server/
+
+- PrismaORM + PostgreSQL
+- WebSocket - Between client + server, and server-to-relay-pool
+- Docker - Both apps are Dockerized
+- Caddy - A Caddy webserver config is included, primarily for easy deployment to
+  Railway
+- nostr-tools - Makes Nostr integration a breeze
+- pdf-kit - To generate PDF receipts
+
 ## Future Scope
 
-Today, this repo is a wonderful webwork of execution steps in desparate desire
-for a refactor. In the pursuit of feature development on a short timescale,
-several implementation patterns were implemented without best-case refactoring.
-There's some spaghetti; mind the dust.
+Today, this repo is a wonderful webwork of execution steps, in which I greatly
+desire to refactor; several implementation patterns were implemented to work,
+and are awaiting best-case refactoring.
 
 Our intention with conduit.coffee is to scrap the service/ and replace it with
 [C3: The Conduit Commerce Coordinator](https://github.com/Conduit-BTC/conduit-commerce-coordinator).
