@@ -31,11 +31,15 @@ A monorepo with two applications
 
 - PrismaORM + PostgreSQL
 - WebSocket - Between client + server, and server-to-relay-pool
+
+- nostr-tools - Makes Nostr integration a breeze
+- pdf-kit - To generate PDF receipts
+
+#### both
+
 - Docker - Both apps are Dockerized
 - Caddy - A Caddy webserver config is included, primarily for easy deployment to
   Railway
-- nostr-tools - Makes Nostr integration a breeze
-- pdf-kit - To generate PDF receipts
 
 ## Future Scope
 
