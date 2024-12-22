@@ -153,7 +153,7 @@ class EmailService {
                 orderId: details.orderId,
                 date: details.date,
                 payment: {
-                    grandTotal: Math.round(details.grandTotal),
+                    grandTotal: Math.round(details.totalCost),
                     donation: Math.round(details.subtotal * OPENSATS_DONATION),
                 },
                 blockHeight,
