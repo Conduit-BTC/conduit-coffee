@@ -149,6 +149,10 @@ class EmailService {
 
             const blockHeight = await getBtcBlockHeight();
 
+            const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === "true";
+
+            const grandTotal = useTestPayment ? Math.round(details.totalCost) : Math.round(details.subtotal + details.shippingCost);
+
             const pdfData = {
                 orderId: details.orderId,
                 date: details.date,
