@@ -151,13 +151,13 @@ class EmailService {
 
             const useTestPayment = process.env.USE_TEST_PAYMENT_AMOUNT === "true";
 
-            const grandTotal = useTestPayment ? Math.round(details.totalCost) : Math.round(details.subtotal + details.shippingCost);
+            const grandTotal = useTestPayment ? Math.round(details.subtotal + details.shippingCost) : Math.round(details.totalCost);
 
             const pdfData = {
                 orderId: details.orderId,
                 date: details.date,
                 payment: {
-                    grandTotal: Math.round(details.totalCost + details.shippingCost),
+                    grandTotal: grandTotal,
                     donation: Math.round(details.subtotal * OPENSATS_DONATION),
                 },
                 blockHeight,
