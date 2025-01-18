@@ -1,7 +1,7 @@
 import { useCartContext } from "../context/CartContext";
 import ProductLineItem from "../components/ProductLineItem";
 import useProducts from "../hooks/useProducts";
-import { FossFridayMessage, DeliveryTimesMessage } from "../components/EarlyAdopterMessage";
+import { DeliveryTimesMessage } from "../components/EarlyAdopterMessage";
 
 function getColors(name) {
   switch (name) {
@@ -52,9 +52,6 @@ const TerminalLayout = () => {
           <div className="w-1/2 h-2 bg-white/50"></div>
           <a href="https://primal.net/p/npub1nkfqwlz7xkhhdaa3ekz88qqqk7a0ks7jpv9zdsv0u206swxjw9rq0g2svu" className='mx-auto text-large font-bold p-4 border-white/50 border-2'>Connect with Conduit on Nostr! @ConduitBTC</a>
           <div className="w-1/2 h-2 bg-white/50"></div>
-        </div>
-        <div className='p-8 pt-16'>
-          <FossFridayMessage />
         </div>
         <div className="p-8">
           <div className="mb-8">
