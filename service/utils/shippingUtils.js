@@ -69,7 +69,7 @@ function createRatesPayload(zip, pkg) {
  * @returns {Promise<{ success: boolean, cost?: number, error?: { message: string, status?: number }>}}
  */
 async function calculateShippingCost(zip, items) {
-   try {
+  try {
     const packages = calculatePackagesFromCart(items);
     let totalCost = 0.0;
 
@@ -165,29 +165,71 @@ function calculatePackagesFromCart(_items = []) {
     return [];
   }
 
-  const packageDetails = {
+  // Package dimensions
+  const mailerDetails = {
     units: 'inches',
-    length: 10.5,
+    length: 10,
+    width: 13,
+    height: 4,
+  };
+
+  const boxDetails = {
+    units: 'inches',
+    length: 8,
     width: 8,
-    height: 1,
+    height: 6.5,
   };
 
   // Flatten items array based on quantity
   const flattenedItems = _items.flatMap(item =>
-    Array(item.quantity || 0).fill({ weight: item.weight || 0 })
+    Array(item.quantity || 0).fill({ weight: item.weight ? item.weight + 2.0 : 0.0 })
   );
 
-  // Group items into packages of 2
+  // Initialize result packages array
   const packages = [];
-  for (let i = 0; i < flattenedItems.length; i += 2) {
-    const itemsInPackage = flattenedItems.slice(i, i + 2);
-    const totalWeight = itemsInPackage.reduce((sum, item) => sum + item.weight, 0);
 
-    packages.push({
-      ...packageDetails,
-      weight: totalWeight,
-      itemCount: itemsInPackage.length
-    });
+  let remainingItems = flattenedItems.length;
+  let currentIndex = 0;
+
+  while (remainingItems > 0) {
+    if (remainingItems === 1 || remainingItems === 2) {
+      // Handle 1 or 2 items as a mailer
+      const itemsInPackage = flattenedItems.slice(currentIndex, currentIndex + remainingItems);
+      const totalWeight = itemsInPackage.reduce((sum, item) => sum + item.weight, 0);
+
+      packages.push({
+        ...mailerDetails,
+        weight: totalWeight,
+        itemCount: itemsInPackage.length,
+      });
+
+      remainingItems = 0;
+    } else if (remainingItems === 3 || remainingItems === 4) {
+      // Handle 3 or 4 items as a box
+      const itemsInPackage = flattenedItems.slice(currentIndex, currentIndex + remainingItems);
+      const totalWeight = itemsInPackage.reduce((sum, item) => sum + item.weight, 0);
+
+      packages.push({
+        ...boxDetails,
+        weight: totalWeight,
+        itemCount: itemsInPackage.length,
+      });
+
+      remainingItems = 0;
+    } else {
+      // Handle 5 or more items: use box first
+      const itemsInPackage = flattenedItems.slice(currentIndex, currentIndex + 4);
+      const totalWeight = itemsInPackage.reduce((sum, item) => sum + item.weight, 0);
+
+      packages.push({
+        ...boxDetails,
+        weight: totalWeight,
+        itemCount: itemsInPackage.length,
+      });
+
+      remainingItems -= 4;
+      currentIndex += 4;
+    }
   }
 
   return packages;
