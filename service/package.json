@@ -15,7 +15,7 @@
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^5.12.1",
+    "@prisma/client": "5.12.1",
     "@vercel/postgres": "^0.8.0",
     "axios": "^1.7.7",
     "body-parser": "^1.20.2",
@@ -40,7 +40,7 @@
     "jest": "^27.0.6",
     "nodemon": "^2.0.7",
     "prettier": "^2.3.2",
-    "prisma": "^5.12.1"
+    "prisma": "5.12.1"
   },
   "babel": {
     "presets": [
