@@ -1,6 +1,9 @@
 # First stage: Build environment
 FROM node:23-slim AS builder
 
+# Install system dependencies Prisma needs
+RUN apt-get update -y && apt-get install -y openssl libssl1.1
+
 WORKDIR /service
 
 # Copy and install all deps (including devDependencies)
