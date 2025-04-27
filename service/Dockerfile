@@ -1,8 +1,8 @@
 # First stage: Build environment
-FROM node:23-slim AS builder
+FROM node:18-slim AS builder
 
 # Install system dependencies Prisma needs
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
 
 WORKDIR /service
 
@@ -17,13 +17,15 @@ COPY . .
 RUN npx prisma generate
 
 # Second stage: Slim production image
-FROM node:23-slim
+FROM  node:18-slim
+
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
 
 WORKDIR /service
 
 # Only copy prod deps
 COPY package*.json ./
-RUN yarn install --production=true
+RUN yarn install
 
 # Copy generated code (and app source)
 COPY --from=builder /service .
