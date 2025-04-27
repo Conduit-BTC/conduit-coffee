@@ -2,7 +2,7 @@
 FROM node:23-slim AS builder
 
 # Install system dependencies Prisma needs
-RUN apt-get update -y && apt-get install -y openssl libssl1.1
+RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /service
 
