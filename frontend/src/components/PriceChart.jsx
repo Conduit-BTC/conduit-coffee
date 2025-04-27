@@ -12,14 +12,8 @@ const BitcoinPriceChart = () => {
 
   useEffect(() => {
     const cartPriceOverTime = priceOverTime.map((item) => {
-      const hodlings = cartItems.reduce(
-        (sum, product) => sum + product.quantity,
-        0
-      );
-
       const satsToUsd = item[1];
-      const costPerBag = satsToUsd * cartPriceUsd;
-      const totalCost = costPerBag * hodlings;
+      const totalCost = satsToUsd * cartPriceUsd;
       return [item[0], totalCost];
     });
 
