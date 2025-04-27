@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base
-FROM node:18
+FROM node:23-slim
 
 # Set the working directory
 WORKDIR /service
@@ -13,11 +13,8 @@ RUN yarn install
 # Copy the rest of the application code
 COPY . .
 
-# Copy the Prisma schema
-COPY prisma ./prisma/
-
 # Generate Prisma client and migrate the database
-RUN npx prisma generate
+RUN prisma generate
 
 # Make startup script executable
 RUN chmod +x startup.sh
