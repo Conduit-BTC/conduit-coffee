@@ -1,23 +1,34 @@
-# Use the official Node.js image as the base
-FROM node:18
+# First stage: Build environment
+FROM node:18-slim AS builder
 
-# Set the working directory
+# Install system dependencies Prisma needs
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
+
 WORKDIR /service
 
-# Copy package.json and package-lock.json
+# Copy and install all deps (including devDependencies)
 COPY package*.json ./
+RUN yarn install --production=false
 
-# Install dependencies
-RUN yarn install
-
-# Copy the rest of the application code
+# Copy app code
 COPY . .
 
-# Copy the Prisma schema
-COPY prisma ./prisma/
-
-# Generate Prisma client and migrate the database
+# Generate Prisma Client
 RUN npx prisma generate
+
+# Second stage: Slim production image
+FROM  node:18-slim
+
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
+
+WORKDIR /service
+
+# Only copy prod deps
+COPY package*.json ./
+RUN yarn install
+
+# Copy generated code (and app source)
+COPY --from=builder /service .
 
 # Make startup script executable
 RUN chmod +x startup.sh

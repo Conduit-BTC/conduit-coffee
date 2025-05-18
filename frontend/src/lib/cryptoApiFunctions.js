@@ -29,7 +29,11 @@ export async function getHistoricSatsPrice() {
   // [time, price]
 
   return fetch(
-    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&precision=10`
+    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&precision=10`, {
+    headers: {
+      'x-cg-demo-api-key': 'CG-Demo-API-Key'
+    }
+  }
   )
     .then((response) => {
       if (!response.ok) {
