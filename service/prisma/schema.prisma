@@ -5,52 +5,54 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  engineType    = "binary"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_PRIVATE_URL")
+  url      = env("DATABASE_PRIVATE_URL")
 }
 
 model Order {
-  id                  String     @id @default(uuid())
-  first_name          String
-  last_name           String
-  address1            String
-  address2            String?
-  zip                 String
+  id                   String   @id @default(uuid())
+  first_name           String
+  last_name            String
+  address1             String
+  address2             String?
+  zip                  String
   special_instructions String?
-  cart                Cart?
-  invoiceId           String? @unique
-  invoiceStatus       String?
-  lightningInvoice    String? @unique
-  shippingProvider    String?
-  shippingOrderId     String?
-  shippingStatus      String?
-  created_at          DateTime @default(now())
+  cart                 Cart?
+  invoiceId            String?  @unique
+  invoiceStatus        String?
+  lightningInvoice     String?  @unique
+  shippingProvider     String?
+  shippingOrderId      String?
+  shippingStatus       String?
+  created_at           DateTime @default(now())
 }
 
 model Cart {
-  id                String          @id @default(uuid())
-  sats_cart_price   Float
-  usd_cart_price    Float
-  shipping_cost_usd Float
+  id                 String   @id @default(uuid())
+  sats_cart_price    Float
+  usd_cart_price     Float
+  shipping_cost_usd  Float
   shipping_cost_sats Float
-  items             String[]
-  order             Order           @relation(fields: [orderId], references: [id])
-  orderId           String          @unique
+  items              String[]
+  order              Order    @relation(fields: [orderId], references: [id])
+  orderId            String   @unique
 }
 
 model Product {
-  id           String        @id @default(uuid())
-  sku          String
-  name         String
-  description  String
-  price        Float
-  weight       Float
-  size_width   Float
-  size_length  Float
-  size_height  Float
-  image_url    String?
+  id          String  @id @default(uuid())
+  sku         String
+  name        String
+  description String
+  price       Float
+  weight      Float
+  size_width  Float
+  size_length Float
+  size_height Float
+  image_url   String?
 }
