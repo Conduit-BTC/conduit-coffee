@@ -23,11 +23,17 @@ const server = http.createServer(app);
 const wsService = require('./services/wsService');
 wsService.initialize(server);
 
-app.use(cors({
-  origin: ['https://conduit.coffee'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: [
+      'https://conduit.coffee',
+      'https://conduit-coffee-dev.up.railway.app',
+      'https://conduit-coffee-staging.up.railway.app',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  }),
+);
 
 app.use(
   bodyParser.json({
