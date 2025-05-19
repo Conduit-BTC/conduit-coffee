@@ -14,6 +14,7 @@ const fetchUsdBtcValueFromStrike = async () => {
       const btcToUsd = response.data.filter(
         (obj) => obj.sourceCurrency === 'USD' && obj.targetCurrency === 'BTC',
       );
+      console.log('>>>>> fetchUsdBtcValueFromStrike response: ', btcToUsd);
       return btcToUsd[0].amount;
     })
     .catch((error) => {
