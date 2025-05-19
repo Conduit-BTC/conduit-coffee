@@ -2,9 +2,7 @@ export async function getCurrentSatsPrice() {
   const url = import.meta.env.VITE_API_URL;
 
   if (!url) {
-    console.error(
-      "useProducts.js: Environment Variable missing: VITE_API_URL"
-    );
+    console.error("useProducts.js: Environment Variable missing: VITE_API_URL");
     return;
   }
 
@@ -29,11 +27,8 @@ export async function getHistoricSatsPrice() {
   // [time, price]
 
   return fetch(
-    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&precision=10`, {
-    headers: {
-      'x-cg-demo-api-key': 'CG-Demo-API-Key'
-    }
-  }
+    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&precision=10`,
+    {}
   )
     .then((response) => {
       if (!response.ok) {
